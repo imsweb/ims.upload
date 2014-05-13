@@ -18,7 +18,7 @@ class ChunkUploadView(grok.View):
     grok.name('upload')
     grok.context(IUploadCapable)
     grok.template('upload')
-        
+
     def chunksize(self):
         registry = getUtility(IRegistry).forInterface(IChunkSettings)
         return registry.chunksize
@@ -27,7 +27,7 @@ class ChunkUploadView2(ChunkUploadView):
     """ Basic Plus UI version """
     grok.name('upload2')
     grok.template('upload2')
-    
+
     def jstemplate(self):
       """ have to put it here or TAL will fail to compile """
       return """
@@ -115,7 +115,7 @@ def mergeChunks(context, cf, file_name):
     tmpfile = NamedTemporaryFile(mode='w',delete='false')
     tname = tmpfile.name
     tmpfile.close()
-    
+
     for chunk in chunks:
       tmpfile = open(tname,'a')
       tmpfile.write(chunk.file.data)
@@ -127,7 +127,7 @@ def mergeChunks(context, cf, file_name):
     os.remove(tname)
     _file_name = file_name+'_'
     context.manage_delObjects([_file_name])
-    return
+    return nf.absolute_url()
 
 class ChunkedUpload(grok.View):
     """ Upload a file
@@ -141,51 +141,48 @@ class ChunkedUpload(grok.View):
 
     def render(self):
       _files = {}
-      for f in self.request.form.keys():
-        file_data = self.request.form[f]
-        file_name = file_data.filename
-        _file_name = file_name+'_'
-        
-        chunk_size = self.request['CONTENT_LENGTH']
-        content_range = self.request['HTTP_CONTENT_RANGE']
-        
-        content_type = mimetypes.guess_type(file_name)[0] or ""
-        for mutator in getAllUtilitiesRegisteredFor(IFileMutator):
-            file_name, file_data, content_type = mutator(file_name, file_data, content_type)
-        
-        if content_range:
-          """ don't do anything special if we only have one chunk """
-          max_size = int(content_range.split('/')[-1])
-                
-          if file_data:
-            if _file_name in self.context.objectIds():
-              cf = self.context[_file_name]
-              cf.addChunk(file_data,file_name,content_range)
-            else:
-              self.context.invokeFactory('ChunkedFile',_file_name)
-              cf = self.context[_file_name]
-              cf.title = file_name
-              cf.addChunk(file_data,file_name,content_range)
-              
-            size = cf.currsize()
-            url = cf.absolute_url()
-            _files[file_name]= {'name':file_name,
-                                'size':size,
-                                'url':url}
-            
-            if size == max_size :   
-              nf_url = mergeChunks(self.context, cf, file_name)      
-              
-              _files[file_name]['url'] = nf_url
-              #_files[file_name]['url'] = nf.absolute_url()
-        else:
-          self.context.invokeFactory('File',file_name)
-          nf = self.context[file_name]
-          nf.setTitle(file_name)
-          nf.setFile(file_data)
-          nf.reindexObject()
-          _files[file_name] = {'name':file_name,
-                               'size':nf.size(),
-                               'url':nf.absolute_url()}
-              
+      file_data = self.request.form['files[]']
+      file_name = file_data.filename
+      _file_name = file_name+'_'
+
+      chunk_size = self.request['CONTENT_LENGTH']
+      content_range = self.request['HTTP_CONTENT_RANGE']
+
+      content_type = mimetypes.guess_type(file_name)[0] or ""
+      for mutator in getAllUtilitiesRegisteredFor(IFileMutator):
+          file_name, file_data, content_type = mutator(file_name, file_data, content_type)
+
+      if content_range:
+        """ don't do anything special if we only have one chunk """
+        max_size = int(content_range.split('/')[-1])
+
+        if file_data:
+          if _file_name in self.context.objectIds():
+            cf = self.context[_file_name]
+            cf.addChunk(file_data,file_name,content_range)
+          else:
+            self.context.invokeFactory('ChunkedFile',_file_name)
+            cf = self.context[_file_name]
+            cf.title = file_name
+            cf.addChunk(file_data,file_name,content_range)
+
+          size = cf.currsize()
+          url = cf.absolute_url()
+          _files[file_name]= {'name':file_name,
+                              'size':size,
+                              'url':url}
+
+          if size == max_size :
+            nf_url = mergeChunks(self.context, cf, file_name)
+            _files[file_name]['url'] = nf_url
+      else:
+        self.context.invokeFactory('File',file_name)
+        nf = self.context[file_name]
+        nf.setTitle(file_name)
+        nf.setFile(file_data)
+        nf.reindexObject()
+        _files[file_name] = {'name':file_name,
+                             'size':nf.size(),
+                             'url':nf.absolute_url()}
+
       return json.dumps({'files':_files.values()})
