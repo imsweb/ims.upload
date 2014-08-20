@@ -78,6 +78,13 @@
         /*jslint unparam: true, regexp: true */
         /*global window, $ */
         
+        function refreshlisting() {
+          $("#upload-folder-listing").load("@@upload_refresh",function(responseTxt,statusTxt,xhr){
+            if(statusTxt=="error")
+              alert("Error updating content listing: "+xhr.status+": "+xhr.statusText);
+          });
+        }
+        
         function getCurrentFiles() {
           var filenames = new Array();
           contents = $('#upload-folder-listing a.url')
@@ -88,10 +95,19 @@
         }
         
         $('#uploadAll').click(function() {
-          $('#files button').click()
+          $('#files button.btn-primary').click()
         });
         $('#cancelAll').click(function() {
-          $('#files div').remove()
+          $('#files div button').each(function (){
+            var $this = $(this),
+                data = $this.data();
+            if (data) {
+              data.abort();
+            }
+            $this.closest('div').remove();
+          });
+          $('#progress .progress-bar').css('width','0%');
+          refreshlisting();
         });
         $(function () {
             'use strict';
@@ -107,8 +123,9 @@
                             .off('click')
                             .text('Abort')
                             .on('click', function () {
-                                $this.remove();
+                                $this.closest('div').remove();
                                 data.abort();
+                                refreshlisting();
                             });
                         data.submit().always(function () {
                             $this.remove();
@@ -116,9 +133,13 @@
                     }),
                 cancelButton = $('<button/>')
                     .addClass('btn btn-warning')
-                    .text('Cancel')
+                    .text('Clear')
                     .click(function () {
-                      $(this).closest('div').remove();
+                      var $this = $(this),
+                          data = $this.data();
+                      $this.closest('div').remove();
+                      data.abort();
+                      refreshlisting();
                     });
                     
             $('#fileupload').fileupload({
@@ -181,10 +202,7 @@
             }).on('fileuploaddone', function (e, data) {
                 $.each(data.result.files, function (index, file) {
                     if (file.url) {
-                       $("#upload-folder-listing").load("@@upload_refresh",function(responseTxt,statusTxt,xhr){
-                         if(statusTxt=="error")
-                           alert("Error updating content listing: "+xhr.status+": "+xhr.statusText);
-                       });
+                       refreshlisting();
                        $(data.context.children()[index]).remove()
                         //var link = $('<a>')
                         //    .attr('target', '_blank')

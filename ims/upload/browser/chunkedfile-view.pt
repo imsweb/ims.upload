@@ -7,16 +7,14 @@
       metal:use-macro="here/main_template/macros/master">
 
   <body>
+      
     <div metal:fill-slot="content-core">
       <p>
-        This is a chunked file. It contains chunks. Of a file. You are viewing this
-        you are wrong and committing an act of moral turpitude. Or the file upload is
-        incomplete and/or aborted.
+        This file's upload has not been completed.
       </p>
       
       <h2>Current Size</h2>
       <p tal:content="context/currsize" />
-      
       <h2>Chunks</h2>
       <span tal:condition="not:context/objectValues">There are no chunks.</span>
       <ul>

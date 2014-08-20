@@ -22,3 +22,10 @@
 #content-core .actionMenuContent .contenttype-chunkedfile { display: none; }
 
 .container { max-width: 100%; padding-left:0; padding-right:0}
+
+.contenttype-chunkedfile {
+  background: no-repeat transparent url('++resource++ims.upload/chunk.jpg');
+  padding-left: 20px !important;
+  padding-right: auto !important;
+  line-height: 2em;
+}

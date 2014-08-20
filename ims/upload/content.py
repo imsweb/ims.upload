@@ -30,6 +30,9 @@ class ChunkedFile(Container):
           chunk.startbyte = int(startbyte)
           chunk.endbyte = int(endbyte)
         logger.info('Chunk uploaded: %s; %s' % (content_range,file_name))
+    
+    def Title(self):
+        return 'Processing/Aborted - ' + self.id[:-1]
 
 class ChunkedFileView(DisplayForm):
     grok.context(IChunkedFile)
