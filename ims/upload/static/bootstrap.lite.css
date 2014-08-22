@@ -29,3 +29,11 @@
   padding-right: auto !important;
   line-height: 2em;
 }
+
+span.glyphicon-ok {
+  color: #5CB85C !important;
+}
+
+span.glyphicon-remove {
+  color: #FF0000 !important;
+}

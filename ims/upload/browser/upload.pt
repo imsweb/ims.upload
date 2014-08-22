@@ -7,7 +7,6 @@
       metal:use-macro="here/main_template/macros/master">
 
   <head>
-    <meta name="description" content="File Upload widget with multiple file selection, drag&amp;drop support, progress bar, validation and preview images, audio and video for jQuery. Supports cross-domain, chunked and resumable file uploads. Works with any server-side platform (Google App Engine, PHP, Python, Ruby on Rails, Java, etc.) that supports standard HTML form file uploads.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <metal:css fill-slot="style_slot">
@@ -61,7 +60,7 @@
       </button>
       <button class="btn btn-warning cancel" id="cancelAll">
           <i class="glyphicon glyphicon-ban-circle"></i>
-          Cancel Uploads
+          Clear Uploads
       </button>
       <br>
       <br>
@@ -94,8 +93,16 @@
           return filenames;
         }
         
+        function update_progress(data) {
+          var progress = parseInt(data.loaded / data.total * 100, 10);
+          $('#progress .progress-bar').css(
+              'width',
+              progress + '%'
+          );
+        }
+        
         $('#uploadAll').click(function() {
-          $('#files button.btn-primary').click()
+          $('#files button.singular').click()
         });
         $('#cancelAll').click(function() {
           $('#files div button').each(function (){
@@ -104,8 +111,8 @@
             if (data) {
               data.abort();
             }
-            $this.closest('div').remove();
           });
+          $('#files div').remove();
           $('#progress .progress-bar').css('width','0%');
           refreshlisting();
         });
@@ -123,10 +130,10 @@
                             .off('click')
                             .text('Abort')
                             .on('click', function () {
-                                $this.closest('div').remove();
+                                $this.closest('p').find('img').remove();
                                 data.abort();
-                                refreshlisting();
                             });
+                        $this.closest('p').prepend(spinner.clone(true));
                         data.submit().always(function () {
                             $this.remove();
                         });
@@ -140,18 +147,29 @@
                       $this.closest('div').remove();
                       data.abort();
                       refreshlisting();
-                    });
+                      update_progress(data);
+                    }),
+                spinner = $('<img>')
+                  .attr('src','spinner.gif')
+                  .css('padding-right','0.5em');
                     
             $('#fileupload').fileupload({
                 url: url,
                 dataType: 'json',
                 autoUpload: false,
                 maxChunkSize: parseInt($('#chunksize').attr('data')),
-                //acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-                //maxFileSize: 5000000, // 5 MB
-                // Enable image resizing, except for Android and Opera,
-                // which actually support image resizing, but fail to
-                // send Blob objects via XHR requests:
+                add: function (e, data) {
+                    var that = this;
+                    $.getJSON('@@chunk-check', {file: data.files[0].name}, function (uploadedBytes) {
+                        $.blueimp.fileupload.prototype
+                            .options.add.call(that, e, data);
+                        data.uploadedBytes = uploadedBytes;
+                        if (uploadedBytes > 0) {
+                          data.data = null
+                          $(data.context.children()).find('button:first').text('Resume Upload');
+                        }
+                    });
+                },
                 disableImageResize: /Android(?!.*Chrome)|Opera/
                     .test(window.navigator.userAgent),
                 previewMaxWidth: 100,
@@ -168,9 +186,9 @@
                             .append(uploadButton.clone(true).data(data))
                             .append(' ')
                             .append(cancelButton.clone(true).data(data));
-                            if ($.inArray(file.name,getCurrentFiles()) != -1) {
-                              node.append($('<span class="text-danger"/>').text(' WARNING - file already exists!'));
-                            }
+                        if ($.inArray(file.name,getCurrentFiles()) != -1) {
+                          node.append($('<span class="text-danger"/>').text(' WARNING - file already exists and will be overwritten'));
+                        }
                     }
                     node.appendTo(data.context);
                 });
@@ -194,21 +212,19 @@
                         .prop('disabled', !!data.files.error);
                 }
             }).on('fileuploadprogressall', function (e, data) {
-                var progress = parseInt(data.loaded / data.total * 100, 10);
-                $('#progress .progress-bar').css(
-                    'width',
-                    progress + '%'
-                );
+                update_progress(data);
             }).on('fileuploaddone', function (e, data) {
+                refreshlisting();
                 $.each(data.result.files, function (index, file) {
+                    $(data.context.children()[index]).find('img').remove();
                     if (file.url) {
-                       refreshlisting();
-                       $(data.context.children()[index]).remove()
-                        //var link = $('<a>')
-                        //    .attr('target', '_blank')
-                        //    .prop('href', file.url);
-                        //$(data.context.children()[index])
-                        //    .wrap(link);
+                       var link = $('<a>')
+                           .attr('target', '_blank')
+                           .prop('href', file.url+'/view');
+                       var child = $(data.context.children()[index]);
+                       child.find('span').before('<span class="success glyphicon glyphicon-ok"/> ');
+                       child.find('button').remove();
+                       child.wrap(link);
                     } else if (file.error) {
                         var error = $('<span class="text-danger"/>').text(file.error);
                         $(data.context.children()[index])
@@ -219,16 +235,18 @@
                 
             }).on('fileuploadfail', function (e, data) {
                 $.each(data.files, function (index, file) {
+                    $(data.context.children()[index]).find('img').remove();
                     var error = $('<span class="text-danger"/>').text('File upload failed.');
                     $(data.context.children()[index])
                         .append('<br>')
-                        .append(error);
+                        .append(error)
+                        .prepend('<span class="warning glyphicon glyphicon-remove"/> ');
                 });
             }).prop('disabled', !$.support.fileInput)
                 .parent().addClass($.support.fileInput ? undefined : 'disabled');
         });
       </script>
-      <div id="upload-folder-listing">
+      <div id="upload-folder-listing" style="display:none;">
         <span tal:replace="structure view/contents_table" tal:omit-tag=""/>
       </div>
     </div>

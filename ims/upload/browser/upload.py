@@ -57,7 +57,7 @@ def mergeChunks(context, cf, file_name):
     tmpfile.close()
     nf.reindexObject()
     os.remove(tname)
-    _file_name = file_name+'_'
+    _file_name = file_name+'_chunk'
     context.manage_delObjects([_file_name])
     logger.info('Upload complete')
     return nf.absolute_url()
@@ -77,7 +77,7 @@ class ChunkedUpload(grok.View):
       file_data = self.request.form['files[]']
       file_name = file_data.filename
       file_name = file_name.split('/')[-1].split('\\')[-1] # bug in old IE
-      _file_name = file_name+'_'
+      _file_name = file_name+'_chunk'
 
       chunk_size = self.request['CONTENT_LENGTH']
       content_range = self.request['HTTP_CONTENT_RANGE']
@@ -122,3 +122,19 @@ class ChunkedUpload(grok.View):
                              'url':nf.absolute_url()}
 
       return json.dumps({'files':_files.values()})
+
+class ChunkCheck(grok.View):
+    """ Upload form page """
+    grok.name('chunk-check')
+    grok.context(IUploadCapable)
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+    
+    def render(self):
+      file_name = self.request.form['file']
+      data = 0
+      if file_name + '_chunk' in self.context.objectIds():
+        data = self.context[file_name + '_chunk'].currsize()
+      return json.dumps(data)
