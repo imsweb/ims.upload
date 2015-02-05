@@ -10,35 +10,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <metal:css fill-slot="style_slot">
-      <!-- Bootstrap styles -->
-      <link rel="stylesheet" type="text/css" media="screen" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
-      <link rel="stylesheet" type="text/css" media="screen" tal:attributes="href string:${portal_url}/++resource++ims.upload/bootstrap.lite.css">
-      <!-- <link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/bootstrap.min.css"> -->
+      <link rel="stylesheet" type="text/css" media="screen" tal:attributes="href string:${portal_url}/++resource++ims.upload/css/bootstrap.css">
+      <link rel="stylesheet" type="text/css" media="screen" tal:attributes="href string:${portal_url}/++resource++ims.upload/css/bootstrap-theme.css">
       
-      <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
       <link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload.css">
     </metal:css>
 
     <metal:javascript fill-slot="javascript_head_slot">
+      <script tal:attributes="src string:${portal_url}/++resource++ims.upload/js/bootstrap.min.js"></script>
+      
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/load-image.min.js"></script>
-      <!-- The Canvas to Blob plugin is included for image resizing functionality -->
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/canvas-to-blob.min.js"></script>
-      <!-- Bootstrap JS is not required, but included for the responsive demo navigation -->
-      <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-      <!-- <script tal:attributes="src string:${portal_url}/++resource++ims.upload/bootstrap.min.js"></script> -->
-      <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.iframe-transport.js"></script>
-      <!-- The basic File Upload plugin -->
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload.js"></script>
-      <!-- The File Upload processing plugin -->
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload-process.js"></script>
-      <!-- The File Upload image preview & resize plugin -->
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload-image.js"></script>
-      <!-- The File Upload audio preview plugin -->
-      <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload-audio.js"></script>
-      <!-- The File Upload video preview plugin -->
-      <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload-video.js"></script>
-      <!-- The File Upload validation plugin -->
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload-validate.js"></script>
       
     </metal:javascript>
@@ -93,6 +79,16 @@
           return filenames;
         }
         
+        function getChunkForFile(file_name) {
+          contents = $('#upload-folder-listing a.url')
+          for (i=0;i<contents.length;i++) {
+            var full_url = $(contents[i]).attr('href');
+            if(full_url.split('/').pop() == file_name + '_chunk') {
+              return full_url;
+            }
+          };
+        }
+        
         function update_progress(data) {
           var progress = parseInt(data.loaded / data.total * 100, 10);
           $('#progress .progress-bar').css(
@@ -130,6 +126,7 @@
                             .off('click')
                             .text('Abort')
                             .on('click', function () {
+                                console.log($this);
                                 $this.closest('p').find('img').remove();
                                 data.abort();
                             });
@@ -158,23 +155,51 @@
                 dataType: 'json',
                 autoUpload: false,
                 maxChunkSize: parseInt($('#chunksize').attr('data')),
-                add: function (e, data) {
-                    var that = this;
-                    $.getJSON('@@chunk-check', {file: data.files[0].name}, function (uploadedBytes) {
-                        $.blueimp.fileupload.prototype
-                            .options.add.call(that, e, data);
-                        data.uploadedBytes = uploadedBytes;
-                        if (uploadedBytes > 0) {
-                          data.data = null
-                          $(data.context.children()).find('button:first').text('Resume Upload');
-                        }
-                    });
-                },
+//                add: function (e, data) {
+//                    var that = this;
+//                    $.getJSON('@@chunk-check', {file: data.files[0].name}, function (result) {
+//                        var uploadedBytes = result.uploadedBytes,
+//                            btnlink = $('<a/>')
+//                              .text('Resume Upload')
+//                              .addClass('btn btn-primary')
+//                              .attr('target','_blank')
+//                              .attr('href',result.url)
+//                              .click(function() {
+//                                $(this).closest('div').remove();
+//                              });
+//                        if (uploadedBytes > 0) {
+//                          data.data = null
+//                          console.log('retrying')
+//                          data.submit()
+//                          $(data.context.children()).find('button:first').after(btnlink.clone(true));
+//                          $(data.context.children()).find('button:first').remove()
+//                        }
+//                        else {
+//                          data.context = $('<div/>').appendTo('#files');
+//                          $.each(data.files, function (index, file) {
+//                              var node = $('<p/>')
+//                                      .append($('<span/>').text(file.name + ' - ' + file.size + ' bytes'));
+//                              if (!index) {
+//                                  node
+//                                      .append('<br>')
+//                                      .append(uploadButton.clone(true).data(data))
+//                                      .append(' ')
+//                                      .append(cancelButton.clone(true).data(data));
+//                                  if ($.inArray(file.name,getCurrentFiles()) != -1) {
+//                                    node.append($('<span class="text-danger"/>').text(' WARNING - file already exists and will be overwritten'));
+//                                  }
+//                              }
+//                              node.appendTo(data.context);
+//                          });
+//                        }
+//                    });
+//                },
                 disableImageResize: /Android(?!.*Chrome)|Opera/
                     .test(window.navigator.userAgent),
                 previewMaxWidth: 100,
                 previewMaxHeight: 100,
                 previewCrop: true
+// uncomment this block if the add: override doesn't work
             }).on('fileuploadadd', function (e, data) {
                 data.context = $('<div/>').appendTo('#files');
                 $.each(data.files, function (index, file) {
@@ -186,7 +211,17 @@
                             .append(uploadButton.clone(true).data(data))
                             .append(' ')
                             .append(cancelButton.clone(true).data(data));
-                        if ($.inArray(file.name,getCurrentFiles()) != -1) {
+                        if (getChunkForFile(file.name)) {
+                          node.find('.btn-primary.singular').removeClass('singular')
+                                                            .text('Resume')
+                                                            .prop('disabled',false)
+                                                            .off()
+                                                            .click(function() {
+                                                              window.open(getChunkForFile(file.name));
+                                                            });
+                          node.append($('<span class="text-danger"/>').text(' A file with this name is currently in progress'));
+                        }
+                        else if ($.inArray(file.name,getCurrentFiles()) != -1) {
                           node.append($('<span class="text-danger"/>').text(' WARNING - file already exists and will be overwritten'));
                         }
                     }
@@ -248,6 +283,24 @@
       </script>
       <div id="upload-folder-listing" style="display:none;">
         <span tal:replace="structure view/contents_table" tal:omit-tag=""/>
+      </div>
+      
+      <div tal:condition="view/chunked_files"
+           tal:define="toLocalizedTime nocall: context/@@plone/toLocalizedTime;
+                       normalizeString nocall: context/plone_utils/normalizeString;">
+        <h3>Files in process or aborted</h3>
+        <ul id="chunked_listing">
+          <tal:item repeat="file view/chunked_files">
+            <li>
+              <a tal:attributes="class python:'contenttype-'+normalizeString(file.portal_type) + ' chunkfile_uploader';
+                                 href file/getURL" target="_blank"
+                 tal:content="file/Title"/>
+              &mdash; created on <span tal:replace="python:toLocalizedTime(file.CreationDate,long_format=1)">
+                              August 16, 2001 at 23:35:59
+                            </span>
+            </li>
+          </tal:item>
+        </ul>
       </div>
     </div>
 </body> 
