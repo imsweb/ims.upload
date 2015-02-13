@@ -157,8 +157,8 @@ class ChunkCheckDirect(grok.View):
     
     def render(self):
       #file_name = self.request.form['file']
-      data = {'uploadedBytes':0}
-      data['uploadedBytes'] = self.context.currsize()
+      data = {'uploadedBytes':self.context.currsize(),
+              'targetsize':self.context.targetsize}
       return json.dumps(data)
 
 class ChunkedUploadDirect(grok.View):

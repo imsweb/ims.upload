@@ -59,10 +59,7 @@
         <br/>
           
         <data id="chunksize" tal:attributes="data view/chunksize" />
-        <script>
-          /*jslint unparam: true, regexp: true */
-          /*global window, $ */
-          
+        <script>          
           function refreshlisting() {
             $("#upload-folder-listing").load("@@upload_refresh",function(responseTxt,statusTxt,xhr){
               if(statusTxt=="error")
@@ -77,40 +74,13 @@
                 progress + '%'
             );
           }
+          spinner = $('<img>')
+            .attr('src','spinner.gif')
+            .css('padding-left','0.5em');
           
           $(function () {
               'use strict';
               var url = '@@upload-chunk',
-                  uploadButton = $('<button/>')
-                      .addClass('btn btn-primary singular')
-                      .prop('disabled', true)
-                      .text('Processing...')
-                      .on('click', function () {
-                          var $this = $(this),
-                              data = $this.data();
-                          $this
-                              .off('click')
-                              .text('Abort')
-                              .on('click', function () {
-                                  $this.closest('p').find('img').remove();
-                                  data.abort();
-                              });
-                          $this.closest('p').prepend(spinner.clone(true));
-                          data.submit().always(function () {
-                              $this.remove();
-                          });
-                      }),
-                  cancelButton = $('<button/>')
-                      .addClass('btn btn-warning')
-                      .text('Clear')
-                      .click(function () {
-                        var $this = $(this),
-                            data = $this.data();
-                        $this.closest('div').remove();
-                        data.abort();
-                        refreshlisting();
-                        update_progress(data);
-                      }),
                   spinner = $('<img>')
                     .attr('src','spinner.gif')
                     .css('padding-right','0.5em');
@@ -127,7 +97,12 @@
                           data.uploadedBytes = uploadedBytes;
                           $.blueimp.fileupload.prototype
                               .options.add.call(that, e, data);
-                          if (uploadedBytes > 0) {
+                          if (data.files[0].size != result.targetsize) {
+                            alert('Partially uploaded file size does not match size of selected file. Please upload the same file!');
+                          }
+                          else if (uploadedBytes > 0) {
+                            console.log(result);
+                            console.log(data);
                             data.submit()
                           }
                       });
@@ -140,7 +115,9 @@
               }).on('fileuploadprogressall', function (e, data) {
                   update_progress(data);
               }).on('fileuploaddone', function (e, data) {
-                  window.location = data.result.complete;
+                  if (data.result.complete) {
+                    window.location = data.result.complete;
+                  }
                   
               }).on('fileuploadfail', function (e, data) {
                   

@@ -39,6 +39,9 @@ class ChunkedFile(Container):
     def addChunk(self,file_data,file_name,content_range,graceful=False):
         if not self.targetsize:
           self.targetsize = content_range.split('/')[-1]
+        elif self.targetsize != content_range.split('/')[-1]:
+          # incoming file size does not match expected total size. abort!
+          return False
         id = content_range.replace(' ','_').replace('/',' of ') or file_name # just use file name if only one chunk
         if id in self.objectIds() and graceful:
           logger.info('Chunk already exists: %s; assume file resume' % file_name)
