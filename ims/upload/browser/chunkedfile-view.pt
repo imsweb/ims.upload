@@ -5,18 +5,18 @@
       xml:lang="en" lang="en"
       i18n:domain="ims.upload"
       metal:use-macro="here/main_template/macros/master">
-    
+
   <head>
     <metal:css fill-slot="style_slot">
       <link rel="stylesheet" type="text/css" media="screen" tal:attributes="href string:${portal_url}/++resource++ims.upload/css/bootstrap.css">
       <link rel="stylesheet" type="text/css" media="screen" tal:attributes="href string:${portal_url}/++resource++ims.upload/css/bootstrap-theme.css">
-      
+
       <link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload.css">
     </metal:css>
 
     <metal:javascript fill-slot="javascript_head_slot">
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/js/bootstrap.min.js"></script>
-      
+
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/load-image.min.js"></script>
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/canvas-to-blob.min.js"></script>
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.iframe-transport.js"></script>
@@ -24,24 +24,24 @@
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload-process.js"></script>
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload-image.js"></script>
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload-validate.js"></script>
-      
+
     </metal:javascript>
   </head>
 
   <body>
-      
+
     <div metal:fill-slot="content"
          tal:define="checkPermission nocall:context/portal_membership/checkPermission">
       <div id="content">
         <h1 tal:content="context/title"></h1>
-        
+
         <p>
           This file's upload has not been completed.
         </p>
-        
+
         <h2>Current Size</h2>
         <p tal:content="view/currsize" />
-          
+
           <span class="btn btn-primary fileinput-button">
             <i class="glyphicon glyphicon-upload"></i>
             <span>Resume File</span>
@@ -57,16 +57,16 @@
         <!-- The container for the uploaded files -->
         <div id="files" class="files"></div>
         <br/>
-          
+
         <data id="chunksize" tal:attributes="data view/chunksize" />
-        <script>          
+        <script>
           function refreshlisting() {
             $("#upload-folder-listing").load("@@upload_refresh",function(responseTxt,statusTxt,xhr){
               if(statusTxt=="error")
                 alert("Error updating content listing: "+xhr.status+": "+xhr.statusText);
             });
           }
-          
+
           function update_progress(data) {
             var progress = parseInt(data.loaded / data.total * 100, 10);
             $('#progress .progress-bar').css(
@@ -77,14 +77,14 @@
           spinner = $('<img>')
             .attr('src','spinner.gif')
             .css('padding-left','0.5em');
-          
+
           $(function () {
               'use strict';
               var url = '@@upload-chunk',
                   spinner = $('<img>')
                     .attr('src','spinner.gif')
                     .css('padding-right','0.5em');
-                      
+
               $('#fileupload').fileupload({
                   url: url,
                   dataType: 'json',
@@ -98,11 +98,9 @@
                           $.blueimp.fileupload.prototype
                               .options.add.call(that, e, data);
                           if (data.files[0].size != result.targetsize) {
-                            alert('Partially uploaded file size does not match size of selected file. Please upload the same file!');
+                            alert('Partially uploaded file size does not match size of selected file ' + data[files[0]].size + ':' + result.targetsize + '. Please upload the same file!');
                           }
                           else if (uploadedBytes > 0) {
-                            console.log(result);
-                            console.log(data);
                             data.submit()
                           }
                       });
@@ -118,15 +116,15 @@
                   if (data.result.complete) {
                     window.location = data.result.complete;
                   }
-                  
+
               }).on('fileuploadfail', function (e, data) {
-                  
+
               }).prop('disabled', !$.support.fileInput)
                   .parent().addClass($.support.fileInput ? undefined : 'disabled');
           });
         </script>
-          
-        <div tal:condition="python:checkPermission('Manage portal',context)"> 
+
+        <div tal:condition="python:checkPermission('Manage portal',context)">
           <h2>Chunks (debug info - admin only)</h2>
           <span tal:condition="not:context/objectValues">There are no chunks.</span>
           <ul>
@@ -134,8 +132,8 @@
               <li><a tal:attributes="href chunk/absolute_url" tal:content="chunk/getId" /></li>
             </tal:chunk>
           </ul>
-        </div> 
+        </div>
       </div>
     </div>
-</body> 
+</body>
 </html>

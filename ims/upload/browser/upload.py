@@ -9,6 +9,7 @@ from tempfile import NamedTemporaryFile
 from zope.component import getAllUtilitiesRegisteredFor, getUtility
 from zope.filerepresentation.interfaces import IFileFactory
 
+from ims.upload.tools import _printable_size
 from ims.upload.interfaces import IChunkSettings, IFileMutator, IUploadCapable, IChunkedFile
 
 import logging
@@ -21,7 +22,7 @@ class ChunkUploadView(grok.View):
     grok.context(IUploadCapable)
     grok.template('upload')
     listing = ViewPageTemplateFile("listing.pt")
-    
+
     def contents_table(self,context='',request=''):
       if not context:
         context=self.context
@@ -29,11 +30,25 @@ class ChunkUploadView(grok.View):
         request=self.request
 
       return self.listing()
-    
+
     def chunked_files(self):
-      catalog = getToolByName(self.context,'portal_catalog')
-      return catalog(path={'query':'/'.join(self.context.getPhysicalPath()),'depth':1},
-                     portal_type='ChunkedFile')
+      """ Get full objects because
+          1) we would otherwise have to index currsize and targetsize
+          2) we are not likely to have many ChunkedFiles anyway
+      """
+      chunked = []
+      for obj in self.context.objectValues('ChunkedFile'):
+          chunked.append({'url':obj.absolute_url(),
+                          'size':_printable_size(obj.targetsize),
+                          'percent':'%.02f%%' % (obj.currsize()/float(obj.targetsize)*100),
+                          'title':obj.Title(),
+                          'date':obj.CreationDate(),
+                          'portal_type':obj.portal_type,
+                        })
+      return chunked
+      #catalog = getToolByName(self.context,'portal_catalog')
+      #return catalog(path={'query':'/'.join(self.context.getPhysicalPath()),'depth':1},
+      #               portal_type='ChunkedFile')
 
     def chunksize(self):
         registry = getUtility(IRegistry).forInterface(IChunkSettings)
@@ -137,7 +152,7 @@ class ChunkCheck(grok.View):
     def __init__(self, context, request):
         self.context = context
         self.request = request
-    
+
     def render(self):
       file_name = self.request.form['file']
       data = {'uploadedBytes':0}
@@ -154,7 +169,7 @@ class ChunkCheckDirect(grok.View):
     def __init__(self, context, request):
         self.context = context
         self.request = request
-    
+
     def render(self):
       #file_name = self.request.form['file']
       data = {'uploadedBytes':self.context.currsize(),
