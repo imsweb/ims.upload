@@ -1,8 +1,16 @@
+.upload-spinner {
+  padding-right: 0.5em;
+}
+
+.file-fail {
+  display: block;
+}
+
 .chunksize_descriptor {
   background-color: #ddd;;
 }
 
-#content-core .btn-success {
+/* #content-core .btn-success {
     background-color: #5CB85C;
     border-color: #4CAE4C;
     color: #FFFFFF;
@@ -21,7 +29,7 @@
     text-align: center;
     vertical-align: middle;
     white-space: nowrap;
-}
+} */
 
 #content ul#chunked_listing {
     list-style-image: none;
@@ -47,4 +55,4 @@ span.glyphicon-ok {
 
 span.glyphicon-remove {
   color: #FF0000 !important;
-}
+}o

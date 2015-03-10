@@ -59,244 +59,27 @@
       <br/>
 
       <data id="chunksize" tal:attributes="data view/chunksize" />
-      <script>
-        /*jslint unparam: true, regexp: true */
-        /*global window, $ */
 
-        function refreshlisting() {
-          $("#upload-folder-listing").load("@@upload_refresh",function(responseTxt,statusTxt,xhr){
-            if(statusTxt=="error")
-              alert("Error updating content listing: "+xhr.status+": "+xhr.statusText);
-          });
-          refresh_buttons();
-        }
+      <script tal:attributes="src string:${portal_url}/++resource++ims.upload/upload.js"></script>
 
-        function refresh_buttons() {
-          if ( $('#files div').length > 0 ) {
-            // if it doesn't have a button it's completed - only show the clear button
-            if ( $('#files div button').length > 0 ) {
-              $('#uploadAll').show();
-            }
-            else {
-              $('#uploadAll').hide();
-            }
-            $('#clearAll').show();
-          }
-          else {
-            $('#uploadAll').hide();
-            $('#clearAll').hide();
-          }
-        }
+      <h3>Files in process or aborted</h3>
+      <div id="upload-chunks-listing">
+      <img src="spinner.gif" class="upload-spinner" />
+        loading...
+      </div>
 
-        function getCurrentFiles() {
-          var filenames = new Array();
-          contents = $('#upload-folder-listing a.url')
-          for (i=0;i<contents.length;i++) {
-            filenames.push($(contents[i]).text());
-          };
-          return filenames;
-        }
+      <h3>Uploaded content</h3>
+      <div id="upload-folder-listing">
+        <img src="spinner.gif" class="upload-spinner" />
+        loading...
+      </div>
 
-        function getChunkForFile(file_name) {
-          contents = $('#upload-folder-listing a.url')
-          for (i=0;i<contents.length;i++) {
-            var full_url = $(contents[i]).attr('href');
-            if(full_url.split('/').pop() == file_name + '_chunk') {
-              return full_url;
-            }
-          };
-        }
-
-        function update_progress(data) {
-          var progress = parseInt(data.loaded / data.total * 100, 10);
-          $('#progress .progress-bar').css(
-              'width',
-              progress + '%'
-          );
-        }
-
-        $('#uploadAll').click(function() {
-          $('#files button.singular').click()
+      <script type="text/javascript">
+        $(document).ready(function() {
+          refreshlisting()
         });
-        $('#clearAll').click(function() {
-          $('#files div button').each(function (){
-            var $this = $(this),
-                data = $this.data();
-            if (data) {
-              data.abort();
-            }
-          });
-          $('#files div').remove();
-          $('#progress .progress-bar').css('width','0%');
-          refreshlisting();
-        });
-        $(function () {
-            'use strict';
-            var url = '@@upload-chunk',
-                uploadButton = $('<button/>')
-                    .addClass('btn btn-primary singular')
-                    .prop('disabled', true)
-                    .text('Processing...')
-                    .on('click', function () {
-                        var $this = $(this),
-                            data = $this.data();
-                        $this
-                            .off('click')
-                            .text('Abort')
-                            .on('click', function () {
-                                $this.closest('p').find('img').remove();
-                                data.abort();
-                            });
-                        $this.closest('p').prepend(spinner.clone(true));
-                        data.submit().always(function () {
-                            $this.remove();
-                        });
-                    }),
-                cancelButton = $('<button/>')
-                    .addClass('btn btn-warning')
-                    .text('Clear')
-                    .click(function () {
-                      var $this = $(this),
-                          data = $this.data();
-                      $this.closest('div').remove();
-                      data.abort();
-                      refreshlisting();
-                      update_progress(data);
-                    }),
-                spinner = $('<img>')
-                  .attr('src','spinner.gif')
-                  .css('padding-right','0.5em');
-
-            $('#fileupload').fileupload({
-                url: url,
-                dataType: 'json',
-                autoUpload: false,
-                maxChunkSize: parseInt($('#chunksize').attr('data')),
-                disableImageResize: /Android(?!.*Chrome)|Opera/
-                    .test(window.navigator.userAgent),
-                previewMaxWidth: 100,
-                previewMaxHeight: 100,
-                previewCrop: true
-            }).on('fileuploadadd', function (e, data) {
-                data.context = $('<div/>').appendTo('#files');
-                $.each(data.files, function (index, file) {
-                    var node = $('<p/>')
-                            .append($('<span/>').text(file.name + ' - ' + file.size + ' bytes'));
-                    if (!index) {
-                        node
-                            .append('<br>')
-                            .append(uploadButton.clone(true).data(data))
-                            .append(' ')
-                            .append(cancelButton.clone(true).data(data));
-                        if (getChunkForFile(file.name)) {
-                          $.getJSON(getChunkForFile(file.name)+'/chunk-check').done(function(result) {
-                            data.uploadedBytes = result.uploadedBytes;
-                            // check size
-                            if (data.files[index].size != result.targetsize) {
-                              alert('Partially uploaded file size does not match size of selected file ' + data[files[index]].size + ':' + result.targetsize + '. Please upload the same file!');
-                              data.abort();
-                            }
-                            var percent_complete = (result.uploadedBytes/result.targetsize*100).toPrecision(4)
-                            node.find('.btn-primary.singular').text('Resume')
-                                                              .removeClass('singular')
-                                                              .prop('disabled',false)
-                                                              .off()
-                                                              .click(function() {
-                                                                data.submit();
-                                                                $(this).prop('disabled',true);
-                                                              //  window.open(getChunkForFile(file.name));
-                                                              });
-                            node.append($('<span class="text-danger"/>').text(' A file with this name is ' + percent_complete + '% uploaded.'));
-                          });
-                        }
-                        else if ($.inArray(file.name,getCurrentFiles()) != -1) {
-                          node.append($('<span class="text-danger"/>').text(' WARNING - file already exists and will be overwritten'));
-                        }
-                    }
-                    node.appendTo(data.context);
-                });
-                refresh_buttons();
-            }).on('fileuploadprocessalways', function (e, data) {
-                console.log(data);
-                var index = data.index,
-                    file = data.files[index],
-                    node = $(data.context.children()[index]);
-                if (file.preview) {
-                    node
-                        .prepend('<br>')
-                        .prepend(file.preview);
-                }
-                if (file.error) {
-                    node
-                        .append('<br>')
-                        .append($('<span class="text-danger"/>').text(file.error));
-                }
-                if (index + 1 === data.files.length) {
-                    data.context.find('button.singular')
-                        .text('Upload')
-                        .prop('disabled', !!data.files.error);
-                }
-            }).on('fileuploadprogressall', function (e, data) {
-                update_progress(data);
-            }).on('fileuploaddone', function (e, data) {
-                $.each(data.result.files, function (index, file) {
-                    $(data.context.children()[index]).find('img').remove();
-                    if (file.url) {
-                       var link = $('<a>')
-                           .attr('target', '_blank')
-                           .prop('href', file.url+'/view');
-                       var child = $(data.context.children()[index]);
-                       child.find('.text-danger').remove(); // remove any old warning about duplicate files
-                       child.find('span').before('<span class="success glyphicon glyphicon-ok"/> '); // add ok icon
-                       child.find('button').remove(); // remove submit/clear buttons
-                       child.wrap(link);
-                    } else if (file.error) {
-                        var error = $('<span class="text-danger"/>').text(file.error);
-                        $(data.context.children()[index])
-                            .append('<br>')
-                            .append(error);
-                    }
-                });
-                refreshlisting();
-            }).on('fileuploadfail', function (e, data) {
-                $.each(data.files, function (index, file) {
-                    $(data.context.children()[index]).find('img').remove();
-                    var error = $('<span class="text-danger"/>').text('File upload failed.');
-                    $(data.context.children()[index])
-                        .append('<br>')
-                        .append(error)
-                        .prepend('<span class="warning glyphicon glyphicon-remove"/> ');
-                });
-            }).prop('disabled', !$.support.fileInput)
-                .parent().addClass($.support.fileInput ? undefined : 'disabled');
-        });
-        refresh_buttons();
       </script>
-      <div id="upload-folder-listing" style="display:none;">
-        <span tal:replace="structure view/contents_table" tal:omit-tag=""/>
-      </div>
-
-      <div tal:condition="view/chunked_files"
-           tal:define="toLocalizedTime nocall: context/@@plone/toLocalizedTime;
-                       normalizeString nocall: context/plone_utils/normalizeString;">
-        <h3>Files in process or aborted</h3>
-        <ul id="chunked_listing">
-          <tal:item repeat="file view/chunked_files">
-            <li>
-              <a tal:attributes="class python:'contenttype-'+normalizeString(file['portal_type']) + ' chunkfile_uploader';
-                                 href file/url" target="_blank"
-                 tal:content="file/title"/>
-              [ <span class="chunksize_descriptor">
-                <span tal:replace="file/percent"/> of <span tal:replace="file/size"/> completed
-              </span> ]
-
-              &mdash; created on <span tal:replace="python:toLocalizedTime(file['date'],long_format=1)">
-                              August 16, 2001 at 23:35:59
-                            </span>
-            </li>
-          </tal:item>
-        </ul>
-      </div>
     </div>
+
 </body>
 </html>

@@ -219,3 +219,39 @@ class ChunkedUploadDirect(grok.View):
             nf_url = mergeChunks(self.context.aq_parent, self.context, file_name)
             complete = self.context.aq_parent.absolute_url() + '/@@upload'
       return json.dumps({'files':_files.values(),'complete':complete})
+
+
+
+class UnchunkedListing(grok.View):
+    """ listing of all else
+    """
+    grok.name('unchunk-listing')
+    grok.context(IUploadCapable)
+
+    def render(self):
+      template = ViewPageTemplateFile("listing.pt")
+      return template(self)
+
+
+class ChunkedListing(grok.View):
+    """ listing of files
+    """
+    grok.name('chunk-listing')
+    grok.context(IUploadCapable)
+
+    def render(self):
+      putils = getToolByName(self.context,'plone_utils')
+
+      content = []
+      for obj in self.context.objectValues():
+        currsize = getattr(obj,'currsize',0)
+        if callable(currsize):
+          currsize = currsize()
+          content.append({'url':obj.absolute_url(),
+                          'size':_printable_size(getattr(obj,'targetsize',0)),
+                          'percent':'%.02f%%' % (currsize/float(getattr(obj,'targetsize',0))*100),
+                          'title':obj.Title(),
+                          'date':putils.toLocalizedTime(obj.CreationDate(),long_format=1),
+                          'portal_type':obj.portal_type,
+                        })
+      return json.dumps(content)
