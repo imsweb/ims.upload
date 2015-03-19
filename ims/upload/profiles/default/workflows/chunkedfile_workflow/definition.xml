@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<dc-workflow workflow_id="chunkedfile_workflow" title="Chunked File Workflow" description="" state_variable="state" initial_state="hidden" manager_bypass="False">
+ <permission>View</permission>
+ <state state_id="hidden" title="">
+  <permission-map name="View" acquired="False">
+   <permission-role>Manager</permission-role>
+   <permission-role>Site Administrator</permission-role>
+   <permission-role>Owner</permission-role>
+  </permission-map>
+ </state>
+</dc-workflow>

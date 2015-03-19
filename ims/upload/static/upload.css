@@ -10,6 +10,11 @@
   background-color: #ddd;;
 }
 
+.fileinput-button:hover, .fileinput-button:focus {
+    color: #fff !important;
+    text-decoration: none;
+}
+
 /* #content-core .btn-success {
     background-color: #5CB85C;
     border-color: #4CAE4C;

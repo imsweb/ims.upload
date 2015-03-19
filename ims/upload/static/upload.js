@@ -56,6 +56,22 @@ function refresh_buttons() {
   }
 }
 
+function printable_size(fsize) {
+  fsize = parseFloat(fsize);
+  if (fsize == 0) {
+    return '0 B'
+  }
+  prefixes = ['B','KB','MB','GB','TB','PB']
+  tens = Math.floor(Math.log(fsize)/Math.log(1024))
+  fsize = Math.round(fsize/Math.pow(1024,tens),2)
+  if (tens < prefixes.length) {
+    return fsize.toFixed(2) + ' ' + prefixes[tens]
+  }
+  else { // uhhhh, we should never have a file this big
+    return fsize.toFixed(2) + fsize * Math.pow(1024,tens) + ' B'
+  }
+}
+
 function abortize(ele,data) {
   // replace a button with an abort function
   ele.off('click')
@@ -182,7 +198,7 @@ $(function () {
         data.context = $('<div/>').appendTo('#files');
         $.each(data.files, function (index, file) {
             var node = $('<p/>')
-                    .append($('<span/>').text(file.name + ' - ' + file.size + ' bytes'));
+                    .append($('<span/>').text(file.name + ' - ' + printable_size(file.size) + ' bytes'));
             if (!index) {
                 // add buttons
                 node.append('<br>')
@@ -191,12 +207,14 @@ $(function () {
                     .append(cancelButton.clone(true).data(data));
                 // check if we have a partially uploaded file of the same name
                 if (get_chunk_for_file(file.name)) {
-                  $.getJSON(get_chunk_for_file(file.name)+'/chunk-check').done(function(result) {
+                  $.getJSON(file.name+'_chunk/chunk-check').done(function(result) {
                     data.uploadedBytes = result.uploadedBytes;
                     // check size of the file to be uploaded against file on server's intended size
                     if (data.files[index].size != result.targetsize) {
-                      alert('Partially uploaded file size does not match size of selected file ' + data[files[index]].size + ':' + result.targetsize + '. Please upload the same file!');
+                      alert('Partially uploaded file size (' + printable_size(result.targetsize) + ') does not match size of selected file (' + printable_size(data.files[index].size) + ')' + '. Upload aborted.');
                       data.abort();
+                      node.remove();
+                      return null;
                     }
                     var percent_complete = (result.uploadedBytes/result.targetsize*100).toFixed(2)
                     resumify(node.find('.btn-primary.singular'),data);
