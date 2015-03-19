@@ -12,9 +12,11 @@ function build_chunks() {
       $('#upload-chunks-listing ul').attr('id','chunked_listing');
 
       $.each(result, function(index,chunk) {
-        link = $('<a>').text(chunk.title)
-                       .attr('href',chunk.url)
-                       .addClass('contenttype-'+chunk.portal_type.toLowerCase())
+        link = $('<a>')
+                     .attr('href',chunk.url)
+                     .addClass('contenttype-'+chunk.portal_type.toLowerCase())
+        linktext = $('<span>').text(chunk.title)
+        link.append(linktext);
         descriptor = $('<span>').text(chunk.percent + ' of ' + chunk.size + ' completed')
                                 .addClass('chunksize_descriptor')
         linkblock = $('<span>').append(link)
