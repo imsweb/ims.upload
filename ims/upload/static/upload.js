@@ -199,8 +199,13 @@ $(function () {
         // add file event
         data.context = $('<div/>').appendTo('#files');
         $.each(data.files, function (index, file) {
+            var file_text = file.name;
+            if (file.size) {
+              file_text += ' - ' + printable_size(file.size) + ' bytes'
+            }
             var node = $('<p/>')
-                    .append($('<span/>').text(file.name + ' - ' + printable_size(file.size) + ' bytes'));
+                    .append($('<span/>').text(file_text));
+            console.log(file);
             if (!index) {
                 // add buttons
                 node.append('<br>')
@@ -212,7 +217,7 @@ $(function () {
                   $.getJSON(file.name+'_chunk/chunk-check').done(function(result) {
                     data.uploadedBytes = result.uploadedBytes;
                     // check size of the file to be uploaded against file on server's intended size
-                    if (data.files[index].size != result.targetsize) {
+                    if (data.files[index].size && data.files[index].size != result.targetsize) { // check doesn't work on IE9, which has no file size
                       alert('Partially uploaded file size (' + printable_size(result.targetsize) + ') does not match size of selected file (' + printable_size(data.files[index].size) + ')' + '. Upload aborted.');
                       data.abort();
                       node.remove();

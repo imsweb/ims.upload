@@ -14,6 +14,8 @@
       <link rel="stylesheet" type="text/css" media="screen" tal:attributes="href string:${portal_url}/++resource++ims.upload/css/bootstrap-theme.css">
 
       <link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload.css">
+      <noscript><link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload-noscript.css"></noscript>
+      <noscript><link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload-ui-noscript.css"></noscript>
     </metal:css>
 
     <metal:javascript fill-slot="javascript_head_slot">
@@ -27,55 +29,79 @@
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload-image.js"></script>
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload-validate.js"></script>
 
+
     </metal:javascript>
   </head>
 
   <body>
     <div metal:fill-slot="content-core">
       <br>
-      <!-- The fileinput-button span is used to style the file input field as button -->
-      <span class="btn btn-success fileinput-button">
-          <i class="glyphicon glyphicon-plus"></i>
-          <span>Add files...</span>
-          <!-- The file input field used as target for the file upload widget -->
-          <input id="fileupload" type="file" name="files[]" multiple>
-      </span>
-      <button class="btn btn-primary" id="uploadAll">
-        <i class="glyphicon glyphicon-upload"></i>
-        Upload All
-      </button>
-      <button class="btn btn-warning cancel" id="clearAll">
-          <i class="glyphicon glyphicon-ban-circle"></i>
-          Clear Uploads
-      </button>
-      <br>
-      <br>
-      <!-- The global progress bar -->
-      <div id="progress" class="progress">
-          <div class="progress-bar progress-bar-success"></div>
+      <form id="fileupload-chunkless" class="uploadForm" enctype="multipart/form-data" method="POST"
+            tal:attributes="action string:${context/absolute_url}/chunkless-upload">
+
+        <span class="btn btn-success fileinput-button">
+            <i class="glyphicon glyphicon-plus"></i>
+            <span>Add files...</span>
+            <!-- The file input field used as target for the file upload widget -->
+            <input id="fileupload-chunkless-button" type="file" name="files[]" multiple>
+        </span>
+        <button class="btn btn-primary" id="uploadChunkless" type="submit">
+          <i class="glyphicon glyphicon-upload"></i>
+          Upload
+        </button>
+      </form>
+
+      <div class="uploadForm" style="display:none;">
+        <!-- The fileinput-button span is used to style the file input field as button -->
+        <span class="btn btn-success fileinput-button">
+            <i class="glyphicon glyphicon-plus"></i>
+            <span>Add files...</span>
+            <!-- The file input field used as target for the file upload widget -->
+            <input id="fileupload" type="file" name="files[]" multiple>
+        </span>
+        <button class="btn btn-primary" id="uploadAll">
+          <i class="glyphicon glyphicon-upload"></i>
+          Upload All
+        </button>
+        <button class="btn btn-warning cancel" id="clearAll">
+            <i class="glyphicon glyphicon-ban-circle"></i>
+            Clear Uploads
+        </button>
+        <br>
+        <br>
+        <!-- The global progress bar -->
+        <div id="progress" class="progress">
+            <div class="progress-bar progress-bar-success"></div>
+        </div>
+        <!-- The container for the uploaded files -->
+        <div id="files" class="files"></div>
+        <br/>
       </div>
-      <!-- The container for the uploaded files -->
-      <div id="files" class="files"></div>
-      <br/>
 
       <data id="chunksize" tal:attributes="data view/chunksize" />
 
       <script tal:attributes="src string:${portal_url}/++resource++ims.upload/upload.js"></script>
 
-      <h3>Files in process or aborted</h3>
-      <div id="upload-chunks-listing">
-      <img src="spinner.gif" class="upload-spinner" />
-        loading...
-      </div>
-
-      <h3>Uploaded content</h3>
-      <div id="upload-folder-listing">
+      <div id="folder-contents" style="display:none;">
+        <h3>Files in process or aborted</h3>
+        <div id="upload-chunks-listing">
         <img src="spinner.gif" class="upload-spinner" />
-        loading...
+          loading...
+        </div>
+
+        <h3>Uploaded content</h3>
+        <div id="upload-folder-listing">
+          <img src="spinner.gif" class="upload-spinner" />
+          loading...
+        </div>
       </div>
 
       <script type="text/javascript">
         $(document).ready(function() {
+          $.ajaxSetup({ cache: false });
+          $('#fileupload-chunkless').remove();
+          $('.uploadForm').toggle();
+          $('#folder-contents').toggle();
           refreshlisting()
         });
       </script>

@@ -52,6 +52,7 @@
   background: no-repeat transparent url('++resource++ims.upload/error.png');
   padding-left: 20px !important;
   padding-right: auto !important;
+  display: inline-block;
   line-height: 2em;
 }
 

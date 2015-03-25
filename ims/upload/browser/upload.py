@@ -5,10 +5,12 @@ from plone.namedfile.file import NamedBlobFile
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.statusmessages.interfaces import IStatusMessage
 from tempfile import NamedTemporaryFile
 from zope.component import getAllUtilitiesRegisteredFor, getUtility
 from zope.filerepresentation.interfaces import IFileFactory
 
+from ims.upload import _
 from ims.upload.tools import _printable_size
 from ims.upload.interfaces import IChunkSettings, IFileMutator, IUploadCapable, IChunkedFile
 
@@ -220,7 +222,26 @@ class ChunkedUploadDirect(grok.View):
             complete = self.context.aq_parent.absolute_url() + '/@@upload'
       return json.dumps({'files':_files.values(),'complete':complete})
 
+class ChunklessUploadView(grok.View):
+    """ Backup upload for no javascript """
+    grok.name('chunkless-upload')
+    grok.context(IUploadCapable)
 
+    def render(self):
+      _file = self.request.form.get('files[]')
+      if not _file:
+        IStatusMessage(self.request).addStatusMessage(_(u"You must select a file."),"error")
+        return self.request.response.redirect(self.context.absolute_url()+'/@@upload')
+
+      file_name = _file.filename
+      self.context.invokeFactory('File',file_name)
+      ob = self.context[file_name]
+      ob.setFile(_file)
+      ob.setFilename(file_name)
+      ob.reindexObject()
+
+      IStatusMessage(self.request).addStatusMessage(_(u"File successfully uploaded."),"info")
+      return self.request.response.redirect(self.context.absolute_url()+'/@@upload')
 
 class UnchunkedListing(grok.View):
     """ listing of all else
