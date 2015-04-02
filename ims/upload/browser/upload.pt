@@ -39,16 +39,32 @@
       <form id="fileupload-chunkless" class="uploadForm" enctype="multipart/form-data" method="POST"
             tal:attributes="action string:${context/absolute_url}/chunkless-upload">
 
-        <span class="btn btn-success fileinput-button">
+        <span class="btn btn-success fileupload-chunkless">
             <i class="glyphicon glyphicon-plus"></i>
-            <span>Add files...</span>
+            <span>Add file:</span>
             <!-- The file input field used as target for the file upload widget -->
-            <input id="fileupload-chunkless-button" type="file" name="files[]" multiple>
+            <input id="fileupload-chunkless-button" type="file" name="files[]">
         </span>
         <button class="btn btn-primary" id="uploadChunkless" type="submit">
           <i class="glyphicon glyphicon-upload"></i>
           Upload
         </button>
+
+        <p>
+          Your current browser does not support multi-file chunked uploads. You may upload single files in your current
+          browser or switch browsers to utilize more features.
+        </p>
+
+        <p>
+          Partial list of browsers with full support:
+        </p>
+        <ul>
+          <li>Internet Explorer &gt;=10</li>
+          <li>Firefox</li>
+          <li>Chrome</li>
+          <li>Safari</li>
+          <li>Opera</li>
+        </ul>
       </form>
 
       <div class="uploadForm" style="display:none;">
@@ -99,9 +115,11 @@
       <script type="text/javascript">
         $(document).ready(function() {
           $.ajaxSetup({ cache: false });
-          $('#fileupload-chunkless').remove();
-          $('.uploadForm').toggle();
           $('#folder-contents').toggle();
+          if (xhr_support()) {
+            $('#fileupload-chunkless').remove();
+            $('.uploadForm').toggle();
+          }
           refreshlisting()
         });
       </script>

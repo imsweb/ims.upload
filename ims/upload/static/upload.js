@@ -293,3 +293,8 @@ $(function () {
 });
 
 refresh_buttons(); // initial button load
+
+function xhr_support() {
+  var xhr = new XMLHttpRequest();
+  return !! (xhr && ('upload' in xhr) && ('onprogress' in xhr.upload));
+}

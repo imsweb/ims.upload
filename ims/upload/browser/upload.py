@@ -1,6 +1,6 @@
 import json, mimetypes, os
 from five import grok
-
+import os
 from plone.namedfile.file import NamedBlobFile
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
@@ -233,15 +233,19 @@ class ChunklessUploadView(grok.View):
         IStatusMessage(self.request).addStatusMessage(_(u"You must select a file."),"error")
         return self.request.response.redirect(self.context.absolute_url()+'/@@upload')
 
-      file_name = _file.filename
-      self.context.invokeFactory('File',file_name)
-      ob = self.context[file_name]
-      ob.setFile(_file)
-      ob.setFilename(file_name)
-      ob.reindexObject()
+      file_name = os.path.split(_file.filename)[-1] # older IE returns full path?!
+      if file_name in self.context.objectIds():
+        IStatusMessage(self.request).addStatusMessage(_(u"A file with that name already exists"),"error")
+        return self.request.response.redirect(self.context.absolute_url()+'/@@upload')
+      else:
+        self.context.invokeFactory('File',file_name)
+        ob = self.context[file_name]
+        ob.setFile(_file)
+        ob.setFilename(file_name)
+        ob.reindexObject()
 
-      IStatusMessage(self.request).addStatusMessage(_(u"File successfully uploaded."),"info")
-      return self.request.response.redirect(self.context.absolute_url()+'/@@upload')
+        IStatusMessage(self.request).addStatusMessage(_(u"File successfully uploaded."),"info")
+        return self.request.response.redirect(self.context.absolute_url()+'/@@upload')
 
 class UnchunkedListing(grok.View):
     """ listing of all else
