@@ -233,7 +233,7 @@ class ChunklessUploadView(grok.View):
         IStatusMessage(self.request).addStatusMessage(_(u"You must select a file."),"error")
         return self.request.response.redirect(self.context.absolute_url()+'/@@upload')
 
-      file_name = os.path.split(_file.filename)[-1] # older IE returns full path?!
+      file_name = _file.filename.split('\\')[-1] # older IE returns full path?!
       if file_name in self.context.objectIds():
         IStatusMessage(self.request).addStatusMessage(_(u"A file with that name already exists"),"error")
         return self.request.response.redirect(self.context.absolute_url()+'/@@upload')
