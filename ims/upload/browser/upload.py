@@ -56,6 +56,10 @@ class ChunkUploadView(grok.View):
         registry = getUtility(IRegistry).forInterface(IChunkSettings)
         return registry.chunksize
 
+    def can_delete(self):
+      mtool = getToolByName(self.context,'portal_membership')
+      return mtool.checkPermission('Manage delete objects',self.context)
+
 def mergeChunks(context, cf, file_name):
     chunks = sorted(cf.objectValues(),key=lambda term: term.startbyte)
     if file_name not in context.objectIds():
@@ -280,3 +284,14 @@ class ChunkedListing(grok.View):
                           'portal_type':obj.portal_type,
                         })
       return json.dumps(content)
+
+class ChunkedFileDelete(grok.View):
+    """ Special delete, with redirect """
+    grok.name('delete')
+    grok.context(IChunkedFile)
+
+    def render(self):
+      parent = self.context.aq_inner.aq_parent
+      parent.manage_delObjects(self.context.getId())
+      IStatusMessage(self.request).addStatusMessage(_(u"Partially uploaded file successfully deleted."),"info")
+      self.request.response.redirect(parent.absolute_url()+'/@@upload')

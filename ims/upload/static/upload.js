@@ -24,7 +24,17 @@ function build_chunks() {
                                .append(descriptor)
                                .append(' ]')
                                .append(' &mdash; created on ' + chunk.date)
-        listitem = $('<li>').append(linkblock)
+        delbutton = $('<a>').attr('href',chunk.url+'/@@delete')
+                            .text('Delete')
+                            .addClass('btn btn-danger delete');
+        if ($('#can_delete')) {
+          listitem = $('<li>').append(delbutton)
+                              .append(' ')
+                              .append(linkblock);
+        }
+        else {
+          listitem = $('<li>').append(linkblock);
+        }
         $('#upload-chunks-listing ul').append(listitem)
       });
     }

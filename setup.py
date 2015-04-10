@@ -5,17 +5,15 @@ version = '0.1'
 
 setup(name='ims.upload',
       version=version,
-      description="",
-      # Get more strings from
-      # http://pypi.python.org/pypi?:action=list_classifiers
+      description="Plone implementation of the jQuery File Upload extenstion from blueimp",
       classifiers=[
         "Framework :: Plone",
         "Programming Language :: Python",
         ],
       keywords='',
-      author='',
-      author_email='',
-      url='http://svn.plone.org/svn/collective/',
+      author='Eric Wohnlich',
+      author_email='wohnlice@imsweb.com',
+      url='http://git.imsweb.com/plone/ims.upload',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['ims'],
@@ -23,7 +21,7 @@ setup(name='ims.upload',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          # -*- Extra requirements: -*-
+          'collective.js.jqueryui',
       ],
       entry_points="""
       # -*- Entry points: -*-

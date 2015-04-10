@@ -47,7 +47,12 @@
             <span>Resume File</span>
             <!-- The file input field used as target for the file upload widget -->
             <input id="fileupload" type="file" name="files[]">
-        </span>
+          </span>
+
+          <a class="btn btn-danger" tal:attributes="href string:${context/absolute_url}/delete_confirmation">
+            <i class="glyphicon glyphicon-remove"></i>
+            <span>Delete File</span>
+          </a>
         <br>
         <br>
         <!-- The global progress bar -->

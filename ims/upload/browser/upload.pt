@@ -36,6 +36,7 @@
   <body>
     <div metal:fill-slot="content-core">
       <br>
+      <input id="can_delete" name="can_delete" type="hidden" tal:attributes="value view/can_delete" />
       <form id="fileupload-chunkless" class="uploadForm" enctype="multipart/form-data" method="POST"
             tal:attributes="action string:${context/absolute_url}/chunkless-upload">
 
