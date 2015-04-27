@@ -22,6 +22,10 @@
   color: white;
 }
 
+#content .btn {
+  color: white !important;
+}
+
 #content ul#chunked_listing {
     list-style-image: none;
     list-style-type: none;
