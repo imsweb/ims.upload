@@ -140,9 +140,6 @@ function get_chunk_for_file(file_name) {
 function update_progress(data) {
   // update the progress bar
   var progress = parseInt(data.loaded / data.total * 100, 10);
-  if (progress == 100) {
-    progress = 0; // reset
-  }
   $('#progress .progress-bar').css(
       'width',
       progress + '%'
