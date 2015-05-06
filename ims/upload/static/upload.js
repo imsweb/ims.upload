@@ -140,6 +140,9 @@ function get_chunk_for_file(file_name) {
 function update_progress(data) {
   // update the progress bar
   var progress = parseInt(data.loaded / data.total * 100, 10);
+  if (progress == 100) {
+    progress = 0; // reset
+  }
   $('#progress .progress-bar').css(
       'width',
       progress + '%'
@@ -281,6 +284,7 @@ $(function () {
                child.find('span').before('<span class="success glyphicon glyphicon-ok"/> '); // add ok icon
                child.find('button').remove(); // remove submit/clear buttons
                child.wrap(link);
+               child.hide('slow', function(){ child.remove(); });
             } else if (file.error) {
                 var error = $('<span class="text-danger"/>').text(file.error);
                 $(data.context.children()[index])
