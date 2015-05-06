@@ -45,7 +45,7 @@ class ChunkedFile(Container):
           return False
         id = content_range.replace(' ','_').replace('/',' of ') or file_name # just use file name if only one chunk
         if id in self.objectIds() and graceful:
-          logger.info('Chunk already exists: %s; assume file resume' % file_name)
+          #logger.info('Chunk already exists: %s; assume file resume' % file_name)
           return
         self.invokeFactory('Chunk',id)
         chunk = self[id]
@@ -54,7 +54,7 @@ class ChunkedFile(Container):
           startbyte,endbyte = re.match('bytes ([0-9]+)-([0-9]+)',content_range).groups()
           chunk.startbyte = int(startbyte)
           chunk.endbyte = int(endbyte)
-        logger.info('Chunk uploaded: %s; %s' % (content_range,file_name))
+        #logger.info('Chunk uploaded: %s; %s' % (content_range,file_name))
 
     def Title(self):
         return 'Processing/Aborted - ' + self.id[:-6] # remove _chunk from id

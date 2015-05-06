@@ -72,13 +72,13 @@ def mergeChunks(context, cf, file_name):
     counter = 1
 
     for chunk in chunks:
-      logger.info('Merging chunk %d' % counter)
+      #logger.info('Merging chunk %d' % counter)
       counter += 1
       tmpfile = open(tname,'a')
       tmpfile.write(chunk.file.data)
       tmpfile.close()
     tmpfile = open(tname,'r')
-    logger.info('Merging complete, writing to disk')
+    #logger.info('Merging complete, writing to disk')
     nf.setFile(tmpfile)
     nf.setFilename(file_name) # overwrite temp file name
     tmpfile.close()
@@ -86,7 +86,7 @@ def mergeChunks(context, cf, file_name):
     os.remove(tname)
     _file_name = file_name+'_chunk'
     context.manage_delObjects([_file_name])
-    logger.info('Upload complete')
+    #logger.info('Upload complete')
     return nf.absolute_url()
 
 class ChunkedUpload(grok.View):
@@ -120,7 +120,7 @@ class ChunkedUpload(grok.View):
         if file_data:
           if _file_name in self.context.objectIds():
             cf = self.context[_file_name]
-            cf.addChunk(file_data,file_name,content_range)
+            cf.addChunk(file_data,file_name,content_range,graceful=True)
           else:
             self.context.invokeFactory('ChunkedFile',_file_name)
             cf = self.context[_file_name]
@@ -134,7 +134,7 @@ class ChunkedUpload(grok.View):
                               'url':url}
 
           if size == max_size :
-            logger.info('Starting chunk merger')
+            #logger.info('Starting chunk merger')
             nf_url = mergeChunks(self.context, cf, file_name)
             _files[file_name]['url'] = nf_url
       else:
@@ -221,7 +221,7 @@ class ChunkedUploadDirect(grok.View):
                               'url':url}
 
           if size == max_size :
-            logger.info('Starting chunk merger')
+            #logger.info('Starting chunk merger')
             nf_url = mergeChunks(self.context.aq_parent, self.context, file_name)
             complete = self.context.aq_parent.absolute_url() + '/@@upload'
       return json.dumps({'files':_files.values(),'complete':complete})
