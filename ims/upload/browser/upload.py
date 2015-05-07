@@ -10,13 +10,21 @@ from tempfile import NamedTemporaryFile
 from zope.component import getAllUtilitiesRegisteredFor, getUtility
 from zope.filerepresentation.interfaces import IFileFactory
 
-from ims.upload import _
+from ims.upload import _, QUIET
 from ims.upload.tools import _printable_size
 from ims.upload.interfaces import IChunkSettings, IFileMutator, IUploadCapable, IChunkedFile
 
 import logging
 logger = logging.getLogger('ims.upload')
+
 grok.templatedir('.')
+
+import re
+bad_id=re.compile(r'[^a-zA-Z0-9-_~,.$\(\)# @]').search
+def clean_file_name(file_name):
+  while bad_id(file_name):
+    file_name = file_name.replace( bad_id(file_name).group(), u'_')
+  return file_name
 
 class ChunkUploadView(grok.View):
     """ Upload form page """
@@ -48,9 +56,6 @@ class ChunkUploadView(grok.View):
                           'portal_type':obj.portal_type,
                         })
       return chunked
-      #catalog = getToolByName(self.context,'portal_catalog')
-      #return catalog(path={'query':'/'.join(self.context.getPhysicalPath()),'depth':1},
-      #               portal_type='ChunkedFile')
 
     def chunksize(self):
         registry = getUtility(IRegistry).forInterface(IChunkSettings)
@@ -72,13 +77,15 @@ def mergeChunks(context, cf, file_name):
     counter = 1
 
     for chunk in chunks:
-      #logger.info('Merging chunk %d' % counter)
+      if not QUIET:
+        logger.info('Merging chunk %d' % counter)
       counter += 1
       tmpfile = open(tname,'a')
       tmpfile.write(chunk.file.data)
       tmpfile.close()
     tmpfile = open(tname,'r')
-    #logger.info('Merging complete, writing to disk')
+    if not QUIET:
+      logger.info('Merging complete, writing to disk')
     nf.setFile(tmpfile)
     nf.setFilename(file_name) # overwrite temp file name
     tmpfile.close()
@@ -86,7 +93,8 @@ def mergeChunks(context, cf, file_name):
     os.remove(tname)
     _file_name = file_name+'_chunk'
     context.manage_delObjects([_file_name])
-    #logger.info('Upload complete')
+    if not QUIET:
+      logger.info('Upload complete')
     return nf.absolute_url()
 
 class ChunkedUpload(grok.View):
@@ -104,6 +112,7 @@ class ChunkedUpload(grok.View):
       file_data = self.request.form['files[]']
       file_name = file_data.filename
       file_name = file_name.split('/')[-1].split('\\')[-1] # bug in old IE
+      file_name = clean_file_name(file_name)
       _file_name = file_name+'_chunk'
 
       chunk_size = self.request['CONTENT_LENGTH']
@@ -134,7 +143,8 @@ class ChunkedUpload(grok.View):
                               'url':url}
 
           if size == max_size :
-            #logger.info('Starting chunk merger')
+            if not QUIET:
+              logger.info('Starting chunk merger')
             nf_url = mergeChunks(self.context, cf, file_name)
             _files[file_name]['url'] = nf_url
       else:
@@ -160,7 +170,7 @@ class ChunkCheck(grok.View):
         self.request = request
 
     def render(self):
-      file_name = self.request.form['file']
+      file_name = clean_file_name(self.request.form['file'])
       data = {'uploadedBytes':0}
       if file_name + '_chunk' in self.context.objectIds():
         data['uploadedBytes'] = self.context[file_name + '_chunk'].currsize()
@@ -177,7 +187,6 @@ class ChunkCheckDirect(grok.View):
         self.request = request
 
     def render(self):
-      #file_name = self.request.form['file']
       data = {'uploadedBytes':self.context.currsize(),
               'targetsize':self.context.targetsize}
       return json.dumps(data)
@@ -197,6 +206,7 @@ class ChunkedUploadDirect(grok.View):
       file_data = self.request.form['files[]']
       file_name = file_data.filename
       file_name = file_name.split('/')[-1].split('\\')[-1] # bug in old IE
+      file_name = clean_file_name(file_name)
       _file_name = file_name+'_chunk'
 
       chunk_size = self.request['CONTENT_LENGTH']
@@ -221,7 +231,8 @@ class ChunkedUploadDirect(grok.View):
                               'url':url}
 
           if size == max_size :
-            #logger.info('Starting chunk merger')
+            if not QUIET:
+              logger.info('Starting chunk merger')
             nf_url = mergeChunks(self.context.aq_parent, self.context, file_name)
             complete = self.context.aq_parent.absolute_url() + '/@@upload'
       return json.dumps({'files':_files.values(),'complete':complete})
@@ -238,6 +249,7 @@ class ChunklessUploadView(grok.View):
         return self.request.response.redirect(self.context.absolute_url()+'/@@upload')
 
       file_name = _file.filename.split('\\')[-1] # older IE returns full path?!
+      file_name = clean_file_name(file_name)
       if file_name in self.context.objectIds():
         IStatusMessage(self.request).addStatusMessage(_(u"A file with that name already exists"),"error")
         return self.request.response.redirect(self.context.absolute_url()+'/@@upload')
