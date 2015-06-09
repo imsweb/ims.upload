@@ -1,15 +1,20 @@
 from plone.directives import form
 from plone.namedfile.field import NamedBlobFile
+from plone.theme.interfaces import IDefaultPloneLayer
 from zope import interface, schema
 
 from ims.upload import _
 
+class IUploadLayer(IDefaultPloneLayer):
+    """
+    """
+
 class IUploadCapable(interface.Interface):
-    """ 
+    """
     """
 
 class IFileMutator(interface.Interface):
-    """ 
+    """
     """
 
 class IChunkedFile(form.Schema):

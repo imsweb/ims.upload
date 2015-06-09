@@ -5,10 +5,11 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:grok="http://namespaces.zope.org/grok"
     i18n_domain="ims.upload">
-    
+
   <include file="permissions.zcml" />
-    
+
   <include package="five.grok" />
+  <include package=".browser" />
   <grok:grok package="." />
 
   <genericsetup:registerProfile
