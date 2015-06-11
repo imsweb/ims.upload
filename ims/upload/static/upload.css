@@ -106,6 +106,11 @@ input.buttonToggler:hover {
   cursor: pointer;
 }
 
+#upload_listing .summary a {
+  text-decoration: none;
+  border-bottom: 0.1em solid #ccc;
+}
+
 #upload_listing td, #upload_listing th,
 #activity_table td, #activity_table th {
   padding: 0.5em 1em;

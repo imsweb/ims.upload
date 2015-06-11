@@ -27,7 +27,7 @@
             <input tal:condition="batch" type="button" value="Check all" id="toggler" name="toggler" class="discreet buttonToggler"/>
           </th>
           <th class="borderedHeader">File</th>
-          <th class="borderedHeader">Uploader</th>
+          <th class="borderedHeader">Creator</th>
           <th class="borderedHeader">Modified Date</th>
           <th class="borderedHeader">File Size</th>
         </tr>
@@ -70,8 +70,8 @@
             <td>
               <span class="documentByLine"
                     tal:condition="item_creator"
-                    tal:define="author python:pas_member.info(item_creator);"
-                    tal:content="author/name_or_id"
+                    tal:define="author python:view.member_info(item_creator);"
+                    tal:content="python: author and author['fullname'] or item_creator"
                     tal:omit-tag="not:author" />
             </td>
             <td>

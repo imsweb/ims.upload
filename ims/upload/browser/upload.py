@@ -280,6 +280,9 @@ class UnchunkedListing(grok.View):
       template = ViewPageTemplateFile("listing.pt")
       return template(self)
 
+    def member_info(self, creator):
+      return self.context.portal_membership.getMemberInfo(creator)
+
 
 class ChunkedListing(grok.View):
     """ listing of files
