@@ -33,6 +33,10 @@
     </metal:javascript>
   </head>
 
+  <div metal:fill-slot="content-title">
+    <h1>Upload Files to <span tal:replace="context/title|string:Folder" /></h1>
+  </div>
+
   <body>
     <div metal:fill-slot="content-core">
       <br>
@@ -85,6 +89,7 @@
             Clear Uploads
         </button>
         <br>
+        Drag and drop anywhere on the page
         <br>
         <!-- The global progress bar -->
         <div id="progress" class="progress">
@@ -93,6 +98,7 @@
         <!-- The container for the uploaded files -->
         <div id="files" class="files"></div>
         <br/>
+        <div id="dropzone">Drop files anywhere</div>
       </div>
 
       <data id="chunksize" tal:attributes="data view/chunksize" />
@@ -106,11 +112,14 @@
           loading...
         </div>
 
-        <h3>Uploaded content</h3>
-        <div id="upload-folder-listing">
-          <img src="spinner.gif" class="upload-spinner" />
-          loading...
-        </div>
+        <form tal:attributes="action context/absolute_url" method="POST">
+          <h3>Contents</h3>
+          <div id="upload-folder-listing">
+            <img src="spinner.gif" class="upload-spinner" />
+            loading...
+          </div>
+          <input tal:replace="structure context/@@authenticator/authenticator" />
+        </form>
       </div>
 
       <script type="text/javascript">

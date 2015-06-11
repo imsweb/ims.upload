@@ -198,6 +198,7 @@ $(function () {
         // main fileupload
         url: url,
         dataType: 'json',
+        dropZone: $('#dropzone'),
         autoUpload: false,
         maxChunkSize: parseInt($('#chunksize').attr('data')),
         disableImageResize: /Android(?!.*Chrome)|Opera/
@@ -309,3 +310,31 @@ function xhr_support() {
   var xhr = new XMLHttpRequest();
   return !! (xhr && ('upload' in xhr) && ('onprogress' in xhr.upload));
 }
+
+$(document).bind('dragover', function (e) {
+    var dropZone = $('#dropzone'),
+        timeout = window.dropZoneTimeout;
+    if (!timeout) {
+        dropZone.addClass('in');
+    } else {
+        clearTimeout(timeout);
+    }
+    var found = false,
+        node = e.target;
+    do {
+        if (node === dropZone[0]) {
+            found = true;
+            break;
+        }
+        node = node.parentNode;
+    } while (node != null);
+    if (found) {
+        dropZone.addClass('hover');
+    } else {
+        dropZone.removeClass('hover');
+    }
+    window.dropZoneTimeout = setTimeout(function () {
+        window.dropZoneTimeout = null;
+        dropZone.removeClass('in hover');
+    }, 100);
+});

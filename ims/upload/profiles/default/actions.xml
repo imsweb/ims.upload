@@ -6,10 +6,9 @@
   <object name="upload" meta_type="CMF Action" i18n:domain="plone">
    <property name="title" i18n:translate="">Upload</property>
    <property name="description" i18n:translate=""></property>
-   <property name="url_expr">string:$object_url/@@upload</property>
+   <property name="url_expr">string:${globals_view/getCurrentFolderUrl}/@@upload</property>
    <property name="icon_expr"></property>
-   <property
-      name="available_expr">python:here.portal_type=='Folder' or here.portal_type=='GroupSpace'</property>
+   <property name="available_expr">object/displayContentsTab</property>
    <property name="permissions">
     <element value="Modify portal content"/>
    </property>

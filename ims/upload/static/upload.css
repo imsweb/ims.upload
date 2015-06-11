@@ -64,3 +64,86 @@ span.glyphicon-remove {
 #chunked_listing li a span {
   border-bottom: 1px solid #ccc;
 }
+
+#dropzone {
+    display: none;
+}
+#dropzone.in {
+    display: block;
+    opacity:0.6;
+    position:fixed;
+    width: 100%;
+    height: 100%;
+    font-size: 300%;
+    text-align: center;
+    font-weight: bold;
+    color: black;
+    top:0px;
+    left:0px;
+    z-index:1000;
+    padding-top: 10%;
+}
+#dropzone.hover {
+    background: #ccc;
+}
+#dropzone.fade {
+}
+
+
+/* from dataexchange for now */
+
+#upload_listing th {
+  background-color: #dddddd;
+}
+
+input.buttonToggler {
+  background: none;
+  border-style: none;
+  color: #205C90 !important;
+}
+
+input.buttonToggler:hover {
+  cursor: pointer;
+}
+
+#upload_listing td, #upload_listing th,
+#activity_table td, #activity_table th {
+  padding: 0.5em 1em;
+  border-style: none;
+}
+
+#upload_listing th.borderedHeader {
+  border-left: 1px solid white !important;
+}
+
+#upload_listing th.header,
+#activity_table th.header {
+  background-color: #dddddd;
+  background-image: url("++resource++ims.dataexchange/bg.png");
+  background-position: right center !important;
+  background-repeat: no-repeat !important;
+  color: #666666;
+  cursor: pointer;
+  text-align: center;
+  white-space:nowrap;
+  padding-right: 20px;
+  margin: 0;
+  border-style: none;
+}
+
+#upload_listing th.headerSortUp,
+#activity_table th.headerSortUp {
+  background-image: url("++resource++ims.dataexchange/asc.png");
+  cursor: pointer;
+}
+
+#upload_listing th.headerSortDown,
+#activity_table th.headerSortDown {
+  background-image: url("++resource++ims.dataexchange/desc.png");
+  cursor: pointer;
+}
+
+#upload_listing tbody tr.odd td,
+#activity_table tbody tr.odd td {
+    background: none repeat scroll 0 0 #EEEEEE;
+}

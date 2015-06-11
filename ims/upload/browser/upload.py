@@ -1,4 +1,5 @@
 import json, mimetypes, os
+from Acquisition import aq_inner
 from five import grok
 import os
 from plone.namedfile.file import NamedBlobFile
@@ -268,6 +269,12 @@ class UnchunkedListing(grok.View):
     """
     grok.name('unchunk-listing')
     grok.context(IUploadCapable)
+
+    def content_actions(self):
+      context = aq_inner(self.context)
+      portal_actions = getToolByName(context, 'portal_actions')
+      button_actions = portal_actions.listActionInfos(object=aq_inner(self.context), categories=('folder_buttons', ))
+      return button_actions
 
     def render(self):
       template = ViewPageTemplateFile("listing.pt")
