@@ -124,7 +124,7 @@ input.buttonToggler:hover {
 #upload_listing th.header,
 #activity_table th.header {
   background-color: #dddddd;
-  background-image: url("++resource++ims.dataexchange/bg.png");
+  background-image: url("bg.png");
   background-position: right center !important;
   background-repeat: no-repeat !important;
   color: #666666;
@@ -138,13 +138,13 @@ input.buttonToggler:hover {
 
 #upload_listing th.headerSortUp,
 #activity_table th.headerSortUp {
-  background-image: url("++resource++ims.dataexchange/asc.png");
+  background-image: url("asc.png");
   cursor: pointer;
 }
 
 #upload_listing th.headerSortDown,
 #activity_table th.headerSortDown {
-  background-image: url("++resource++ims.dataexchange/desc.png");
+  background-image: url("desc.png");
   cursor: pointer;
 }
 
