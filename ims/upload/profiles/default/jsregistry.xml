@@ -3,4 +3,5 @@
 
  <javascript cacheable="True" compression="none" cookable="True"
     enabled="True" expression="" id="++resource++ims.upload/jquery.tablesorter.min.js" inline="False"/>
+ <javascript id="jquery.js" remove="True"/>
 </object>
