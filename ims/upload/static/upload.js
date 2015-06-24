@@ -293,12 +293,16 @@ $(function () {
         refreshlisting();
     }).on('fileuploadfail', function (e, data) {
         $.each(data.files, function (index, file) {
-            $(data.context.children()[index]).find('img').remove();
-            var error = $('<span class="text-danger"/>').text('File upload failed.');
+            var error = $('<span class="text-danger"/>').text('File upload failed.'),
+                uploaded = data._progress.loaded,
+                ele = $(data.context.children()[index]);
+            data.abort();
+            resumify(ele.find('.btn-primary.singular'),data,uploaded);
+            refreshlisting();
             $(data.context.children()[index])
                 .append('<br>')
-                .append(error)
-                .prepend('<span class="warning glyphicon glyphicon-remove"/> ');
+                .append('<span class="warning glyphicon glyphicon-remove"/> ')
+                .append(error);
         });
     }).prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
