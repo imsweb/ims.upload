@@ -212,11 +212,10 @@ $(function () {
         $.each(data.files, function (index, file) {
             var file_text = file.name;
             if (file.size) {
-              file_text += ' - ' + printable_size(file.size) + ' bytes'
+              file_text += ' - ' + printable_size(file.size)
             }
             var node = $('<p/>')
                     .append($('<span/>').text(file_text));
-            console.log(file);
             if (!index) {
                 // add buttons
                 node.append('<br>')
@@ -293,7 +292,7 @@ $(function () {
         refreshlisting();
     }).on('fileuploadfail', function (e, data) {
         $.each(data.files, function (index, file) {
-            var error = $('<span class="text-danger"/>').text('File upload failed.'),
+            var error = $('<span class="text-danger"/>').text('File upload failed. Server response: ' + data.jqXHR.status + ' - ' + data.jqXHR.statusText),
                 uploaded = data._progress.loaded,
                 ele = $(data.context.children()[index]);
             data.abort();
