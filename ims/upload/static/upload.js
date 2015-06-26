@@ -75,7 +75,7 @@ function printable_size(fsize) {
   }
   prefixes = ['B','KB','MB','GB','TB','PB']
   tens = Math.floor(Math.log(fsize)/Math.log(1024))
-  fsize = Math.round(fsize/Math.pow(1024,tens),2)
+  fsize = fsize/Math.pow(1024,tens)
   if (tens < prefixes.length) {
     return fsize.toFixed(2) + ' ' + prefixes[tens]
   }
