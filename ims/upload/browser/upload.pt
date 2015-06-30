@@ -38,7 +38,8 @@
   </div>
 
   <body>
-    <div metal:fill-slot="content-core">
+    <div metal:fill-slot="content-core"
+         tal:define="portal context/@@plone_portal_state/portal">
       <br>
       <input id="can_delete" name="can_delete" type="hidden" tal:attributes="value view/can_delete" />
       <form id="fileupload-chunkless" class="uploadForm" enctype="multipart/form-data" method="POST"
@@ -71,12 +72,13 @@
           <li>Opera</li>
         </ul>
       </form>
+      <input id="mailto" name="mailto" type="hidden" tal:attributes="value portal/email_from_address" />
 
       <div class="uploadForm" style="display:none;">
         <!-- The fileinput-button span is used to style the file input field as button -->
         <span class="btn btn-success fileinput-button">
             <i class="glyphicon glyphicon-plus"></i>
-            <span>Add files...</span>
+            <span>Add Files</span>
             <!-- The file input field used as target for the file upload widget -->
             <input id="fileupload" type="file" name="files[]" multiple>
         </span>
@@ -88,10 +90,11 @@
             <i class="glyphicon glyphicon-ban-circle"></i>
             Clear Uploads
         </button>
-        <br>
-        Drag and drop anywhere on the page
-        <br>
+
+        <p class="draganddropdesc">Drag and drop files anywhere on the page to upload, or use the "+ Add Files" button.</p>
+
         <!-- The global progress bar -->
+        <span class="discreet">Upload progress status:</span>
         <div id="progress" class="progress">
             <div class="progress-bar progress-bar-success"></div>
         </div>

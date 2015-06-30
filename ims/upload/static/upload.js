@@ -144,11 +144,12 @@ function update_progress(data) {
       'width',
       progress + '%'
   );
+  $('#progress .progress-bar').html('&nbsp;' + progress + '%');
 }
 
 // assign event for upload all
 $('#uploadAll').click(function() {
-  $('#files button.singular').click()
+  $('#files button.singular').click();
 });
 
 // assign event for clear all
@@ -160,6 +161,7 @@ $('#clearAll').click(function() {
   });
   $('#files div').remove();
   $('#progress .progress-bar').css('width','0%');
+  $('#progress .progress-bar').text('');
   refreshlisting();
 });
 
@@ -292,11 +294,28 @@ $(function () {
         refreshlisting();
     }).on('fileuploadfail', function (e, data) {
         $.each(data.files, function (index, file) {
-            var error = $('<span class="text-danger"/>').text('File upload failed. Server response: ' + data.jqXHR.status + ' - ' + data.jqXHR.statusText),
+            var error_text = 'File upload failed. An unknown error has occurred.',
+                mailto = $('#mailto').val();
+            if (xhr_support()) {
+              switch(data.jqXHR.status) {
+                  case 504:
+                      error_text = 'The uploaded file is still processing and is taking longer than expected.  This happens with very large files.  Please check back in a few minutes by refreshing the page.'
+                      break;
+                  case 500:
+                      error_text = 'An unexpected error has occurred.  Please contact the administrator at <a href="mailto:' + mailto + '">' + mailto + '</a>.'
+                      break;
+                  case 0:
+                      error_text = 'File upload aborted.'
+                      break;
+                  default:
+                      error_text = 'File upload failed. Server response: ' + data.jqXHR.status + ' - ' + data.jqXHR.statusText;
+              }
+            }
+            var error = $('<span class="text-danger"/>').html(error_text),
                 uploaded = data._progress.loaded,
                 ele = $(data.context.children()[index]);
             data.abort();
-            resumify(ele.find('.btn-primary.singular'),data,uploaded);
+            resumify(ele.find('.btn-primary'),data,uploaded);
             refreshlisting();
             $(data.context.children()[index])
                 .append('<br>')

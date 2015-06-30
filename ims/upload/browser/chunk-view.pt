@@ -13,7 +13,7 @@
         <a tal:attributes="href string:${context/absolute_url}/@@download/file/${context/file/filename}"
            tal:content="string:${context/file/filename}" />
       </p>
-      
+
       <dl>
         <dt>Starting byte:</dt>
         <dd tal:content="context/startbyte" />
@@ -21,5 +21,5 @@
         <dt>Ending byte:</dt>
         <dd tal:content="context/endbyte" />
     </div>
-</body> 
+</body>
 </html>

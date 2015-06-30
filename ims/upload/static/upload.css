@@ -2,12 +2,23 @@
   padding-right: 0.5em;
 }
 
+#progress .progress-bar {
+  text-align: left !important;
+}
+
+.draganddropdesc {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-left: 20px;
+  background: no-repeat transparent url('++resource++ims.upload/help.png');
+}
+
 .file-fail {
   display: block;
 }
 
 .chunksize_descriptor {
-  background-color: #ddd;
+  background-color: #eee;
   padding: 2px;
 }
 
