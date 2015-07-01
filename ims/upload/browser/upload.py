@@ -146,7 +146,6 @@ class ChunkedUpload(grok.View):
           if size == max_size :
             if not QUIET:
               logger.info('Starting chunk merger')
-            print context
             nf_url = mergeChunks(self.context, cf, file_name)
             _files[file_name]['url'] = nf_url
       else:
