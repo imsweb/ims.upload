@@ -21,7 +21,7 @@ setup(name='ims.upload',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'collective.js.jqueryui>=1.10.4',
+          'collective.js.jqueryui>=1.10.1.2',
           'plone.app.dexterity',
       ],
       entry_points="""
