@@ -10,7 +10,7 @@ class IUploadLayer(IDefaultPloneLayer):
     """
 
 class IUploadCapable(interface.Interface):
-    """
+    """ Marker interface for an upload capable content type (folder)
     """
 
 class IFileMutator(interface.Interface):

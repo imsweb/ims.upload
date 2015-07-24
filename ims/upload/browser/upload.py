@@ -161,7 +161,7 @@ class ChunkedUpload(grok.View):
       return json.dumps({'files':_files.values()})
 
 class ChunkCheck(grok.View):
-    """ Upload form page """
+    """ Checks the chunk from the folder view """
     grok.name('chunk-check')
     grok.context(IUploadCapable)
 
@@ -178,7 +178,7 @@ class ChunkCheck(grok.View):
       return json.dumps(data)
 
 class ChunkCheckDirect(grok.View):
-    """ Upload form page """
+    """ Returns the uploaded bytes and expected total, from the chunked file """
     grok.name('chunk-check')
     grok.context(IChunkedFile)
 
@@ -192,7 +192,7 @@ class ChunkCheckDirect(grok.View):
       return json.dumps(data)
 
 class ChunkedUploadDirect(grok.View):
-    """ Upload a file
+    """ Upload a file chunk
     """
     grok.name('upload-chunk')
     grok.context(IChunkedFile)
@@ -238,7 +238,7 @@ class ChunkedUploadDirect(grok.View):
       return json.dumps({'files':_files.values(),'complete':complete})
 
 class ChunklessUploadView(grok.View):
-    """ Backup upload for no javascript """
+    """ Backup upload for no javascript, etc. """
     grok.name('chunkless-upload')
     grok.context(IUploadCapable)
 
