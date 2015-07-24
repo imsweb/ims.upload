@@ -9,7 +9,6 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from tempfile import NamedTemporaryFile
 from zope.component import getAllUtilitiesRegisteredFor, getUtility
-from zope.filerepresentation.interfaces import IFileFactory
 
 from ims.upload import _, QUIET
 from ims.upload.tools import _printable_size
