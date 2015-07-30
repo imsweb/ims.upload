@@ -67,10 +67,6 @@ class ChunkUploadView(grok.View):
 
 def mergeChunks(context, cf, file_name):
     chunks = sorted(cf.objectValues(),key=lambda term: term.startbyte)
-    if file_name not in context.objectIds():
-      context.invokeFactory('File',file_name)
-    nf = context[file_name]
-    nf.setTitle(file_name)
     tmpfile = NamedTemporaryFile(mode='w',delete='false')
     tname = tmpfile.name
     tmpfile.close()
@@ -86,10 +82,16 @@ def mergeChunks(context, cf, file_name):
     tmpfile = open(tname,'r')
     if not QUIET:
       logger.info('Merging complete, writing to disk')
-    nf.setFile(tmpfile)
-    nf.setFilename(file_name) # overwrite temp file name
+
+    if file_name not in context.objectIds():
+      ctr = getToolByName(context, 'content_type_registry')
+      content_type = ctr.findTypeName(file_name.lower(), '', '') or 'File'
+      kwargs = {'title':file_name,
+                'file':tmpfile}
+      context.invokeFactory(content_type,file_name,**kwargs)
+    nf = context[file_name]
+    nf.setFilename(file_name)
     tmpfile.close()
-    nf.reindexObject()
     os.remove(tname)
     _file_name = file_name+'_chunk'
     context.manage_delObjects([_file_name])
@@ -149,11 +151,13 @@ class ChunkedUpload(grok.View):
             _files[file_name]['url'] = nf_url
       else:
         if file_name not in self.context.objectIds():
-          self.context.invokeFactory('File',file_name)
+          ctr = getToolByName(self.context, 'content_type_registry')
+          content_type = ctr.findTypeName(file_name.lower(), '', '') or 'File'
+          kwargs = {'title':file_name,
+                    'file':file_data}
+          self.context.invokeFactory(content_type,file_name,**kwargs)
         nf = self.context[file_name]
-        nf.setTitle(file_name)
-        nf.setFile(file_data)
-        nf.reindexObject()
+        nf.setFilename(file_name)
         _files[file_name] = {'name':file_name,
                              'size':nf.size(),
                              'url':nf.absolute_url()}
