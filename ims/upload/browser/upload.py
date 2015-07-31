@@ -86,6 +86,8 @@ def mergeChunks(context, cf, file_name):
     if file_name not in context.objectIds():
       ctr = getToolByName(context, 'content_type_registry')
       content_type = ctr.findTypeName(file_name.lower(), '', '') or 'File'
+      if content_type == 'Document': # force file
+        content_type = 'File'
       kwargs = {'title':file_name,
                 'file':tmpfile}
       context.invokeFactory(content_type,file_name,**kwargs)
@@ -153,6 +155,8 @@ class ChunkedUpload(grok.View):
         if file_name not in self.context.objectIds():
           ctr = getToolByName(self.context, 'content_type_registry')
           content_type = ctr.findTypeName(file_name.lower(), '', '') or 'File'
+          if content_type == 'Document': # force file
+            content_type = 'File'
           kwargs = {'title':file_name,
                     'file':file_data}
           self.context.invokeFactory(content_type,file_name,**kwargs)
