@@ -70,7 +70,7 @@
                   <span tal:condition="python:item_type in use_view_action">
                     &mdash;
                     <a tal:attributes="href item_url">
-                      <img tal:attributes="src string:${portal_url}/download_icon.gif" title="download" alt="download">
+                      <img tal:attributes="src string:${portal_url}/download_icon.gif" title="download" alt="download" />
                     </a>
                   </span>
               </span>
