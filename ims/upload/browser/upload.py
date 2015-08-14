@@ -85,7 +85,7 @@ def mergeChunks(context, cf, file_name):
 
     if file_name not in context.objectIds():
       ctr = getToolByName(context, 'content_type_registry')
-      pt = getToolByName(self.context, 'portal_types')
+      pt = getToolByName(context, 'portal_types')
       content_type = ctr.findTypeName(file_name.lower(), '', '') or 'File'
       if content_type == 'Document' or not pt.getTypeInfo(context).allowType(content_type): # force file
         content_type = 'File'
