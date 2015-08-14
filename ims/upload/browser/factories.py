@@ -11,4 +11,4 @@ class UploadFolderFactoriesView(FolderFactoriesView):
       if upload_add:
         upload_add = upload_add[0]
         upload_add['action'] = '%s/@@upload' % self.add_context().absolute_url()
-      return addables
+    return addables
