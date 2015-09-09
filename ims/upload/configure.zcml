@@ -20,6 +20,13 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
+  <genericsetup:importStep
+      name="ims.upload"
+      title="ims.upload after install"
+      description=""
+      handler="ims.upload.setuphandlers.setup_various"
+      />
+
   <class class="Products.ATContentTypes.content.folder.ATFolder">
     <implements interface=".interfaces.IUploadCapable" />
   </class>
