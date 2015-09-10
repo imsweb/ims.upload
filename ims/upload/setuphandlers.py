@@ -5,6 +5,9 @@ def setup_various(context):
   """
 
   portal = context.getSite()
+  if context.readDataFile('imsupload.txt') is None:
+        return
+
   qi = getToolByName(portal,'portal_quickinstaller')
   setup = getToolByName(portal,'portal_setup')
   pw = getToolByName(portal,'portal_workflow')
