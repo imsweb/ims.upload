@@ -22,6 +22,10 @@
   padding: 2px;
 }
 
+.filedelete-button {
+  text-decoration: none;
+}
+
 .fileinput-button:hover, .fileinput-button:focus {
     color: #fff !important;
     text-decoration: none;

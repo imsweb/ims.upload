@@ -42,36 +42,38 @@
          tal:define="portal context/@@plone_portal_state/portal">
       <br>
       <input id="can_delete" name="can_delete" type="hidden" tal:attributes="value view/can_delete" />
-      <form id="fileupload-chunkless" class="uploadForm" enctype="multipart/form-data" method="POST"
-            tal:attributes="action string:${context/absolute_url}/chunkless-upload">
+      <div id="fileupload-chunkless-container" style="display:none;">
+        <form id="fileupload-chunkless" class="uploadForm" enctype="multipart/form-data" method="POST"
+              tal:attributes="action string:${context/absolute_url}/chunkless-upload">
 
-        <span class="btn btn-success fileupload-chunkless">
-            <i class="glyphicon glyphicon-plus"></i>
-            <span>Add file:</span>
-            <!-- The file input field used as target for the file upload widget -->
-            <input id="fileupload-chunkless-button" type="file" name="files[]">
-        </span>
-        <button class="btn btn-primary" id="uploadChunkless" type="submit">
-          <i class="glyphicon glyphicon-upload"></i>
-          Upload
-        </button>
+          <span class="btn btn-success fileupload-chunkless">
+              <i class="glyphicon glyphicon-plus"></i>
+              <span>Add file:</span>
+              <!-- The file input field used as target for the file upload widget -->
+              <input id="fileupload-chunkless-button" type="file" name="files[]">
+          </span>
+          <button class="btn btn-primary" id="uploadChunkless" type="submit">
+            <i class="glyphicon glyphicon-upload"></i>
+            Upload
+          </button>
 
-        <p>
-          Your current browser does not support multi-file chunked uploads. You may upload single files in your current
-          browser or switch browsers to utilize more features.
-        </p>
+          <p>
+            Your current browser does not support multi-file chunked uploads. You may upload single files in your current
+            browser or switch browsers to utilize more features.
+          </p>
 
-        <p>
-          Partial list of browsers with full support:
-        </p>
-        <ul>
-          <li>Internet Explorer &gt;=10</li>
-          <li>Firefox</li>
-          <li>Chrome</li>
-          <li>Safari</li>
-          <li>Opera</li>
-        </ul>
-      </form>
+          <p>
+            Partial list of browsers with full support:
+          </p>
+          <ul>
+            <li>Internet Explorer &gt;=10</li>
+            <li>Firefox</li>
+            <li>Chrome</li>
+            <li>Safari</li>
+            <li>Opera</li>
+          </ul>
+        </form>
+      </div>
       <input id="mailto" name="mailto" type="hidden" tal:attributes="value portal/email_from_address" />
 
       <div class="uploadForm" style="display:none;">
@@ -125,13 +127,17 @@
         </form>
       </div>
 
+      <noscript>JavaScript has been disabled or is not supported by your browser. JavaScript must be enabled to upload files.</noscript>
+
       <script type="text/javascript">
         $(document).ready(function() {
           $.ajaxSetup({ cache: false });
           $('#folder-contents').toggle();
           if (xhr_support()) {
-            $('#fileupload-chunkless').remove();
             $('.uploadForm').toggle();
+          }
+          else {
+            $('#fileupload-chunkless-container').toggle();
           }
           refreshlisting()
         });
