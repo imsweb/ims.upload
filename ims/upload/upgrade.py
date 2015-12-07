@@ -7,7 +7,7 @@ from zope.component import getUtility
 import logging, transaction
 
 def to_1_5(context, logger=None):
-  portal = getUtility(ISiteRoot)
+  portal = getUtility(ISiteRoot, context=context)
   if logger is None:
       logger = logging.getLogger('ims.upload')
   qi = getToolByName(portal,'portal_quickinstaller')
