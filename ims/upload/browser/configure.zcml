@@ -14,4 +14,12 @@
         permission="cmf.AddPortalContent"
         />
 
+    <browser:page
+        for="*"
+        name="is_upload_supported"
+        class=".upload.UploadActionGuards"
+        attribute="is_upload_supported"
+        permission="zope.Public"
+        />
+
 </configure>

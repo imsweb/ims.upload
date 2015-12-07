@@ -2,13 +2,16 @@ import json, mimetypes, os
 from Acquisition import aq_inner
 from five import grok
 import os
+import plone.api
+from plone.app.content.browser.folderfactories import _allowedTypes
 from plone.namedfile.file import NamedBlobFile
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
+from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from tempfile import NamedTemporaryFile
-from zope.component import getAllUtilitiesRegisteredFor, getUtility
+from zope.component import getAllUtilitiesRegisteredFor, getUtility, getMultiAdapter
 
 from ims.upload import _, QUIET
 from ims.upload.tools import _printable_size
@@ -326,3 +329,20 @@ class ChunkedFileDelete(grok.View):
       parent.manage_delObjects(self.context.getId())
       IStatusMessage(self.request).addStatusMessage(_(u"Partially uploaded file successfully deleted."),"info")
       self.request.response.redirect(parent.absolute_url()+'/@@upload')
+
+
+class UploadActionGuards(BrowserView):
+    def __init__(self, context, request):
+        super(BrowserView, self).__init__(context, request)
+        request.response.setHeader('Cache-Control', 'no-cache')
+        request.response.setHeader('Pragma', 'no-cache')
+
+    def is_upload_supported(self):
+      guards = [plone.api.user.has_permission('Add portal content'),
+                plone.api.user.has_permission('Archetypes: Add file'),
+                self.context.restrictedTraverse('@@plone').displayContentsTab(),
+                [i for i in _allowedTypes(self.request,self.context) if i.id == 'File']]
+      for guard in guards:
+        if not guard:
+          return False
+      return True

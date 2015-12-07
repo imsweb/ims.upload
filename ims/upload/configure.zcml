@@ -27,6 +27,15 @@
       handler="ims.upload.setuphandlers.setup_various"
       />
 
+  <genericsetup:upgradeStep
+        title="Upgrade ims.upload to 1.5"
+        description="Adds change password action"
+        source="*"
+        destination="0150"
+        handler=".upgrade.to_1_5"
+        profile="ims.upload:default"
+    />
+
   <class class="Products.ATContentTypes.content.folder.ATFolder">
     <implements interface=".interfaces.IUploadCapable" />
   </class>
