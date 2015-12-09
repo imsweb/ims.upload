@@ -339,7 +339,7 @@ class UploadActionGuards(BrowserView):
 
     def is_upload_supported(self):
       guards = [plone.api.user.has_permission('Add portal content'),
-                plone.api.user.has_permission('Archetypes: Add file'),
+                plone.api.user.has_permission('ATContentTypes: Add File'),
                 self.context.restrictedTraverse('@@plone').displayContentsTab(),
                 [i for i in _allowedTypes(self.request,self.context) if i.id in ('Image','File')]]
       for guard in guards:
