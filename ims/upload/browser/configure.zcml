@@ -22,4 +22,12 @@
         permission="zope.Public"
         />
 
+    <browser:page
+        for="*"
+        name="is_upload_supported_details"
+        class=".upload.UploadActionGuards"
+        attribute="is_upload_supported_details"
+        permission="zope.Public"
+        />
+
 </configure>

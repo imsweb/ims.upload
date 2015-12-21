@@ -337,12 +337,18 @@ class UploadActionGuards(BrowserView):
         request.response.setHeader('Cache-Control', 'no-cache')
         request.response.setHeader('Pragma', 'no-cache')
 
+    @property
+    def guards(self):
+      return [plone.api.user.has_permission('Add portal content'),
+              plone.api.user.has_permission('ATContentTypes: Add File'),
+              self.context.restrictedTraverse('@@plone').displayContentsTab(),
+              [i for i in _allowedTypes(self.request,self.context) if i.id in ('Image','File')]]
+
     def is_upload_supported(self):
-      guards = [plone.api.user.has_permission('Add portal content'),
-                plone.api.user.has_permission('ATContentTypes: Add File'),
-                self.context.restrictedTraverse('@@plone').displayContentsTab(),
-                [i for i in _allowedTypes(self.request,self.context) if i.id in ('Image','File')]]
-      for guard in guards:
+      for guard in self.guards:
         if not guard:
           return False
       return True
+
+    def is_upload_supported_details(self):
+      return self.guards
