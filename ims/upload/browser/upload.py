@@ -1,17 +1,25 @@
 import json, mimetypes, os
 from Acquisition import aq_inner
-from five import grok
 import os
 import plone.api
+from plone.app.content.browser.file import TUS_ENABLED
 from plone.app.content.browser.folderfactories import _allowedTypes
+from plone.app.content.interfaces import IStructureAction
+from plone.app.content.utils import json_dumps
 from plone.namedfile.file import NamedBlobFile
 from plone.registry.interfaces import IRegistry
+from plone.rfc822.interfaces import IPrimaryFieldInfo
+from plone.uuid.interfaces import IUUID
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces.controlpanel import IMailSchema
+from Products.CMFPlone import utils
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from tempfile import NamedTemporaryFile
-from zope.component import getAllUtilitiesRegisteredFor, getUtility, getMultiAdapter
+from zope.component import getAllUtilitiesRegisteredFor, getUtility, getUtilitiesFor, getMultiAdapter
+from zope.component.hooks import getSite
+from zope.i18n import translate
 
 from ims.upload import _, QUIET
 from ims.upload.tools import _printable_size
@@ -20,21 +28,24 @@ from ims.upload.interfaces import IChunkSettings, IFileMutator, IUploadCapable, 
 import logging
 logger = logging.getLogger('ims.upload')
 
-grok.templatedir('.')
-
 import re
 bad_id=re.compile(r'[^a-zA-Z0-9-_~,.$\(\)# @]').search
 def clean_file_name(file_name):
   while bad_id(file_name):
     file_name = file_name.replace( bad_id(file_name).group(), u'_')
-  return file_name
+  non_underscore = re.search(r'[^_]', file_name)
+  if non_underscore:
+    return file_name[non_underscore.start():]
+  raise Exception('invalid file name')
 
-class ChunkUploadView(grok.View):
+class ChunkUploadView(BrowserView):
     """ Upload form page """
-    grok.name('upload')
-    grok.context(IUploadCapable)
-    grok.template('upload')
     listing = ViewPageTemplateFile("listing.pt")
+
+    def email_from_address(self):
+      registry = getUtility(IRegistry)
+      mail_settings = registry.forInterface(IMailSchema, prefix='plone')
+      return mail_settings.email_from_address
 
     def contents_table(self,context='',request=''):
       if not context:
@@ -68,6 +79,19 @@ class ChunkUploadView(grok.View):
       mtool = getToolByName(self.context,'portal_membership')
       return mtool.checkPermission('Manage delete objects',self.context)
 
+def make_file(file_name, context, filedata):
+  if file_name not in context.objectIds():
+      ctr = getToolByName(context, 'content_type_registry')
+      pt = getToolByName(context, 'portal_types')
+      content_type = ctr.findTypeName(file_name.lower(), '', '') or 'File'
+      if content_type == 'Document' or not pt.getTypeInfo(context).allowType(content_type): # force file
+        content_type = 'File'
+      obj = plone.api.content.create(container=context, type=content_type, id=file_name, title=file_name)
+      primary_field_name = IPrimaryFieldInfo(obj).fieldname
+      setattr(obj, primary_field_name, NamedBlobFile(filedata, filename=utils.safe_unicode(file_name)))
+      obj.reindexObject()
+  return context[file_name]
+
 def mergeChunks(context, cf, file_name):
     chunks = sorted(cf.objectValues(),key=lambda term: term.startbyte)
     tmpfile = NamedTemporaryFile(mode='w',delete='false')
@@ -86,17 +110,7 @@ def mergeChunks(context, cf, file_name):
     if not QUIET:
       logger.info('Merging complete, writing to disk')
 
-    if file_name not in context.objectIds():
-      ctr = getToolByName(context, 'content_type_registry')
-      pt = getToolByName(context, 'portal_types')
-      content_type = ctr.findTypeName(file_name.lower(), '', '') or 'File'
-      if content_type == 'Document' or not pt.getTypeInfo(context).allowType(content_type): # force file
-        content_type = 'File'
-      kwargs = {'title':file_name,
-                'file':tmpfile}
-      context.invokeFactory(content_type,file_name,**kwargs)
-    nf = context[file_name]
-    nf.setFilename(file_name)
+    nf = make_file(file_name, context, tmpfile)
     tmpfile.close()
     os.remove(tname)
     _file_name = file_name+'_chunk'
@@ -105,15 +119,9 @@ def mergeChunks(context, cf, file_name):
       logger.info('Upload complete')
     return nf.absolute_url()
 
-class ChunkedUpload(grok.View):
+class ChunkedUpload(BrowserView):
     """ Upload a file
     """
-    grok.name('upload-chunk')
-    grok.context(IUploadCapable)
-
-    def __init__(self, context, request):
-        self.context = context
-        self.request = request
 
     def render(self):
       _files = {}
@@ -156,32 +164,16 @@ class ChunkedUpload(grok.View):
             nf_url = mergeChunks(self.context, cf, file_name)
             _files[file_name]['url'] = nf_url
       else:
-        if file_name not in self.context.objectIds():
-          ctr = getToolByName(self.context, 'content_type_registry')
-          pt = getToolByName(self.context, 'portal_types')
-          content_type = ctr.findTypeName(file_name.lower(), '', '') or 'File'
-          if content_type == 'Document' or not pt.getTypeInfo(self.context).allowType(content_type): # force file
-            content_type = 'File'
-          kwargs = {'title':file_name,
-                    'file':file_data}
-          self.context.invokeFactory(content_type,file_name,**kwargs)
-        nf = self.context[file_name]
-        nf.setFilename(file_name)
+        nf = make_file(file_name, self.context, file_data)
+        primary_field = IPrimaryFieldInfo(nf)
         _files[file_name] = {'name':file_name,
-                             'size':nf.size(),
+                             'size':nf.getObjSize(None,primary_field.value.size),
                              'url':nf.absolute_url()}
 
       return json.dumps({'files':_files.values()})
 
-class ChunkCheck(grok.View):
+class ChunkCheck(BrowserView):
     """ Checks the chunk from the folder view """
-    grok.name('chunk-check')
-    grok.context(IUploadCapable)
-
-    def __init__(self, context, request):
-        self.context = context
-        self.request = request
-
     def render(self):
       file_name = clean_file_name(self.request.form['file'])
       data = {'uploadedBytes':0}
@@ -190,29 +182,16 @@ class ChunkCheck(grok.View):
         data['url'] = self.context[file_name + '_chunk'].absolute_url()
       return json.dumps(data)
 
-class ChunkCheckDirect(grok.View):
+class ChunkCheckDirect(BrowserView):
     """ Returns the uploaded bytes and expected total, from the chunked file """
-    grok.name('chunk-check')
-    grok.context(IChunkedFile)
-
-    def __init__(self, context, request):
-        self.context = context
-        self.request = request
-
     def render(self):
       data = {'uploadedBytes':self.context.currsize(),
               'targetsize':self.context.targetsize}
       return json.dumps(data)
 
-class ChunkedUploadDirect(grok.View):
+class ChunkedUploadDirect(BrowserView):
     """ Upload a file chunk
     """
-    grok.name('upload-chunk')
-    grok.context(IChunkedFile)
-
-    def __init__(self, context, request):
-        self.context = context
-        self.request = request
 
     def render(self):
       _files = {}
@@ -250,10 +229,8 @@ class ChunkedUploadDirect(grok.View):
             complete = self.context.aq_parent.absolute_url() + '/@@upload'
       return json.dumps({'files':_files.values(),'complete':complete})
 
-class ChunklessUploadView(grok.View):
+class ChunklessUploadView(BrowserView):
     """ Backup upload for no javascript, etc. """
-    grok.name('chunkless-upload')
-    grok.context(IUploadCapable)
 
     def render(self):
       _file = self.request.form.get('files[]')
@@ -267,40 +244,31 @@ class ChunklessUploadView(grok.View):
         IStatusMessage(self.request).addStatusMessage(_(u"A file with that name already exists"),"error")
         return self.request.response.redirect(self.context.absolute_url()+'/@@upload')
       else:
-        self.context.invokeFactory('File',file_name)
-        ob = self.context[file_name]
-        ob.setFile(_file)
-        ob.setFilename(file_name)
-        ob.reindexObject()
+        plone.api.content.create(container=self.context, type='File', id=file_name, title=file_name, file=NamedBlobFile(_file, filename=utils.safe_unicode(file_name)))
 
         IStatusMessage(self.request).addStatusMessage(_(u"File successfully uploaded."),"info")
         return self.request.response.redirect(self.context.absolute_url()+'/@@upload')
 
-class UnchunkedListing(grok.View):
+class UnchunkedListing(BrowserView):
     """ listing of all else
     """
-    grok.name('unchunk-listing')
-    grok.context(IUploadCapable)
 
     def content_actions(self):
-      context = aq_inner(self.context)
-      portal_actions = getToolByName(context, 'portal_actions')
-      button_actions = portal_actions.listActionInfos(object=aq_inner(self.context), categories=('folder_buttons', ))
-      return button_actions
-
-    def render(self):
-      template = ViewPageTemplateFile("listing.pt")
-      return template(self)
+      actions = []
+      for name, Utility in getUtilitiesFor(IStructureAction):
+          utility = Utility(self.context, self.request)
+          actions.append(utility)
+      actions.sort(key=lambda a: a.order)
+      import pdb; pdb.set_trace()
+      return [a.get_options() for a in actions] # if not a.get_options().get('form')]
 
     def member_info(self, creator):
       return self.context.portal_membership.getMemberInfo(creator)
 
 
-class ChunkedListing(grok.View):
+class ChunkedListing(BrowserView):
     """ listing of files
     """
-    grok.name('chunk-listing')
-    grok.context(IUploadCapable)
 
     def render(self):
       putils = getToolByName(self.context,'plone_utils')
@@ -319,10 +287,8 @@ class ChunkedListing(grok.View):
                         })
       return json.dumps(content)
 
-class ChunkedFileDelete(grok.View):
+class ChunkedFileDelete(BrowserView):
     """ Special delete, with redirect """
-    grok.name('delete')
-    grok.context(IChunkedFile)
 
     def render(self):
       parent = self.context.aq_inner.aq_parent
@@ -341,7 +307,6 @@ class UploadActionGuards(BrowserView):
     def guards(self):
       return [plone.api.user.has_permission('Add portal content', obj=self.context),
               plone.api.user.has_permission('ATContentTypes: Add File', obj=self.context),
-              self.context.restrictedTraverse('@@plone').displayContentsTab(),
               [i for i in _allowedTypes(self.request,self.context) if i.id in ('Image','File')]]
 
     def is_upload_supported(self):

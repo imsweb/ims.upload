@@ -80,14 +80,14 @@
             );
           }
           spinner = $('<img>')
-            .attr('src','spinner.gif')
+            .attr('src','++plone++static/select2-spinner.gif')
             .css('padding-left','0.5em');
 
           $(function () {
               'use strict';
               var url = '@@upload-chunk',
                   spinner = $('<img>')
-                    .attr('src','spinner.gif')
+                    .attr('src','++plone++static/select2-spinner.gif')
                     .css('padding-right','0.5em');
 
               $('#fileupload').fileupload({

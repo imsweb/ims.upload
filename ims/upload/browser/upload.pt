@@ -14,23 +14,9 @@
       <link rel="stylesheet" type="text/css" media="screen" tal:attributes="href string:${portal_url}/++resource++ims.upload/css/bootstrap-theme.css">
 
       <link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload.css">
-      <noscript><link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload-noscript.css"></noscript>
-      <noscript><link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload-ui-noscript.css"></noscript>
+      <!-- fix me! <noscript><link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload-noscript.css"></noscript>
+      <noscript><link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload-ui-noscript.css"></noscript> -->
     </metal:css>
-
-    <metal:javascript fill-slot="javascript_head_slot">
-      <script tal:attributes="src string:${portal_url}/++resource++ims.upload/js/bootstrap.min.js"></script>
-
-      <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/load-image.min.js"></script>
-      <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/canvas-to-blob.min.js"></script>
-      <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.iframe-transport.js"></script>
-      <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload.js"></script>
-      <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload-process.js"></script>
-      <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload-image.js"></script>
-      <script tal:attributes="src string:${portal_url}/++resource++ims.upload/blueimp/js/jquery.fileupload-validate.js"></script>
-
-
-    </metal:javascript>
   </head>
 
   <div metal:fill-slot="content-title">
@@ -46,13 +32,13 @@
         <form id="fileupload-chunkless" class="uploadForm" enctype="multipart/form-data" method="POST"
               tal:attributes="action string:${context/absolute_url}/chunkless-upload">
 
-          <span class="btn btn-success fileupload-chunkless">
+          <span class="btn btn-primary fileupload-chunkless">
               <i class="glyphicon glyphicon-plus"></i>
               <span>Add file:</span>
               <!-- The file input field used as target for the file upload widget -->
               <input id="fileupload-chunkless-button" type="file" name="files[]">
           </span>
-          <button class="btn btn-primary" id="uploadChunkless" type="submit">
+          <button class="btn btn-default" id="uploadChunkless" type="submit">
             <i class="glyphicon glyphicon-upload"></i>
             Upload
           </button>
@@ -74,7 +60,7 @@
           </ul>
         </form>
       </div>
-      <input id="mailto" name="mailto" type="hidden" tal:attributes="value portal/email_from_address" />
+      <input id="mailto" name="mailto" type="hidden" tal:attributes="value view/email_from_address" />
 
       <div class="uploadForm" style="display:none;">
         <!-- The fileinput-button span is used to style the file input field as button -->
@@ -83,6 +69,7 @@
             <span>Add Files</span>
             <!-- The file input field used as target for the file upload widget -->
             <input id="fileupload" type="file" name="files[]" multiple>
+            <input type="hidden" name="_authenticator" id="_authenticator" tal:attributes="value context/@@authenticator/token" />
         </span>
         <button class="btn btn-primary" id="uploadAll">
           <i class="glyphicon glyphicon-upload"></i>
@@ -113,14 +100,14 @@
       <div id="folder-contents" style="display:none;">
         <h3>Files in process or aborted</h3>
         <div id="upload-chunks-listing">
-        <img src="spinner.gif" class="upload-spinner" />
+        <img src="++plone++static/select2-spinner.gif" class="upload-spinner" />
           loading...
         </div>
 
         <form tal:attributes="action context/absolute_url" method="POST">
           <h3>Contents</h3>
           <div id="upload-folder-listing">
-            <img src="spinner.gif" class="upload-spinner" />
+            <img src="++plone++static/select2-spinner.gif" class="upload-spinner" />
             loading...
           </div>
           <input tal:replace="structure context/@@authenticator/authenticator" />

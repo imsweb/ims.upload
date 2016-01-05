@@ -24,7 +24,7 @@ function build_chunks() {
                                .append(descriptor)
                                .append(' ]')
                                .append(' &mdash; created on ' + chunk.date)
-        delbutton = $('<a>').attr('href',chunk.url+'/@@delete')
+        delbutton = $('<a>').attr('href',chunk.url+'/@@delete?_authenticator='+$('_authenticator').val())
                             .text('Delete')
                             .addClass('btn btn-danger delete');
         if ($('#can_delete')) {
@@ -172,8 +172,7 @@ $(function () {
         // upload button to be added to individual files
         uploadButton = $('<button/>')
             .addClass('btn btn-primary singular')
-            .prop('disabled', true)
-            .text('Processing...')
+            .text('Upload')
             .on('click', function () {
                 var $this = $(this),
                     data = $this.data();
@@ -193,12 +192,13 @@ $(function () {
               update_progress(data);
             }),
         spinner = $('<img>')
-          .attr('src','spinner.gif')
+          .attr('src','++plone++static/select2-spinner.gif')
           .addClass('upload-spinner');
 
     $('#fileupload').fileupload({
         // main fileupload
         url: url,
+        formData: {'_authenticator': $('#_authenticator').val()},
         dataType: 'json',
         dropZone: $('#dropzone'),
         autoUpload: false,

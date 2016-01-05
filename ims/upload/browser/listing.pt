@@ -25,9 +25,6 @@
     <table class="tablesorter" metal:define-slot="entries" id="upload_listing">
       <thead>
         <tr>
-          <th class="nosort inputcenter">
-            <input tal:condition="batch" type="button" value="Check all" id="toggler" name="toggler" class="discreet buttonToggler"/>
-          </th>
           <th class="borderedHeader">File</th>
           <th class="borderedHeader">Creator</th>
           <th class="borderedHeader">Modified Date</th>
@@ -55,9 +52,6 @@
                                item_samedate python: (item_end - item_start &lt; 1) if item_type == 'Event' else False">
           <metal:block define-slot="entry">
           <tr>
-            <td class="inputcenter">
-              <input type="checkbox" tal:attributes="value item/getPath" name="paths:list"/>
-            </td>
             <td>
               <span class="summary">
                   <img tal:replace="structure item_icon/html_tag" />
@@ -97,13 +91,18 @@
       </tbody>
     </table>
 
-    <div tal:define="actions view/content_actions">
+    <p>For mass modification or deletion of uploaded files please use the Contents page</p>
+
+   <div tal:define="actions view/content_actions" id="upload_listing_buttons">
+      <span tal:replace="structure context/@@authenticator/authenticator"/>
       <tal:action repeat="action actions">
-        <input tal:condition="python:action['available'] and action['visible']"
-               tal:attributes="value action/title;
-                               name action/url"
-               class="context"
-               type="submit" />
+        <button tal:attributes="value action/title;
+                           name action/url;
+                           class python:action.get('context') and 'btn btn-%s' % action['context'] or 'btn btn-default'"
+                type="submit">
+          <span tal:attributes="class string:glyphicon glyphicon-${action/icon}" />
+          <tal:btn content="action/title" />
+        </button>
       </tal:action>
     </div>
     <input type="hidden" name="orig_template" id="orig_template" value="upload" />
@@ -123,7 +122,7 @@
       $(document).ready(function()
           {
             $('#upload_listing tr:odd').addClass("odd");
-            jq.tablesorter.addParser({
+            $.tablesorter.addParser({
                 id: 'fileunits',
                 is: function(s) {
                     return false;

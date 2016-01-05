@@ -10,7 +10,7 @@
         name="folder_factories"
         class=".factories.UploadFolderFactoriesView"
         template="folderfactories.pt"
-        layer="..interfaces.IUploadLayer"
+        layer="ims.upload.interfaces.IUploadLayer"
         permission="cmf.AddPortalContent"
         />
 
@@ -23,10 +23,90 @@
         />
 
     <browser:page
-        for="*"
-        name="is_upload_supported_details"
-        class=".upload.UploadActionGuards"
-        attribute="is_upload_supported_details"
+        for="ims.upload.interfaces.IUploadCapable"
+        name="upload"
+        class=".upload.ChunkUploadView"
+        template="upload.pt"
+        permission="zope.Public"
+        />
+
+    <browser:page
+        for="ims.upload.interfaces.IUploadCapable"
+        name="upload-chunk"
+        class=".upload.ChunkedUpload"
+        attribute="render"
+        permission="zope.Public"
+        />
+
+    <browser:page
+        for="ims.upload.interfaces.IChunkedFile"
+        name="upload-chunk"
+        class=".upload.ChunkedUploadDirect"
+        attribute="render"
+        permission="zope.Public"
+        />
+
+    <browser:page
+        for="ims.upload.interfaces.IUploadCapable"
+        name="chunk-check"
+        class=".upload.ChunkCheck"
+        attribute="render"
+        permission="zope.Public"
+        />
+
+    <browser:page
+        for="ims.upload.interfaces.IChunkedFile"
+        name="chunk-check"
+        class=".upload.ChunkCheckDirect"
+        attribute="render"
+        permission="zope.Public"
+        />
+
+    <browser:page
+        for="ims.upload.interfaces.IUploadCapable"
+        name="chunkless-upload"
+        class=".upload.ChunkCheckDirect"
+        attribute="render"
+        permission="zope.Public"
+        />
+
+    <browser:page
+        for="ims.upload.interfaces.IUploadCapable"
+        name="unchunk-listing"
+        class=".upload.UnchunkedListing"
+        template="listing.pt"
+        permission="zope.Public"
+        />
+
+    <browser:page
+        for="ims.upload.interfaces.IUploadCapable"
+        name="chunk-listing"
+        class=".upload.ChunkedListing"
+        attribute="render"
+        permission="zope.Public"
+        />
+
+    <browser:page
+        for="ims.upload.interfaces.IChunkedFile"
+        name="delete"
+        class=".upload.ChunkedFileDelete"
+        attribute="render"
+        permission="zope.Public"
+        />
+
+    <browser:page
+        for="ims.upload.interfaces.IChunk"
+        name="chunk-view"
+        class=".content.ChunkView"
+        template="chunk-view.pt"
+        permission="zope.Public"
+        />
+
+    <browser:page
+        for="ims.upload.interfaces.IChunkedFile"
+        name="chunkedfile-view"
+        class=".content.ChunkedFileView"
+        template="chunkedfile-view.pt"
         permission="zope.Public"
         />
 

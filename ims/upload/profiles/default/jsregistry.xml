@@ -3,6 +3,16 @@
 
  <javascript cacheable="True" compression="none" cookable="True"
     enabled="True" expression="" id="++resource++ims.upload/jquery.tablesorter.min.js" inline="False"/>
- <javascript id="jquery.js" remove="True"/>
- <javascript id="++resource++flashcheck.js" remove="True"/>
+ <javascript cacheable="True" compression="none" cookable="True"
+    enabled="True" expression="" id="++resource++ims.upload/blueimp/js/jquery.iframe-transport.js" inline="False"/>
+ <javascript cacheable="True" compression="none" cookable="True"
+    enabled="True" expression="" id="++resource++ims.upload/blueimp/js/jquery.fileupload.js" inline="False"/>
+ <javascript cacheable="True" compression="none" cookable="True"
+    enabled="True" expression="" id="++resource++ims.upload/blueimp/js/jquery.process.js" inline="False"/>
+ <javascript cacheable="True" compression="none" cookable="True"
+    enabled="True" expression="" id="++resource++ims.upload/blueimp/js/jquery.image.js" inline="False"/>
+ <javascript cacheable="True" compression="none" cookable="True"
+    enabled="True" expression="" id="++resource++ims.upload/blueimp/js/jquery.validate.js" inline="False"/>
+ <javascript cacheable="True" compression="none" cookable="True"
+    enabled="True" expression="" id="++resource++ims.upload/blueimp/js/jquery.ui.js" inline="False"/>
 </object>

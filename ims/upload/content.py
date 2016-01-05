@@ -1,4 +1,3 @@
-from five import grok
 from plone.dexterity.content import Item, Container
 from plone.directives.dexterity import DisplayForm
 from plone.namedfile.file import NamedBlobFile
@@ -12,8 +11,6 @@ logger = logging.getLogger('ims.upload')
 
 from ims.upload.tools import _printable_size
 from interfaces import IChunkedFile, IChunk, IChunkSettings
-
-grok.templatedir('browser')
 
 class ChunkedFile(Container):
     """ A chunked file. Allows it to have its own workflows and schema before conversion to File
@@ -59,25 +56,5 @@ class ChunkedFile(Container):
     def Title(self):
         return 'Processing/Aborted - ' + self.id[:-6] # remove _chunk from id
 
-class ChunkedFileView(DisplayForm):
-    grok.context(IChunkedFile)
-    grok.name('chunkedfile-view')
-    grok.template('chunkedfile-view')
-
-    def chunksize(self):
-        registry = getUtility(IRegistry).forInterface(IChunkSettings)
-        return registry.chunksize
-
-    def printable_size(self, fsize):
-      return _printable_size(fsize)
-
-    def currsize(self):
-        return '%s of %s' % (self.printable_size(self.context.currsize()),self.context.targetsize and self.printable_size(int(self.context.targetsize) or '0 B'))
-
 class Chunk(Item):
     """ An individual chunk """
-
-class ChunkView(DisplayForm):
-    grok.context(IChunk)
-    grok.name('chunk-view')
-    grok.template('chunk-view')

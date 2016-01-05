@@ -1,2 +1,0 @@
-blueimp jQuery File Upload 9.5.7
-https://github.com/blueimp/jQuery-File-Upload/releases/tag/9.5.7
