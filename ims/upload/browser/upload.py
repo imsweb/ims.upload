@@ -7,6 +7,7 @@ from plone.app.content.browser.folderfactories import _allowedTypes
 from plone.namedfile.file import NamedBlobFile
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode as su
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
@@ -26,7 +27,7 @@ import re
 bad_id=re.compile(r'[^a-zA-Z0-9-_~,.$\(\)# @]').search
 def clean_file_name(file_name):
   while bad_id(file_name):
-    file_name = file_name.replace( bad_id(file_name).group(), u'_')
+    file_name = su(file_name).replace( bad_id(su(file_name)).group(), u'_')
   return file_name
 
 class ChunkUploadView(grok.View):
