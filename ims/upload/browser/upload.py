@@ -1,12 +1,10 @@
-import json, mimetypes, os
+import json, mimetypes
 from Acquisition import aq_inner
-import os
 import plone.api
 from plone.app.content.browser.file import TUS_ENABLED
 from plone.app.content.browser.folderfactories import _allowedTypes
 from plone.app.content.interfaces import IStructureAction
 from plone.app.content.utils import json_dumps
-from plone.namedfile.file import NamedBlobFile
 from plone.registry.interfaces import IRegistry
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 from plone.uuid.interfaces import IUUID
@@ -16,7 +14,6 @@ from Products.CMFPlone import utils
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
-from tempfile import NamedTemporaryFile
 from zope.component import getAllUtilitiesRegisteredFor, getUtility, getUtilitiesFor, getMultiAdapter
 from zope.component.hooks import getSite
 from zope.i18n import translate
@@ -32,7 +29,7 @@ import re
 bad_id=re.compile(r'[^a-zA-Z0-9-_~,.$\(\)# @]').search
 def clean_file_name(file_name):
   while bad_id(file_name):
-    file_name = file_name.replace( bad_id(file_name).group(), u'_')
+    file_name = su(file_name).replace( bad_id(su(file_name)).group(), u'_')
   non_underscore = re.search(r'[^_]', file_name)
   if non_underscore:
     return file_name[non_underscore.start():]
@@ -87,32 +84,22 @@ def make_file(file_name, context, filedata):
       if content_type == 'Document' or not pt.getTypeInfo(context).allowType(content_type): # force file
         content_type = 'File'
       obj = plone.api.content.create(container=context, type=content_type, id=file_name, title=file_name)
-      primary_field_name = IPrimaryFieldInfo(obj).fieldname
-      setattr(obj, primary_field_name, NamedBlobFile(filedata, filename=utils.safe_unicode(file_name)))
+      primary_field = IPrimaryFieldInfo(obj)
+      setattr(obj, primary_field.fieldname, primary_field.field._type(filedata, filename=utils.safe_unicode(file_name)))
       obj.reindexObject()
   return context[file_name]
 
 def mergeChunks(context, cf, file_name):
     chunks = sorted(cf.objectValues(),key=lambda term: term.startbyte)
-    tmpfile = NamedTemporaryFile(mode='w',delete='false')
-    tname = tmpfile.name
-    tmpfile.close()
     counter = 1
 
-    for chunk in chunks:
-      if not QUIET:
-        logger.info('Merging chunk %d' % counter)
-      counter += 1
-      tmpfile = open(tname,'a')
-      tmpfile.write(chunk.file.data)
-      tmpfile.close()
-    tmpfile = open(tname,'r')
-    if not QUIET:
-      logger.info('Merging complete, writing to disk')
+    nf = make_file(file_name, context, filedata='')
+    primary_field = IPrimaryFieldInfo(nf)
 
-    nf = make_file(file_name, context, tmpfile)
-    tmpfile.close()
-    os.remove(tname)
+    data = None
+    primary_field.value._setData(''.join([chunk.file.data for chunk in chunks]))
+    nf.reindexObject()
+
     _file_name = file_name+'_chunk'
     context.manage_delObjects([_file_name])
     if not QUIET:
@@ -167,7 +154,7 @@ class ChunkedUpload(BrowserView):
         nf = make_file(file_name, self.context, file_data)
         primary_field = IPrimaryFieldInfo(nf)
         _files[file_name] = {'name':file_name,
-                             'size':nf.getObjSize(None,primary_field.value.size),
+                             'size':nf.getObjSize(None,primary_field.value.getSize()),
                              'url':nf.absolute_url()}
 
       return json.dumps({'files':_files.values()})
@@ -244,7 +231,7 @@ class ChunklessUploadView(BrowserView):
         IStatusMessage(self.request).addStatusMessage(_(u"A file with that name already exists"),"error")
         return self.request.response.redirect(self.context.absolute_url()+'/@@upload')
       else:
-        plone.api.content.create(container=self.context, type='File', id=file_name, title=file_name, file=NamedBlobFile(_file, filename=utils.safe_unicode(file_name)))
+        make_file(file_name, self.context, _file)
 
         IStatusMessage(self.request).addStatusMessage(_(u"File successfully uploaded."),"info")
         return self.request.response.redirect(self.context.absolute_url()+'/@@upload')

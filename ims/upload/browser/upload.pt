@@ -104,14 +104,11 @@
           loading...
         </div>
 
-        <form tal:attributes="action context/absolute_url" method="POST">
-          <h3>Contents</h3>
-          <div id="upload-folder-listing">
-            <img src="++plone++static/select2-spinner.gif" class="upload-spinner" />
-            loading...
-          </div>
-          <input tal:replace="structure context/@@authenticator/authenticator" />
-        </form>
+        <h3>Contents</h3>
+        <div id="upload-folder-listing">
+          <img src="++plone++static/select2-spinner.gif" class="upload-spinner" />
+          loading...
+        </div>
       </div>
 
       <noscript>JavaScript has been disabled or is not supported by your browser. JavaScript must be enabled to upload files.</noscript>

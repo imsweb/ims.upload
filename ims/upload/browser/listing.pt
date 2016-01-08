@@ -8,14 +8,13 @@
                     folderContents folderContents|nothing; folderContents python:folderContents or is_a_topic and context.queryCatalog(batch=True, **contentFilter) or context.getFolderContents(contentFilter, batch=True, b_size=limit_display or 100);
                     folderContents python:[b for b in folderContents if b.portal_type != 'ChunkedFile'];
                     site_properties context/portal_properties/site_properties;
-                    use_view_action site_properties/typesUseViewActionInListings|python:();
+                    use_view_action python:('File','Image',);
                     Batch python:modules['Products.CMFPlone'].Batch;
                     b_start python:request.get('b_start', 0);
                     batch python:isinstance(folderContents, Batch) and folderContents or Batch(folderContents, limit_display or 100, int(b_start), orphan=1);
                     isAnon context/@@plone_portal_state/anonymous;
                     normalizeString nocall: context/plone_utils/normalizeString;
                     toLocalizedTime nocall: context/@@plone/toLocalizedTime;
-                    show_about python:not isAnon or site_properties.allowAnonymousViewAbout;
                     navigation_root_url context/@@plone_portal_state/navigation_root_url;
                     pas_member context/@@pas_member;
                     portal_state context/@@plone_portal_state;
@@ -64,7 +63,8 @@
                   <span tal:condition="python:item_type in use_view_action">
                     &mdash;
                     <a tal:attributes="href item_url">
-                      <img tal:attributes="src string:${portal_url}/download_icon.gif" title="download" alt="download" />
+                      <span class="glyphicon glyphicon-download"></span>
+                      download
                     </a>
                   </span>
               </span>
@@ -91,66 +91,7 @@
       </tbody>
     </table>
 
-    <p>For mass modification or deletion of uploaded files please use the Contents page</p>
-
-   <div tal:define="actions view/content_actions" id="upload_listing_buttons">
-      <span tal:replace="structure context/@@authenticator/authenticator"/>
-      <tal:action repeat="action actions">
-        <button tal:attributes="value action/title;
-                           name action/url;
-                           class python:action.get('context') and 'btn btn-%s' % action['context'] or 'btn btn-default'"
-                type="submit">
-          <span tal:attributes="class string:glyphicon glyphicon-${action/icon}" />
-          <tal:btn content="action/title" />
-        </button>
-      </tal:action>
-    </div>
-    <input type="hidden" name="orig_template" id="orig_template" value="upload" />
-
-    <script type="text/javascript">
-      $('#toggler').toggle(
-            function() {
-                $('input[name*="paths:list"]').attr('checked', 'checked');
-                $('#toggler').val('Uncheck all');
-            },
-            function() {
-                $('input[name*="paths:list"]').attr('checked', null);
-                $('#toggler').val('Check all');
-            }
-        );
-
-      $(document).ready(function()
-          {
-            $('#upload_listing tr:odd').addClass("odd");
-            $.tablesorter.addParser({
-                id: 'fileunits',
-                is: function(s) {
-                    return false;
-                },
-                format: function(s) {
-                    data = s.split(' ')
-                    val = parseFloat(data[0]);
-                    unit = data[1].toLowerCase();
-                    conversions = {'b':1,
-                                   'kb':1024,
-                                   'mb':Math.pow(1024,2),
-                                   'gb':Math.pow(1024,3),
-                                   'tb':Math.pow(1024,4)}
-                    return val*conversions[unit];
-                },
-                // set type, either numeric or text
-                type: 'numeric'
-            });
-            $('#upload_listing').tablesorter({
-                                       headers: {0:{sorter:false},3:{sorter:'shortDate'},4:{sorter:'fileunits'}},
-                                       sortList: [[3,0]] }).bind("sortEnd", function(){
-              $('#upload_listing tr:odd').addClass("odd");
-              $('#upload_listing tr:even').removeClass("odd");
-              }
-            );
-          }
-      );
-    </script>
+    <p>For mass modification or deletion of uploaded files please use the <a tal:attributes="href string:${context/absolute_url}/folder_contents">Contents</a> page</p>
 
     <div metal:use-macro="context/batch_macros/macros/navigation" />
 

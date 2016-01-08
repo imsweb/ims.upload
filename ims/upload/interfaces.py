@@ -43,3 +43,7 @@ class IChunkSettings(form.Schema):
                      title = _(u"Chunk size"),
                      description = _(u"Size of each chunk in upload"),
                      )
+  hijack = schema.Bool(
+                     title = _(u"Override 'Add New' menu"),
+                     description = _(u"If true, adding Files and Images will instead redirect to @@upload"),
+                     )

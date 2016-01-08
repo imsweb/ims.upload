@@ -24,7 +24,7 @@ function build_chunks() {
                                .append(descriptor)
                                .append(' ]')
                                .append(' &mdash; created on ' + chunk.date)
-        delbutton = $('<a>').attr('href',chunk.url+'/@@delete?_authenticator='+$('_authenticator').val())
+        delbutton = $('<a>').attr('href',chunk.url+'/@@delete?_authenticator='+$('#_authenticator').val())
                             .text('Delete')
                             .addClass('btn btn-danger delete');
         if ($('#can_delete')) {
