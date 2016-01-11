@@ -110,6 +110,7 @@
       </div>
 
       <noscript>JavaScript has been disabled or is not supported by your browser. JavaScript must be enabled to upload files.</noscript>
+      <input type="hidden" id="upload-marker" value="marker" />
 
       <script type="text/javascript">
         $(document).ready(function() {

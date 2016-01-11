@@ -42,13 +42,16 @@ function build_chunks() {
 }
 
 function refreshlisting() {
-  // build listing of partial uploads, build listing of completed uploads, toggle upload/cancel all buttons
-  build_chunks();
-  $("#upload-folder-listing").load("@@unchunk-listing",function(responseTxt,statusTxt,xhr){
-    if(statusTxt=="error")
-      $('#upload-chunks-listing').html("Error updating content listing: "+xhr.status+": "+xhr.statusText);
-  });
-  refresh_buttons();
+  if ( $('#upload-marker') ) {
+
+    // build listing of partial uploads, build listing of completed uploads, toggle upload/cancel all buttons
+    build_chunks();
+    $("#upload-folder-listing").load("@@unchunk-listing",function(responseTxt,statusTxt,xhr){
+      if(statusTxt=="error")
+        $('#upload-chunks-listing').html("Error updating content listing: "+xhr.status+": "+xhr.statusText);
+    });
+    refresh_buttons();
+  }
 }
 
 function refresh_buttons() {
