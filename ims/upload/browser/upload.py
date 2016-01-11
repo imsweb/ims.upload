@@ -29,7 +29,7 @@ import re
 bad_id=re.compile(r'[^a-zA-Z0-9-_~,.$\(\)# @]').search
 def clean_file_name(file_name):
   while bad_id(file_name):
-    file_name = su(file_name).replace( bad_id(su(file_name)).group(), u'_')
+    file_name = utils.safe_unicode(file_name).replace( bad_id(utils.safe_unicode(file_name)).group(), u'_')
   non_underscore = re.search(r'[^_]', file_name)
   if non_underscore:
     return file_name[non_underscore.start():]
