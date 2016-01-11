@@ -95,8 +95,6 @@
 
       <data id="chunksize" tal:attributes="data view/chunksize" />
 
-      <script tal:attributes="src string:${portal_url}/++resource++ims.upload/upload.js"></script>
-
       <div id="folder-contents" style="display:none;">
         <h3>Files in process or aborted</h3>
         <div id="upload-chunks-listing">

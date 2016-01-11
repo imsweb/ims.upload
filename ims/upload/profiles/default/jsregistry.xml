@@ -15,4 +15,6 @@
     enabled="True" expression="" id="++resource++ims.upload/blueimp/js/jquery.validate.js" inline="False"/>
  <javascript cacheable="True" compression="none" cookable="True"
     enabled="True" expression="" id="++resource++ims.upload/blueimp/js/jquery.ui.js" inline="False"/>
+ <javascript cacheable="True" compression="none" cookable="True"
+    enabled="True" expression="" id="++resource++ims.upload/upload.js" inline="False"/>
 </object>
