@@ -26,8 +26,8 @@ grok.templatedir('.')
 import re
 bad_id=re.compile(r'[^a-zA-Z0-9-_~,.$\(\)# @]').search
 def clean_file_name(file_name):
-  while bad_id(file_name):
-    file_name = su(file_name).replace( bad_id(su(file_name)).group(), u'_')
+  while bad_id(su(file_name)):
+    file_name = su(file_name).replace( bad_id(su(file_name)).group(), u'_' )
   return file_name
 
 class ChunkUploadView(grok.View):
