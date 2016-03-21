@@ -116,6 +116,15 @@ function resumify(ele,data) {
     });
 }
 
+function update_name(file_name) {
+  // strip out leading underscores
+  while (file_name && file_name.startsWith('_')) {
+    file_name = file_name.slice(1);
+  }
+
+  return file_name;
+}
+
 function get_current_files() {
   // get all completed files
   var filenames = new Array();
@@ -128,6 +137,7 @@ function get_current_files() {
 
 function get_chunk_for_file(file_name) {
   // for a given file name, see if we have a partially uploaded version
+
   contents = $('#upload-chunks-listing a')
   for (i=0;i<contents.length;i++) {
     var full_url = $(contents[i]).attr('href');
@@ -225,7 +235,8 @@ $(function () {
                     .append(' ')
                     .append(cancelButton.clone(true).data(data));
                 // check if we have a partially uploaded file of the same name
-                if (get_chunk_for_file(file.name)) {
+                var file_name = update_name(file.name);
+                if (get_chunk_for_file(file_name)) {
                   $.getJSON(file.name+'_chunk/chunk-check').done(function(result) {
                     data.uploadedBytes = result.uploadedBytes;
                     // check size of the file to be uploaded against file on server's intended size
@@ -241,7 +252,7 @@ $(function () {
                   });
                 }
                 // check if we have a completed upload of the same name
-                else if ($.inArray(file.name,get_current_files()) != -1) {
+                else if ($.inArray(file_name,get_current_files()) != -1) {
                   node.append($('<span class="text-danger"/>').text(' WARNING - file already exists and will be overwritten'));
                 }
             }
