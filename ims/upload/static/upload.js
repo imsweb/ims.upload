@@ -118,7 +118,7 @@ function resumify(ele,data) {
 
 function update_name(file_name) {
   // strip out leading underscores
-  while (file_name && file_name.startsWith('_')) {
+  while (file_name && file_name[0] == '_') {
     file_name = file_name.slice(1);
   }
 

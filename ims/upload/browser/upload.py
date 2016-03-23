@@ -39,6 +39,9 @@ class ChunkUploadView(grok.View):
     grok.template('upload')
     listing = ViewPageTemplateFile("listing.pt")
 
+    def upload_v(self):
+      return '1.5.5'
+
     def contents_table(self,context='',request=''):
       if not context:
         context=self.context
