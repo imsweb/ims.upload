@@ -4,6 +4,7 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:grok="http://namespaces.zope.org/grok"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="ims.upload">
 
   <include file="permissions.zcml" />
@@ -35,6 +36,19 @@
         handler=".upgrade.to_1_5"
         profile="ims.upload:default"
     />
+
+  <adapter
+      for="plone.app.blob.interfaces.IATBlob"
+      provides=".transformable.ITransformIndexable"
+      factory=".transformable.TransformIndexable" />
+  <adapter
+      zcml:condition="installed plone.app.contenttypes"
+      for="plone.app.contenttypes.interfaces.IFile"
+      provides=".transformable.ITransformIndexable"
+      factory=".transformable.TransformIndexable" />
+
+  <adapter factory=".indexes.transformableIndexer"
+           name="transform_indexable" />
 
   <class class="Products.ATContentTypes.content.folder.ATFolder">
     <implements interface=".interfaces.IUploadCapable" />

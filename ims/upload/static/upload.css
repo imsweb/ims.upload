@@ -167,3 +167,7 @@ input.buttonToggler:hover {
 #activity_table tbody tr.odd td {
     background: none repeat scroll 0 0 #EEEEEE;
 }
+
+.searchable_content_header {
+  text-align: center;
+}

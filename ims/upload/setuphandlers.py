@@ -19,3 +19,12 @@ def setup_various(context):
     # redo the workflow step to allow in GroupSpaces
     setup.runImportStepFromProfile('profile-Products.GroupSpace:default', 'workflow')
     pw.updateRoleMappings()
+  set_indexes(portal)
+
+def set_indexes(portal):
+  catalog = getToolByName(portal,'portal_catalog')
+  metadata_defs = ('transform_indexable',)
+
+  for metadata in metadata_defs:
+    if not metadata in catalog.schema():
+      catalog.addColumn(metadata)

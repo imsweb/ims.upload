@@ -32,6 +32,7 @@
           <th class="borderedHeader">Creator</th>
           <th class="borderedHeader">Modified Date</th>
           <th class="borderedHeader">File Size</th>
+          <th class="borderedHeader">Searchable*</th>
         </tr>
       </thead>
       <tbody>
@@ -90,12 +91,19 @@
               </tal:modified>
             </td>
             <td tal:content="item/getObjSize"/>
+            <td class="searchable_content_header">
+              <img tal:attributes="src string:${portal_url}/confirm_icon.png"
+                   tal:condition="item/transform_indexable"
+                   alt="File contents are searchable" />
+            </td>
           </tr>
           </metal:block>
         </tal:block>
         </tal:entry>
       </tbody>
     </table>
+
+    <p class="discreet">* = Indicates that the contents of the file are searchable.</p>
 
     <div tal:define="actions view/content_actions">
       <tal:action repeat="action actions">
