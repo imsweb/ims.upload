@@ -27,4 +27,6 @@ class TransformIndexable(object):
           return False
         source = field.getContentType(self.context)
         mimetype = 'text/plain'
+        if source == mimetype:
+          return True
         return bool(transforms._findPath(source, mimetype))

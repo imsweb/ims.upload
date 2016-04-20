@@ -5,5 +5,8 @@ from ims.upload.transformable import ITransformIndexable
 
 @indexer(Interface)
 def transformableIndexer(obj):
-  adapter = ITransformIndexable(obj)
+  try:
+    adapter = ITransformIndexable(obj)
+  except TypeError: # not transformable, ignore
+    return
   return adapter.can_transform()
