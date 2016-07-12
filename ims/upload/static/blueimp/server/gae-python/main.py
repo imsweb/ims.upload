@@ -17,7 +17,7 @@ import re
 import urllib
 import webapp2
 
-DEBUG=os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
+DEBUG = os.environ.get('SERVER_SOFTWARE', '').startswith('Dev')
 WEBSITE = 'https://blueimp.github.io/jQuery-File-Upload/'
 MIN_FILE_SIZE = 1  # bytes
 # Max file size is memcache limit (1MB) minus key size minus overhead:
@@ -26,13 +26,16 @@ IMAGE_TYPES = re.compile('image/(gif|p?jpeg|(x-)?png)')
 ACCEPT_FILE_TYPES = IMAGE_TYPES
 THUMB_MAX_WIDTH = 80
 THUMB_MAX_HEIGHT = 80
-THUMB_SUFFIX = '.'+str(THUMB_MAX_WIDTH)+'x'+str(THUMB_MAX_HEIGHT)+'.png'
+THUMB_SUFFIX = '.' + str(THUMB_MAX_WIDTH) + 'x' + \
+    str(THUMB_MAX_HEIGHT) + '.png'
 EXPIRATION_TIME = 300  # seconds
 # If set to None, only allow redirects to the referer protocol+host.
 # Set to a regexp for custom pattern matching against the redirect value:
 REDIRECT_ALLOW_TARGET = None
 
+
 class CORSHandler(webapp2.RequestHandler):
+
     def cors(self):
         headers = self.response.headers
         headers['Access-Control-Allow-Origin'] = '*'
@@ -51,7 +54,9 @@ class CORSHandler(webapp2.RequestHandler):
     def options(self, *args, **kwargs):
         pass
 
+
 class UploadHandler(CORSHandler):
+
     def validate(self, file):
         if file['size'] < MIN_FILE_SIZE:
             file['error'] = 'File is too small'
@@ -89,7 +94,7 @@ class UploadHandler(CORSHandler):
             '/' + urllib.quote(info['name'].encode('utf-8'), '')
         try:
             memcache.set(key, data, time=EXPIRATION_TIME)
-        except: #Failed to add to memcache
+        except:  # Failed to add to memcache
             return (None, None)
         thumbnail_key = None
         if IMAGE_TYPES.match(info['type']):
@@ -106,7 +111,7 @@ class UploadHandler(CORSHandler):
                     thumbnail_data,
                     time=EXPIRATION_TIME
                 )
-            except: #Failed to resize Image or add to memcache
+            except:  # Failed to resize Image or add to memcache
                 thumbnail_key = None
         return (key, thumbnail_key)
 
@@ -130,7 +135,7 @@ class UploadHandler(CORSHandler):
                     result['deleteType'] = 'DELETE'
                     if thumbnail_key is not None:
                         result['thumbnailUrl'] = self.request.host_url +\
-                             '/' + thumbnail_key
+                            '/' + thumbnail_key
                 else:
                     result['error'] = 'Failed to store uploaded file.'
             results.append(result)
@@ -156,7 +161,9 @@ class UploadHandler(CORSHandler):
             self.response.headers['Content-Type'] = 'application/json'
         self.response.write(s)
 
+
 class FileHandler(CORSHandler):
+
     def normalize(self, str):
         return urllib.quote(urllib.unquote(str), '')
 
