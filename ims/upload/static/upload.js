@@ -99,6 +99,11 @@ function abortize(ele,data) {
     });
 }
 
+function xhr_support() {
+  var xhr = new XMLHttpRequest();
+  return !! (xhr && ('upload' in xhr) && ('onprogress' in xhr.upload));
+}
+
 function resumify(ele,data) {
   // replace a button with a resume function
   ele.off('click')
@@ -150,22 +155,53 @@ function update_progress(data) {
   $('#progress .progress-bar').html('&nbsp;' + progress + '%');
 }
 
-// assign event for upload all
-$('#uploadAll').click(function() {
-  $('#files button.singular').click();
-});
+$(document).ready(function() {
+    // assign event for upload all
+    $('#uploadAll').click(function() {
+      $('#files button.singular').click();
+    });
 
-// assign event for clear all
-$('#clearAll').click(function() {
-  $('#files div button').each(function (){
-    var $this = $(this),
-        data = $this.data();
-    abortize($this,data);
-  });
-  $('#files div').remove();
-  $('#progress .progress-bar').css('width','0%');
-  $('#progress .progress-bar').text('');
-  refreshlisting();
+    // assign event for clear all
+    $('#clearAll').click(function() {
+      $('#files div button').each(function (){
+        var $this = $(this),
+            data = $this.data();
+        abortize($this,data);
+      });
+      $('#files div').remove();
+      $('#progress .progress-bar').css('width','0%');
+      $('#progress .progress-bar').text('');
+      refreshlisting();
+    });
+
+    $(document).bind('dragover', function (e) {
+        var dropZone = $('#dropzone'),
+            timeout = window.dropZoneTimeout;
+        if (!timeout) {
+            dropZone.addClass('in');
+        } else {
+            clearTimeout(timeout);
+        }
+        var found = false,
+            node = e.target;
+        do {
+            if (node === dropZone[0]) {
+                found = true;
+                break;
+            }
+            node = node.parentNode;
+        } while (node != null);
+        if (found) {
+            dropZone.addClass('hover');
+        } else {
+            dropZone.removeClass('hover');
+        }
+        window.dropZoneTimeout = setTimeout(function () {
+            window.dropZoneTimeout = null;
+            dropZone.removeClass('in hover');
+        }, 100);
+    });
+    refresh_buttons(); // initial button load
 });
 
 $(function () {
@@ -329,37 +365,3 @@ $(function () {
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
 });
 
-refresh_buttons(); // initial button load
-
-function xhr_support() {
-  var xhr = new XMLHttpRequest();
-  return !! (xhr && ('upload' in xhr) && ('onprogress' in xhr.upload));
-}
-
-$(document).bind('dragover', function (e) {
-    var dropZone = $('#dropzone'),
-        timeout = window.dropZoneTimeout;
-    if (!timeout) {
-        dropZone.addClass('in');
-    } else {
-        clearTimeout(timeout);
-    }
-    var found = false,
-        node = e.target;
-    do {
-        if (node === dropZone[0]) {
-            found = true;
-            break;
-        }
-        node = node.parentNode;
-    } while (node != null);
-    if (found) {
-        dropZone.addClass('hover');
-    } else {
-        dropZone.removeClass('hover');
-    }
-    window.dropZoneTimeout = setTimeout(function () {
-        window.dropZoneTimeout = null;
-        dropZone.removeClass('in hover');
-    }, 100);
-});

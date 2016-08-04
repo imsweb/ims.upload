@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <object name="portal_javascripts" meta_type="JavaScripts Registry">
-
  <javascript cacheable="True" compression="none" cookable="True"
-    enabled="True" expression="" id="++resource++ims.upload/jquery.tablesorter.min.js" inline="False"/>
+    enabled="True" expression="" id="++resource++ims.upload/blueimp/js/load-image.js" inline="False"/>
+ <javascript cacheable="True" compression="none" cookable="True"
+    enabled="True" expression="" id="++resource++ims.upload/blueimp/js/canvas-to-blob.min.js" inline="False"/>
  <javascript cacheable="True" compression="none" cookable="True"
     enabled="True" expression="" id="++resource++ims.upload/blueimp/js/jquery.iframe-transport.js" inline="False"/>
  <javascript cacheable="True" compression="none" cookable="True"

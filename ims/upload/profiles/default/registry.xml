@@ -1,8 +1,21 @@
 <registry>
-  <record field="chunksize" interface="ims.upload.interfaces.IChunkSettings" name="ims.upload.interfaces.IChunkSettings.chunksize">
-    <value>10000000</value>
-  </record>
-  <record field="hijack" interface="ims.upload.interfaces.IChunkSettings" name="ims.upload.interfaces.IChunkSettings.hijack">
-    <value>True</value>
-  </record>
+    <record field="chunksize" interface="ims.upload.interfaces.IChunkSettings" name="ims.upload.interfaces.IChunkSettings.chunksize">
+        <value>10000000</value>
+    </record>
+    <record field="hijack" interface="ims.upload.interfaces.IChunkSettings" name="ims.upload.interfaces.IChunkSettings.hijack">
+        <value>True</value>
+    </record>
+    <records prefix="plone.bundles/plone-legacy"
+             interface='Products.CMFPlone.interfaces.IBundleRegistry'>
+        <value key="merge_with"></value>
+        <value key="resources" purge="false">
+            <element>jquery-highlightsearchterms</element>
+        </value>
+        <value key="depends">plone</value>
+        <value key="jscompilation">++plone++static/plone-legacy-compiled.js</value>
+        <value key="csscompilation">++plone++static/plone-legacy-compiled.css</value>
+        <value key="last_compilation">2014-08-14 00:00:00</value>
+        <value key="compile">False</value>
+        <value key="enabled">True</value>
+    </records>
 </registry>

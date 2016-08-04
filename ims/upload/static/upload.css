@@ -10,7 +10,7 @@
   margin-top: 1em;
   margin-bottom: 1em;
   padding-left: 20px;
-  background: no-repeat transparent url('++resource++ims.upload/help.png');
+  background: no-repeat transparent url('../../++resource++ims.upload/help.png');
 }
 
 #contentview-upload .icon-upload:before {
