@@ -321,10 +321,7 @@ class UploadActionGuards(BrowserView):
                 [i for i in _allowedTypes(self.request, self.context) if i.id in ('Image', 'File')]]
 
     def is_upload_supported(self):
-        for guard in self.guards:
-            if not guard:
-                return False
-        return True
+        return all(self.guards)
 
     def is_upload_supported_details(self):
         return self.guards
