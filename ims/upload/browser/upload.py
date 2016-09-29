@@ -14,7 +14,7 @@ from Products.statusmessages.interfaces import IStatusMessage
 from tempfile import NamedTemporaryFile
 from zope.component import getAllUtilitiesRegisteredFor, getUtility, getMultiAdapter
 
-from ims.upload import _, QUIET
+from ims.upload import _, QUIET, UPLOAD_TMP_DIR
 from ims.upload.tools import _printable_size
 from ims.upload.interfaces import IChunkSettings, IFileMutator, IUploadCapable, IChunkedFile
 
@@ -76,7 +76,7 @@ class ChunkUploadView(grok.View):
 
 def mergeChunks(context, cf, file_name):
     chunks = sorted(cf.objectValues(),key=lambda term: term.startbyte)
-    tmpfile = NamedTemporaryFile(mode='w',delete='false')
+    tmpfile = NamedTemporaryFile(mode='w',delete='false',dir=UPLOAD_TMP_DIR)
     tname = tmpfile.name
     tmpfile.close()
     counter = 1
@@ -88,6 +88,7 @@ def mergeChunks(context, cf, file_name):
       tmpfile = open(tname,'a')
       tmpfile.write(chunk.file.data)
       tmpfile.close()
+    import pdb; pdb.set_trace()
     tmpfile = open(tname,'r')
     if not QUIET:
       logger.info('Merging complete, writing to disk')
