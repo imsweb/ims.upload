@@ -88,7 +88,6 @@ def mergeChunks(context, cf, file_name):
       tmpfile = open(tname,'a')
       tmpfile.write(chunk.file.data)
       tmpfile.close()
-    import pdb; pdb.set_trace()
     tmpfile = open(tname,'r')
     if not QUIET:
       logger.info('Merging complete, writing to disk')
