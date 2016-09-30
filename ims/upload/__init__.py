@@ -3,4 +3,4 @@ _ = MessageFactory('ims.upload')
 
 QUIET = True # for printing log info
 import os
-UPLOAD_TMP_DIR = os.environ.get(UPLOAD_TMP_DIR) or None
+UPLOAD_TMP_DIR = os.environ.get('UPLOAD_TMP_DIR') or None
