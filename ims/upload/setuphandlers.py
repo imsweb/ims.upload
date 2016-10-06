@@ -15,14 +15,14 @@ def setup_various(context):
     setup = plone.api.portal.get_tool('portal_setup')
     pw = plone.api.portal.get_tool('portal_workflow')
     if qi.isProductInstalled('CRNTracker'):
-        # redo the workflow step to allow in GroupSpaces
+        # redo the workflow step to allow in CRNTracker
         setup.runImportStepFromProfile(
             'profile-Products.CRNTracker:default', 'workflow')
         pw.updateRoleMappings()
-    elif qi.isProductInstalled('GroupSpace'):
+    elif qi.isProductInstalled('ims.groupspace'):
         # redo the workflow step to allow in GroupSpaces
         setup.runImportStepFromProfile(
-            'profile-Products.GroupSpace:default', 'workflow')
+            'profile-ims.groupspace:default', 'workflow')
         pw.updateRoleMappings()
 
     #build_bundle(portal)

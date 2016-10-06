@@ -7,11 +7,12 @@ from plone.app.content.browser.folderfactories import _allowedTypes
 from plone.app.content.interfaces import IStructureAction
 from plone.app.content.utils import json_dumps
 from plone.rfc822.interfaces import IPrimaryFieldInfo
+from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.CMFPlone.interfaces.controlpanel import IMailSchema
 from Products.CMFPlone import utils
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from zope.component import getAllUtilitiesRegisteredFor, getUtility, getUtilitiesFor, getMultiAdapter
+from zope.component import getAllUtilitiesRegisteredFor, getUtility, getUtilitiesFor, getMultiAdapter, ComponentLookupError
 from zope.component.hooks import getSite
 from zope.i18n import translate
 
@@ -266,8 +267,6 @@ class UnchunkedListing(BrowserView):
             utility = Utility(self.context, self.request)
             actions.append(utility)
         actions.sort(key=lambda a: a.order)
-        import pdb
-        pdb.set_trace()
         # if not a.get_options().get('form')]
         return [a.get_options() for a in actions]
 
@@ -315,9 +314,19 @@ class UploadActionGuards(BrowserView):
 
     @property
     def guards(self):
+        immediately_addable = True
+        context_state = getMultiAdapter(
+            (aq_inner(self.context), self.request), name=u'plone_context_state')
+        container = context_state.folder()
+        try:
+            constraint = ISelectableConstrainTypes(container)
+            immediately_addable = 'File' in constraint.getImmediatelyAddableTypes()
+        except TypeError:
+            pass
+
         return [plone.api.user.has_permission('Add portal content', obj=self.context),
-                plone.api.user.has_permission(
-                    'ATContentTypes: Add File', obj=self.context),
+                plone.api.user.has_permission('ATContentTypes: Add File', obj=self.context),
+                immediately_addable,
                 [i for i in _allowedTypes(self.request, self.context) if i.id in ('Image', 'File')]]
 
     def is_upload_supported(self):
