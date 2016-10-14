@@ -19,12 +19,11 @@
     </metal:css>
   </head>
 
-  <div metal:fill-slot="content-title">
-    <h1>Upload Files to <span tal:replace="context/title|string:Folder" /></h1>
-  </div>
+  <body metal:fill-slot="main">
+    <h1 class="documentFirstHeading">Upload Files to <span tal:replace="context/title|string:Folder" /></h1>
 
-  <body>
-    <div metal:fill-slot="content-core"
+    <div tal:replace="structure provider:plone.abovecontentbody" tal:condition="not:ajax_load" />
+    <div id="content-core"
          tal:define="portal context/@@plone_portal_state/portal">
       <br>
       <input id="can_delete" name="can_delete" type="hidden" tal:attributes="value view/can_delete" />

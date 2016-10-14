@@ -173,3 +173,23 @@ input.buttonToggler:hover {
 #activity_table tbody tr.odd td {
     background: none repeat scroll 0 0 #EEEEEE;
 }
+
+#portal-header .btn-default {
+    background-color: #e5e5e5;
+    border-color: #b2b2b2;
+    color: #4d4d4d;
+    -moz-user-select: none;
+    background-image: none;
+    border-radius: 2px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.42857;
+    margin-bottom: 0;
+    padding: 6px 12px;
+    text-align: center;
+    text-shadow: 0 1px rgba(0, 0, 0, 0.25);
+    vertical-align: middle;
+    white-space: nowrap;
+}
