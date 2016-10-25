@@ -1,70 +1,65 @@
 <configure
-    xmlns="http://namespaces.zope.org/zope"
-    xmlns:i18n="http://namespaces.zope.org/i18n"
-    xmlns:browser="http://namespaces.zope.org/browser"
-    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    xmlns:zcml="http://namespaces.zope.org/zcml"
-    i18n_domain="ims.upload">
+        xmlns="http://namespaces.zope.org/zope"
+        xmlns:i18n="http://namespaces.zope.org/i18n"
+        xmlns:browser="http://namespaces.zope.org/browser"
+        xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+        xmlns:zcml="http://namespaces.zope.org/zcml"
+        i18n_domain="ims.upload">
 
-  <include file="permissions.zcml" />
+    <include file="permissions.zcml"/>
 
-  <include package=".browser" />
+    <include package=".browser"/>
 
-  <genericsetup:registerProfile
-      name="default"
-      title="ims.upload"
-      directory="profiles/default"
-      description="Installs the ims.upload package"
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      />
+    <genericsetup:registerProfile
+            name="default"
+            title="ims.upload"
+            directory="profiles/default"
+            description="Installs the ims.upload package"
+            provides="Products.GenericSetup.interfaces.EXTENSION"/>
 
-  <genericsetup:importStep
-      name="ims.upload"
-      title="ims.upload after install"
-      description=""
-      handler="ims.upload.setuphandlers.setup_various"
-      />
+    <genericsetup:importStep
+            name="ims.upload"
+            title="ims.upload after install"
+            description=""
+            handler="ims.upload.setuphandlers.setup_various"/>
 
-  <genericsetup:upgradeStep
-        title="Upgrade ims.upload to 1.5"
-        description="Adds change password action"
-        source="*"
-        destination="0150"
-        handler=".upgrade.to_1_5"
-        profile="ims.upload:default"
-    />
+    <genericsetup:upgradeStep
+            title="Upgrade ims.upload to 1.5"
+            description="Adds better upload action conditions"
+            source="*"
+            destination="0150"
+            handler=".upgrade.to_1_5"
+            profile="ims.upload:default"/>
 
-  <adapter
-      for="plone.app.blob.interfaces.IATBlob"
-      provides=".transformable.ITransformIndexable"
-      factory=".transformable.TransformIndexable" />
-  <adapter
-      zcml:condition="installed plone.app.contenttypes"
-      for="plone.app.contenttypes.interfaces.IFile"
-      provides=".transformable.ITransformIndexable"
-      factory=".transformable.TransformIndexable" />
+    <adapter for="plone.app.blob.interfaces.IATBlob"
+             provides=".transformable.ITransformIndexable"
+             factory=".transformable.TransformIndexable"/>
+    <adapter zcml:condition="installed plone.app.contenttypes"
+             for="plone.app.contenttypes.interfaces.IFile"
+             provides=".transformable.ITransformIndexable"
+             factory=".transformable.TransformIndexable"/>
 
-  <adapter factory=".indexes.transformableIndexer"
-           name="transform_indexable" />
+    <adapter factory=".indexes.transformableIndexer"
+             name="transform_indexable"/>
 
-  <class class="Products.ATContentTypes.content.folder.ATFolder">
-    <implements interface=".interfaces.IUploadCapable" />
-  </class>
+    <class class="Products.ATContentTypes.content.folder.ATFolder">
+        <implements interface=".interfaces.IUploadCapable"/>
+    </class>
 
-  <class class="Products.ATContentTypes.content.folder.ATBTreeFolder">
-    <implements interface=".interfaces.IUploadCapable" />
-  </class>
+    <class class="Products.ATContentTypes.content.folder.ATBTreeFolder">
+        <implements interface=".interfaces.IUploadCapable"/>
+    </class>
 
-  <class class="Products.CMFPlone.Portal.PloneSite">
-    <implements interface=".interfaces.IUploadCapable" />
-  </class>
+    <class class="Products.CMFPlone.Portal.PloneSite">
+        <implements interface=".interfaces.IUploadCapable"/>
+    </class>
 
-  <class class="plone.app.contenttypes.content.Folder">
-    <implements interface=".interfaces.IUploadCapable" />
-  </class>
+    <class class="plone.app.contenttypes.content.Folder">
+        <implements interface=".interfaces.IUploadCapable"/>
+    </class>
 
-  <browser:resourceDirectory
-      name="ims.upload"
-      directory="static" />
+    <browser:resourceDirectory
+            name="ims.upload"
+            directory="static"/>
 
 </configure>

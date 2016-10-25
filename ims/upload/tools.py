@@ -1,7 +1,7 @@
 import math
 
 
-def _printable_size(fsize):
+def printable_size(fsize):
     if isinstance(fsize, str):
         fsize = float(fsize)
     if fsize == 0:

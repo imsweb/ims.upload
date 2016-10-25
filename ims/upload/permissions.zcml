@@ -1,10 +1,8 @@
-<configure
-    xmlns="http://namespaces.zope.org/zope"
-    i18n_domain="ims.entrez">
+<configure xmlns="http://namespaces.zope.org/zope"
+           i18n_domain="ims.upload">
 
     <permission
-        id="ims.upload.AddChunkedFile"
-        title="ims.upload: add chunked file"
-        />
+            id="ims.upload.AddChunkedFile"
+            title="ims.upload: add chunked file"/>
 
 </configure>

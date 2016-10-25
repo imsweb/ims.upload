@@ -1,5 +1,5 @@
-from plone.directives import form
 from plone.namedfile.field import NamedBlobFile
+from plone.supermodel import model
 from plone.theme.interfaces import IDefaultPloneLayer
 from zope import interface, schema
 
@@ -21,7 +21,7 @@ class IFileMutator(interface.Interface):
     """
 
 
-class IChunkedFile(form.Schema):
+class IChunkedFile(model.Schema):
     title = schema.TextLine(
         title=_(u'label_title', default=u'Title'),
         required=True
@@ -29,7 +29,7 @@ class IChunkedFile(form.Schema):
     targetsize = schema.TextLine(title=_(u'Target size'))
 
 
-class IChunk(form.Schema):
+class IChunk(model.Schema):
     title = schema.TextLine(
         title=_(u'label_title', default=u'Title'),
         required=True
@@ -42,7 +42,7 @@ class IChunk(form.Schema):
     endbyte = schema.Int(title=_(u'Ending byte'), required=False)
 
 
-class IChunkSettings(form.Schema):
+class IChunkSettings(model.Schema):
     """ """
     chunksize = schema.Int(
         title=_(u"Chunk size"),
@@ -52,4 +52,4 @@ class IChunkSettings(form.Schema):
         title=_(u"Override 'Add New' menu"),
         description=_(
             u"If true, adding Files and Images will instead redirect to @@upload"),
-    )  
+    )

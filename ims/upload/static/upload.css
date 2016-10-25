@@ -36,6 +36,12 @@
     text-decoration: none;
 }
 
+.template-chunkedfile-view .fileinput-button,
+.template-chunkedfile-view .filedelete-button,
+#files .btn {
+    color: #ffffff;
+}
+
 #content a.delete, #content a.delete:hover {
   font-size: 85%;
   padding: 0.5em;
@@ -142,31 +148,8 @@ input.buttonToggler:hover {
   border-left: 1px solid white !important;
 }
 
-#upload_listing th.header,
-#activity_table th.header {
-  background-color: #dddddd;
-  background-image: url("++resource++ims.upload/bg.png");
-  background-position: right center !important;
-  background-repeat: no-repeat !important;
-  color: #666666;
-  cursor: pointer;
-  text-align: center;
-  white-space:nowrap;
-  padding-right: 20px;
-  margin: 0;
-  border-style: none;
-}
-
-#upload_listing th.headerSortUp,
-#activity_table th.headerSortUp {
-  background-image: url("++resource++ims.upload/asc.png");
-  cursor: pointer;
-}
-
-#upload_listing th.headerSortDown,
-#activity_table th.headerSortDown {
-  background-image: url("++resource++ims.upload/desc.png");
-  cursor: pointer;
+.fileinput-button input {
+    color: white;
 }
 
 #upload_listing tbody tr.odd td,

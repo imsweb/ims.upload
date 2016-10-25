@@ -1,10 +1,6 @@
-import plone.api
-from plone.registry.interfaces import IRegistry
-from plone.cachepurging.interfaces import ICachePurgingSettings
-from Products.GenericSetup.registry import _import_step_registry
-from zope.component import getUtility
 import logging
-import transaction
+
+import plone.api
 
 
 def to_1_5(context, logger=None):

@@ -1,16 +1,16 @@
-from plone.dexterity.content import Item, Container
-from plone.directives.dexterity import DisplayForm
-from plone.namedfile.file import NamedBlobFile
-from plone.registry.interfaces import IRegistry
-from Products.CMFPlone.utils import safe_unicode as su
-from zope.component import getAllUtilitiesRegisteredFor, getUtility
+import logging
 import re
 
-import logging
+from Products.CMFPlone.utils import safe_unicode as su
+from plone.dexterity.content import Item, Container
+from plone.namedfile.file import NamedBlobFile
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
+
 logger = logging.getLogger('ims.upload')
 
-from ims.upload.tools import _printable_size
-from interfaces import IChunkedFile, IChunk, IChunkSettings
+from ims.upload import QUIET_UPLOAD
+from ims.upload.interfaces import IChunkSettings
 
 
 class ChunkedFile(Container):
@@ -35,7 +35,7 @@ class ChunkedFile(Container):
             sum += chunk.file.getSize()
         return sum
 
-    def addChunk(self, file_data, file_name, content_range, graceful=False):
+    def add_chunk(self, file_data, file_name, content_range, graceful=False):
         if not self.targetsize:
             self.targetsize = content_range.split('/')[-1]
         elif self.targetsize != content_range.split('/')[-1]:
@@ -44,7 +44,8 @@ class ChunkedFile(Container):
         id = content_range.replace(' ', '_').replace(
             '/', ' of ') or file_name  # just use file name if only one chunk
         if id in self.objectIds() and graceful:
-            #logger.info('Chunk already exists: %s; assume file resume' % file_name)
+            if not QUIET_UPLOAD:
+                logger.info('Chunk already exists: %s; assume file resume' % file_name)
             return
         self.invokeFactory('Chunk', id)
         chunk = self[id]
@@ -54,10 +55,11 @@ class ChunkedFile(Container):
                 'bytes ([0-9]+)-([0-9]+)', content_range).groups()
             chunk.startbyte = int(startbyte)
             chunk.endbyte = int(endbyte)
-        #logger.info('Chunk uploaded: %s; %s' % (content_range,file_name))
+            if not QUIET_UPLOAD:
+                logger.info('Chunk uploaded: %s; %s' % (content_range,file_name))
 
     def Title(self):
-        return 'Processing/Aborted - ' + self.id[:-6]  # remove _chunk from id
+        return 'Processing/Aborted - ' + self.id[:-6]  # remove "_chunk" from id
 
 
 class Chunk(Item):

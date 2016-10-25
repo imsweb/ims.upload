@@ -1,8 +1,6 @@
 import plone.api
 from plone.app.content.browser.folderfactories import FolderFactoriesView
 
-from ims.upload.interfaces import IChunkSettings
-
 
 class UploadFolderFactoriesView(FolderFactoriesView):
     """ Replaces the link for Add File dropdown with a link to our upload page """

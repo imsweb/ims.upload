@@ -1,29 +1,23 @@
 import json
+import logging
 import mimetypes
-from Acquisition import aq_inner
+import re
+
 import plone.api
-from plone.app.content.browser.file import TUS_ENABLED
-from plone.app.content.browser.folderfactories import _allowedTypes
-from plone.app.content.interfaces import IStructureAction
-from plone.app.content.utils import json_dumps
-from plone.rfc822.interfaces import IPrimaryFieldInfo
-from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
-from Products.CMFPlone.interfaces.controlpanel import IMailSchema
 from Products.CMFPlone import utils
+from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from zope.component import getAllUtilitiesRegisteredFor, getUtility, getUtilitiesFor, getMultiAdapter, ComponentLookupError
-from zope.component.hooks import getSite
-from zope.i18n import translate
+from ims.upload import _, QUIET_UPLOAD
+from ims.upload.interfaces import IFileMutator
+from ims.upload.tools import printable_size
+from plone.app.content.browser.folderfactories import _allowedTypes
+from plone.app.content.interfaces import IStructureAction
+from plone.rfc822.interfaces import IPrimaryFieldInfo
+from zope.component import getAllUtilitiesRegisteredFor, getUtilitiesFor, getMultiAdapter
 
-from ims.upload import _, QUIET
-from ims.upload.tools import _printable_size
-from ims.upload.interfaces import IChunkSettings, IFileMutator, IUploadCapable, IChunkedFile
-
-import logging
 logger = logging.getLogger('ims.upload')
 
-import re
 bad_id = re.compile(r'[^a-zA-Z0-9-_~,.$\(\)# @]').search
 
 
@@ -44,12 +38,7 @@ class ChunkUploadView(BrowserView):
     def email_from_address(self):
         return plone.api.portal.get_registry_record('plone.email_from_address')
 
-    def contents_table(self, context='', request=''):
-        if not context:
-            context = self.context
-        if not request:
-            request = self.request
-
+    def contents_table(self):
         return self.listing()
 
     def chunked_files(self):
@@ -60,7 +49,7 @@ class ChunkUploadView(BrowserView):
         chunked = []
         for obj in self.context.objectValues('ChunkedFile'):
             chunked.append({'url': obj.absolute_url(),
-                            'size': _printable_size(obj.targetsize),
+                            'size': printable_size(obj.targetsize),
                             'percent': '%.02f%%' % (obj.currsize() / float(obj.targetsize) * 100),
                             'title': obj.Title(),
                             'date': obj.CreationDate(),
@@ -92,21 +81,19 @@ def make_file(file_name, context, filedata):
     return context[file_name]
 
 
-def mergeChunks(context, cf, file_name):
+def merge_chunks(context, cf, file_name):
     chunks = sorted(cf.objectValues(), key=lambda term: term.startbyte)
-    counter = 1
 
     nf = make_file(file_name, context, filedata='')
     primary_field = IPrimaryFieldInfo(nf)
 
-    data = None
     primary_field.value._setData(
         ''.join([chunk.file.data for chunk in chunks]))
     nf.reindexObject()
 
     _file_name = file_name + '_chunk'
     context.manage_delObjects([_file_name])
-    if not QUIET:
+    if not QUIET_UPLOAD:
         logger.info('Upload complete')
     return nf.absolute_url()
 
@@ -123,7 +110,6 @@ class ChunkedUpload(BrowserView):
         file_name = clean_file_name(file_name)
         _file_name = file_name + '_chunk'
 
-        chunk_size = self.request['CONTENT_LENGTH']
         content_range = self.request['HTTP_CONTENT_RANGE']
 
         content_type = mimetypes.guess_type(file_name)[0] or ""
@@ -138,13 +124,13 @@ class ChunkedUpload(BrowserView):
             if file_data:
                 if _file_name in self.context.objectIds():
                     cf = self.context[_file_name]
-                    cf.addChunk(file_data, file_name,
-                                content_range, graceful=True)
+                    cf.add_chunk(file_data, file_name,
+                                 content_range, graceful=True)
                 else:
                     self.context.invokeFactory('ChunkedFile', _file_name)
                     cf = self.context[_file_name]
                     cf.title = file_name
-                    cf.addChunk(file_data, file_name, content_range)
+                    cf.add_chunk(file_data, file_name, content_range)
 
                 size = cf.currsize()
                 url = cf.absolute_url()
@@ -153,9 +139,9 @@ class ChunkedUpload(BrowserView):
                                      'url': url}
 
                 if size == max_size:
-                    if not QUIET:
+                    if not QUIET_UPLOAD:
                         logger.info('Starting chunk merger')
-                    nf_url = mergeChunks(self.context, cf, file_name)
+                    nf_url = merge_chunks(self.context, cf, file_name)
                     _files[file_name]['url'] = nf_url
         else:
             nf = make_file(file_name, self.context, file_data)
@@ -199,9 +185,7 @@ class ChunkedUploadDirect(BrowserView):
         file_name = file_data.filename
         file_name = file_name.split('/')[-1].split('\\')[-1]  # bug in old IE
         file_name = clean_file_name(file_name)
-        _file_name = file_name + '_chunk'
 
-        chunk_size = self.request['CONTENT_LENGTH']
         content_range = self.request['HTTP_CONTENT_RANGE']
 
         content_type = mimetypes.guess_type(file_name)[0] or ""
@@ -215,7 +199,7 @@ class ChunkedUploadDirect(BrowserView):
             max_size = int(content_range.split('/')[-1])
 
             if file_data:
-                self.context.addChunk(
+                self.context.add_chunk(
                     file_data, file_name, content_range, graceful=True)
 
                 size = self.context.currsize()
@@ -225,10 +209,9 @@ class ChunkedUploadDirect(BrowserView):
                                      'url': url}
 
                 if size == max_size:
-                    if not QUIET:
+                    if not QUIET_UPLOAD:
                         logger.info('Starting chunk merger')
-                    nf_url = mergeChunks(
-                        self.context.aq_parent, self.context, file_name)
+                    merge_chunks(self.context.aq_parent, self.context, file_name)
                     complete = self.context.aq_parent.absolute_url() + '/@@upload'
         return json.dumps({'files': _files.values(), 'complete': complete})
 
@@ -266,8 +249,7 @@ class UnchunkedListing(BrowserView):
         for name, Utility in getUtilitiesFor(IStructureAction):
             utility = Utility(self.context, self.request)
             actions.append(utility)
-        actions.sort(key=lambda a: a.order)
-        # if not a.get_options().get('form')]
+        actions.sort(key=lambda action: action.order)
         return [a.get_options() for a in actions]
 
     def member_info(self, creator):
@@ -285,7 +267,7 @@ class ChunkedListing(BrowserView):
             if callable(currsize):
                 currsize = currsize()
                 content.append({'url': obj.absolute_url(),
-                                'size': _printable_size(getattr(obj, 'targetsize', 0)),
+                                'size': printable_size(getattr(obj, 'targetsize', 0)),
                                 'percent': '%.02f%%' % (currsize / float(getattr(obj, 'targetsize', 0)) * 100),
                                 'title': obj.Title(),
                                 'date': plone.api.portal.get_localized_time(obj.CreationDate(), long_format=1),
@@ -301,14 +283,13 @@ class ChunkedFileDelete(BrowserView):
         parent = self.context.aq_inner.aq_parent
         parent.manage_delObjects(self.context.getId())
         plone.api.portal.show_message(
-            _(u"Partiall uploaded file successfully deleted."), self.request, type="info")
+            _(u"Partially uploaded file successfully deleted."), self.request, type="info")
         self.request.response.redirect(parent.absolute_url() + '/@@upload')
 
 
 class UploadActionGuards(BrowserView):
-
     def __init__(self, context, request):
-        super(BrowserView, self).__init__(context, request)
+        super(UploadActionGuards, self).__init__(context, request)
         request.response.setHeader('Cache-Control', 'no-cache')
         request.response.setHeader('Pragma', 'no-cache')
 
@@ -316,7 +297,7 @@ class UploadActionGuards(BrowserView):
     def guards(self):
         immediately_addable = True
         context_state = getMultiAdapter(
-            (aq_inner(self.context), self.request), name=u'plone_context_state')
+            (self.context.aq_inner, self.request), name=u'plone_context_state')
         container = context_state.folder()
         try:
             constraint = ISelectableConstrainTypes(container)
