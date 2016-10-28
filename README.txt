@@ -3,9 +3,8 @@ ims.upload
 
 
 
-A Plone implementation of the blueimp jQuery File Upload extension https://blueimp.github.io/jQuery-File-Upload/
-
-requires collective.js.jqueryui 1.10.1.2+
+A Plone implementation of chunked uploading. Implements the blueimp jQuery File Upload extension
+https://blueimp.github.io/jQuery-File-Upload/ and provides a complete backend for storing and merging chunks.
 
   - Chunked uploading for supported browsers (IE10+, Firefox, Chrome, etc)
 
@@ -18,12 +17,4 @@ requires collective.js.jqueryui 1.10.1.2+
   - Localized bootstrap styles
 
 
-Acknowledgements:
-
-  - Sebastian Tschan (blueimp) of course :)
-
-  - stripped out bootstrap styles: http://getbootstrap.com/
-
-  - jquery table sorter is from Christian Bach: http://tablesorter.com/docs/
-
-  - some icons from Mark James: http://www.famfamfam.com/lab/icons/silk/
+Tested with Plone 5 -> 5.0.5
