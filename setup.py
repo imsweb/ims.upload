@@ -4,7 +4,7 @@ version = '2.0'
 
 setup(name='ims.upload',
       version=version,
-      description="Plone implementation of the jQuery File Upload extenstion from blueimp",
+      description="Plone package for chunked uploads",
       classifiers=[
           "Framework :: Plone",
           "Programming Language :: Python",
@@ -13,7 +13,7 @@ setup(name='ims.upload',
       author='Eric Wohnlich',
       author_email='wohnlice@imsweb.com',
       url='http://git.imsweb.com/plone/ims.upload',
-      license='GPL',
+      license='MIT',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['ims'],
       include_package_data=True,
