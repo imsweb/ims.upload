@@ -306,7 +306,7 @@ class UploadActionGuards(BrowserView):
             pass
 
         return [plone.api.user.has_permission('Add portal content', obj=self.context),
-                plone.api.user.has_permission('ATContentTypes: Add File', obj=self.context),
+                plone.api.user.has_permission('plone.app.contenttypes: Add File', obj=self.context),
                 immediately_addable,
                 [i for i in _allowedTypes(self.request, self.context) if i.id in ('Image', 'File')]]
 
