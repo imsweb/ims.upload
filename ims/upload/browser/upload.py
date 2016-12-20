@@ -4,6 +4,7 @@ import mimetypes
 import re
 
 import plone.api
+from plone.dexterity.interfaces import IDexterityContainer
 from Products.CMFPlone import utils
 from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.Five import BrowserView
@@ -306,6 +307,7 @@ class UploadActionGuards(BrowserView):
             pass
 
         return [plone.api.user.has_permission('Add portal content', obj=self.context),
+                IDexterityContainer.providedBy(self.context),
                 plone.api.user.has_permission('plone.app.contenttypes: Add File', obj=self.context),
                 immediately_addable,
                 [i for i in _allowedTypes(self.request, self.context) if i.id in ('Image', 'File')]]
