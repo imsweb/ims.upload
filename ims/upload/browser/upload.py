@@ -314,6 +314,3 @@ class UploadActionGuards(BrowserView):
 
     def is_upload_supported(self):
         return all(self.guards)
-
-    def is_upload_supported_details(self):
-        return self.guards

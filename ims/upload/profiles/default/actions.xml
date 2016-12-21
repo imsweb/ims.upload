@@ -9,9 +9,6 @@
             <property name="url_expr">string:${globals_view/getCurrentFolderUrl}/@@upload</property>
             <property name="icon_expr"></property>
             <property name="available_expr">here/@@is_upload_supported</property>
-            <property name="permissions">
-                <element value="Modify portal content"/>
-            </property>
             <property name="visible">True</property>
         </object>
     </object>
