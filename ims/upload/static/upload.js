@@ -272,7 +272,7 @@ $(function () {
                       alert('Partially uploaded file size (' + printable_size(result.targetsize) + ') does not match size of selected file (' + printable_size(data.files[index].size) + ')' + '. Upload aborted.');
                       data.abort();
                       node.remove();
-                      return null;
+                      // return null;
                     }
                     var percent_complete = (result.uploadedBytes/result.targetsize*100).toFixed(2)
                     resumify(node.find('.btn-primary.singular'),data);
