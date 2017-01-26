@@ -48,6 +48,7 @@
     </records>
     <records prefix="plone.bundles/plone-legacy"
              interface='Products.CMFPlone.interfaces.IBundleRegistry'>
+        <value key="merge_with"></value> <!-- important, merging breaks somehow -->
         <value key="resources" purge="false">
             <element>blueimp.load-image</element>
             <element>blueimp.canvas-to-blob</element>
@@ -59,6 +60,11 @@
             <element>blueimp.ui</element>
             <element>ims.upload</element>
         </value>
+        <value key="depends">plone</value>
+        <value key="jscompilation">++plone++static/plone-legacy-compiled.js</value>
+        <value key="csscompilation">++plone++static/plone-legacy-compiled.css</value>
         <value key="last_compilation">2017-01-14 00:00:00</value>
+        <value key="compile">False</value>
+        <value key="enabled">True</value>
     </records>
 </registry>
