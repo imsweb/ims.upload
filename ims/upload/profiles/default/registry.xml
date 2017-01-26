@@ -7,6 +7,7 @@
             name="ims.upload.interfaces.IChunkSettings.hijack">
         <value>True</value>
     </record>
+    <!-- wtf why does this not work?
     <records prefix="plone.resources/blueimp.load-image"
              interface='Products.CMFPlone.interfaces.IResourceRegistry'>
         <value key="js">++resource++ims.upload/blueimp/js/load-image.js</value>
@@ -45,11 +46,11 @@
         <value key="css">
             <element>++resource++ims.upload/upload.css</element>
         </value>
-    </records>
+    </records> -->
     <records prefix="plone.bundles/plone-legacy"
              interface='Products.CMFPlone.interfaces.IBundleRegistry'>
         <value key="merge_with"></value> <!-- important, merging breaks somehow -->
-        <value key="resources" purge="false">
+        <!-- <value key="resources" purge="false">
             <element>blueimp.load-image</element>
             <element>blueimp.canvas-to-blob</element>
             <element>blueimp.jquery-iframe-transport</element>
@@ -59,7 +60,7 @@
             <element>blueimp.validate</element>
             <element>blueimp.ui</element>
             <element>ims.upload</element>
-        </value>
+        </value> -->
         <value key="depends">plone</value>
         <value key="jscompilation">++plone++static/plone-legacy-compiled.js</value>
         <value key="csscompilation">++plone++static/plone-legacy-compiled.css</value>

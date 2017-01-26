@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<object name="portal_javascripts" meta_type="JavaScripts Registry">
+    <javascript cacheable="True" compression="none" cookable="True"
+                enabled="True" expression="" id="++resource++ims.upload/blueimp/js/load-image.js" inline="False"/>
+    <javascript cacheable="True" compression="none" cookable="True"
+                enabled="True" expression="" id="++resource++ims.upload/blueimp/js/canvas-to-blob.min.js"
+                inline="False"/>
+    <javascript cacheable="True" compression="none" cookable="True"
+                enabled="True" expression="" id="++resource++ims.upload/blueimp/js/jquery.iframe-transport.js"
+                inline="False"/>
+    <javascript cacheable="True" compression="none" cookable="True"
+                enabled="True" expression="" id="++resource++ims.upload/blueimp/js/jquery.fileupload.js"
+                inline="False"/>
+    <javascript cacheable="True" compression="none" cookable="True"
+                enabled="True" expression="" id="++resource++ims.upload/blueimp/js/process.js" inline="False"/>
+    <javascript cacheable="True" compression="none" cookable="True"
+                enabled="True" expression="" id="++resource++ims.upload/blueimp/js/image.js" inline="False"/>
+    <javascript cacheable="True" compression="none" cookable="True"
+                enabled="True" expression="" id="++resource++ims.upload/blueimp/js/validate.js" inline="False"/>
+    <javascript cacheable="True" compression="none" cookable="True"
+                enabled="True" expression="" id="++resource++ims.upload/blueimp/js/ui.js" inline="False"/>
+    <javascript cacheable="True" compression="none" cookable="True"
+                enabled="True" expression="" id="++resource++ims.upload/upload.js" inline="False"/>
+</object>
