@@ -88,7 +88,7 @@
                 class="glyphicon glyphicon-plus" style="font-size: 70%; top: 0px;"></i> Add Files" button.</p>
 
         <!-- The global progress bar -->
-        <span class="discreet">Upload progress status:</span>
+        <span class="discreet">Upload progress:</span>
         <div id="progress" class="progress">
             <div class="progress-bar progress-bar-success"></div>
         </div>
