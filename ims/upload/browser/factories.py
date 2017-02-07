@@ -8,8 +8,10 @@ class UploadFolderFactoriesView(FolderFactoriesView):
     def addable_types(self, include=None):
         addables = super(UploadFolderFactoriesView,
                          self).addable_types(include)
-        hijack = plone.api.portal.get_registry_record(
-            'ims.upload.interfaces.IChunkSettings.hijack')
+        try:
+            hijack = plone.api.portal.get_registry_record('ims.upload.interfaces.IChunkSettings.hijack')
+        except plone.api.exc.InvalidParameterError:
+            hijack = None
 
         if hijack:
             upload_types = ('File', 'Image')
