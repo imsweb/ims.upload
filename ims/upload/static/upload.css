@@ -22,6 +22,10 @@
   display: block;
 }
 
+.searchable_content_header {
+    text-align: center;
+}
+
 .chunksize_descriptor {
   background-color: #eee;
   padding: 2px;

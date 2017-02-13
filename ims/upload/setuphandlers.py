@@ -21,3 +21,13 @@ def setup_various(context):
         setup.runImportStepFromProfile(
             'profile-ims.groupspace:default', 'workflow')
         pw.updateRoleMappings()
+    set_indexes()
+
+
+def set_indexes():
+    catalog = plone.api.portal.get_tool('portal_catalog')
+    metadata_defs = ('transform_indexable',)
+
+    for metadata in metadata_defs:
+        if not metadata in catalog.schema():
+            catalog.addColumn(metadata)

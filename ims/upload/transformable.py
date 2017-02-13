@@ -1,5 +1,5 @@
 import plone.api
-from plone.rfc822.interfaces import IPrimaryField
+from plone.rfc822.interfaces import IPrimaryFieldInfo
 from zope.interface import Interface
 
 
@@ -21,16 +21,18 @@ class TransformIndexable(object):
             transforms = plone.api.portal.get_tool('portal_transforms')
         except plone.api.exc.CannotGetPortalError:
             return False
-        field = None
+        source = None
         try:
-            field = IPrimaryField(self.context)  # dexterity
+            field = IPrimaryFieldInfo(self.context)  # dexterity
+            source = field.value.contentType
         except TypeError:
             if hasattr(self.context, 'getPrimaryField'):  # archetypes
                 field = self.context.getPrimaryField()
+                source = field.getContentType(self.context)
 
-        if not field:
+        if not source:
             return False
-        source = field.getContentType(self.context)
+
         mimetype = 'text/plain'
         if source == mimetype:
             return True

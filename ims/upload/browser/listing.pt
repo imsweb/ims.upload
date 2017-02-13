@@ -28,6 +28,7 @@
           <th class="borderedHeader">Creator</th>
           <th class="borderedHeader">Modified Date</th>
           <th class="borderedHeader">File Size</th>
+          <th class="borderedHeader">Searchable</th>
         </tr>
       </thead>
       <tbody>
@@ -79,6 +80,9 @@
               </tal:modified>
             </td>
             <td tal:content="item/getObjSize"/>
+            <td class="searchable_content_header">
+                <span tal:condition="item/transform_indexable" class="glyphicon glyphicon-check" alt="File contents are searchable"></span>
+            </td>
           </tr>
           </metal:block>
         </tal:block>
