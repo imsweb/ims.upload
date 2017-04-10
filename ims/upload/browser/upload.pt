@@ -84,11 +84,11 @@
             Clear Uploads
         </button>
 
-        <p class="draganddropdesc">Drag and drop files anywhere on the page to upload, or use the "<i
-                class="glyphicon glyphicon-plus" style="font-size: 70%; top: 0px;"></i> Add Files" button.</p>
+        <!-- <p class="draganddropdesc">Drag and drop files anywhere on the page to upload, or use the "<i
+                class="glyphicon glyphicon-plus></i> Add Files" button.</p> -->
 
         <!-- The global progress bar -->
-        <span class="discreet">Upload progress status:</span>
+        <div class="discreet">Upload progress status:</div>
         <div id="progress" class="progress">
             <div class="progress-bar progress-bar-success"></div>
         </div>

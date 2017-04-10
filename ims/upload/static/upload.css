@@ -1,34 +1,34 @@
 .upload-spinner {
-  padding-right: 0.5em;
+    padding-right: 0.5em;
 }
 
 #progress .progress-bar {
-  text-align: left !important;
+    text-align: left !important;
 }
 
 .draganddropdesc {
-  margin-top: 1em;
-  margin-bottom: 1em;
-  padding-left: 20px;
-  background: no-repeat transparent url('../../++resource++ims.upload/help.png');
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding-left: 20px;
+    background: no-repeat transparent url('../../++resource++ims.upload/help.png');
 }
 
 #contentview-upload .icon-upload:before {
-  font-family: "Glyphicons Halflings";
-  content: "\e027";
+    font-family: "Glyphicons Halflings";
+    content: "\e027";
 }
 
 .file-fail {
-  display: block;
+    display: block;
 }
 
 .chunksize_descriptor {
-  background-color: #eee;
-  padding: 2px;
+    background-color: #eee;
+    padding: 2px;
 }
 
 .filedelete-button {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 .fileinput-button:hover, .fileinput-button:focus {
@@ -43,9 +43,9 @@
 }
 
 #content a.delete, #content a.delete:hover {
-  font-size: 85%;
-  padding: 0.5em;
-  color: white;
+    font-size: 85%;
+    padding: 0.5em;
+    color: white;
 }
 
 #content ul#chunked_listing {
@@ -56,96 +56,104 @@
 }
 
 #upload-folder-listing p {
-  padding-top: 1em;
+    padding-top: 1em;
 }
 
 /* add menu drop down */
-#chunkedfile { display: none !important; }
+#chunkedfile {
+    display: none !important;
+}
 
-.container { max-width: 100%; padding-left:0; padding-right:0}
+.container {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0
+}
 
 .contenttype-chunkedfile {
-  background: no-repeat transparent url('++resource++ims.upload/error.png');
-  padding-left: 20px !important;
-  padding-right: auto !important;
-  display: inline-block;
-  line-height: 2em;
+    background: no-repeat transparent url('++resource++ims.upload/error.png');
+    padding-left: 20px !important;
+    padding-right: auto !important;
+    display: inline-block;
+    line-height: 2em;
 }
 
 #chunked_listing .contenttype-chunkedfile {
-  line-height: 1.5em;
+    line-height: 1.5em;
 }
 
 span.glyphicon-ok {
-  color: #5CB85C !important;
+    color: #5CB85C !important;
 }
 
 span.glyphicon-remove {
-  color: #FF0000 !important;
+    color: #FF0000 !important;
 }
 
 #chunked_listing li a {
-  border-bottom: none !important;
+    border-bottom: none !important;
 }
 
 #chunked_listing li a span {
-  border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
 }
 
 #dropzone {
     display: none;
 }
-#dropzone.in {
-    display: block;
-    opacity:0.6;
-    position:fixed;
-    width: 100%;
-    height: 100%;
-    font-size: 300%;
-    text-align: center;
-    font-weight: bold;
-    color: black;
-    top:0px;
-    left:0px;
-    z-index:1000;
-    padding-top: 10%;
-}
-#dropzone.hover {
-    background: #ccc;
-}
-#dropzone.fade {
-}
 
+/*#dropzone.in {*/
+    /*display: block;*/
+    /*opacity: 0.6;*/
+    /*position: fixed;*/
+    /*width: 100%;*/
+    /*height: 100%;*/
+    /*font-size: 300%;*/
+    /*text-align: center;*/
+    /*font-weight: bold;*/
+    /*color: black;*/
+    /*top: 0px;*/
+    /*left: 0px;*/
+    /*z-index: 1000;*/
+    /*padding-top: 10%;*/
+/*}*/
+
+/*#dropzone.hover {*/
+    /*background: #ccc;*/
+/*}*/
+
+/*#dropzone.fade {*/
+/*}*/
 
 /* from dataexchange for now */
 
 #upload_listing th {
-  background-color: #dddddd;
+    background-color: #dddddd;
 }
 
 input.buttonToggler {
-  background: none;
-  border-style: none;
-  color: #205C90 !important;
+    background: none;
+    border-style: none;
+    color: #205C90 !important;
 }
 
 input.buttonToggler:hover {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 #upload_listing .summary a {
-  text-decoration: none;
-  border-bottom: 0.1em solid #ccc;
+    text-decoration: none;
+    border-bottom: 0.1em solid #ccc;
 }
 
 #upload_listing td, #upload_listing th,
 #activity_table td, #activity_table th {
-  padding: 0.5em 1em;
-  border-style: none;
+    padding: 0.5em 1em;
+    border-style: none;
 }
 
 #upload_listing th.borderedHeader {
-  border-left: 1px solid white !important;
+    border-left: 1px solid white !important;
 }
 
 .fileinput-button input {
