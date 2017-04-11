@@ -6,22 +6,6 @@
       i18n:domain="ims.upload"
       metal:use-macro="here/main_template/macros/master">
 
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <metal:css fill-slot="style_slot">
-        <link rel="stylesheet" type="text/css" media="screen"
-              tal:attributes="href string:${portal_url}/++resource++ims.upload/css/bootstrap.css">
-        <link rel="stylesheet" type="text/css" media="screen"
-              tal:attributes="href string:${portal_url}/++resource++ims.upload/css/bootstrap-theme.css">
-
-        <link rel="stylesheet"
-              tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload.css">
-        <!-- fix me! <noscript><link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload-noscript.css"></noscript>
-        <noscript><link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload-ui-noscript.css"></noscript> -->
-    </metal:css>
-</head>
-
 <body metal:fill-slot="main">
 <h1 class="documentFirstHeading">Upload Files to <span tal:replace="context/title|string:Folder"/></h1>
 
@@ -84,8 +68,11 @@
             Clear Uploads
         </button>
 
-        <!-- <p class="draganddropdesc">Drag and drop files anywhere on the page to upload, or use the "<i
-                class="glyphicon glyphicon-plus></i> Add Files" button.</p> -->
+        <p class="draganddropdesc">
+            <i class="glyphicon glyphicon-question-sign"></i>
+            Drag and drop files anywhere on the page to upload, or use the
+            "<i class="glyphicon glyphicon-plus"></i>Add Files" button.
+        </p>
 
         <!-- The global progress bar -->
         <div class="discreet">Upload progress status:</div>
@@ -118,21 +105,6 @@
         files.
     </noscript>
     <input type="hidden" id="upload-marker" value="marker"/>
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-          $.ajaxSetup({ cache: false });
-          $('#folder-contents').toggle();
-          if (xhr_support()) {
-            $('.uploadForm').toggle();
-          }
-          else {
-            $('#fileupload-chunkless-container').toggle();
-          }
-          refreshlisting()
-        });
-
-    </script>
 </div>
 
 </body>

@@ -7,17 +7,27 @@
             name="ims.upload.interfaces.IChunkSettings.hijack">
         <value>True</value>
     </record>
+    <records prefix="plone.resources/jquery-fileupload"
+             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+        <value key="js">++resource++ims.upload/jquery.fileupload.js</value>
+        <value key="css">
+            <element>++resource++ims.upload/jquery.fileupload.css</element>
+        </value>
+    </records>
+    <records prefix="plone.resources/ims-upload"
+             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+        <value key="js">++resource++ims.upload/upload.js</value>
+        <value key="css">
+            <element>++resource++ims.upload/bootstrap.css</element>
+            <element>++resource++ims.upload/bootstrap-theme.css</element>
+            <element>++resource++ims.upload/upload.css</element>
+        </value>
+    </records>
     <records prefix="plone.bundles/plone-legacy"
              interface='Products.CMFPlone.interfaces.IBundleRegistry'>
-        <value key="merge_with"></value>
-        <value key="resources" purge="false">
-            <element>jquery-highlightsearchterms</element>
+        <value key="resources" purge="False">
+            <element>jquery-fileupload</element>
+            <element>ims-upload</element>
         </value>
-        <value key="depends">plone</value>
-        <value key="jscompilation">++plone++static/plone-legacy-compiled.js</value>
-        <value key="csscompilation">++plone++static/plone-legacy-compiled.css</value>
-        <value key="last_compilation">2014-08-14 00:00:00</value>
-        <value key="compile">False</value>
-        <value key="enabled">True</value>
     </records>
 </registry>
