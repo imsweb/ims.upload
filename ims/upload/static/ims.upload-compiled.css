@@ -1,84 +1,106 @@
+/* line 2, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 .upload-spinner {
   padding-right: 0.5em;
 }
+/* line 6, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #progress .progress-bar {
   text-align: left !important;
 }
+/* line 10, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 .draganddropdesc {
   margin-top: 1em;
   margin-bottom: 1em;
   padding-left: 20px;
 }
+/* line 16, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #contentview-upload .icon-upload:before {
   font-family: "Glyphicons Halflings";
   content: "\e027";
 }
+/* line 21, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 .file-fail {
   display: block;
 }
+/* line 25, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 .chunksize_descriptor {
   background-color: #eee;
   padding: 2px;
 }
+/* line 30, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 .filedelete-button {
   text-decoration: none;
 }
+/* line 34, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 .fileinput-button:hover,
 .fileinput-button:focus {
   color: #fff !important;
   text-decoration: none;
 }
+/* line 39, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 .template-chunkedfile-view .fileinput-button,
 .template-chunkedfile-view .filedelete-button,
 #files .btn {
   color: #ffffff;
 }
+/* line 45, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #content a.delete,
 #content a.delete:hover {
   font-size: 85%;
   padding: 0.5em;
   color: white;
 }
+/* line 51, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #content ul#chunked_listing {
   list-style-image: none;
   list-style-type: none;
   margin-left: 0px;
   padding-left: 0px;
 }
+/* line 58, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #upload-folder-listing p {
   padding-top: 1em;
 }
 /* add menu drop down */
+/* line 63, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #chunkedfile {
   display: none !important;
 }
+/* line 67, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 .container {
   max-width: 100%;
   padding-left: 0;
   padding-right: 0;
 }
+/* line 73, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #chunked_listing .glyphicon-warning-sign {
   color: #EC9923;
   padding-right: 0.25em;
 }
+/* line 77, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #chunked_listing .contenttype-chunkedfile {
   line-height: 1.5em;
 }
+/* line 81, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 span.glyphicon-ok {
   color: #5CB85C !important;
 }
+/* line 85, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 span.glyphicon-remove {
   color: #FF0000 !important;
 }
+/* line 89, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #chunked_listing li a {
   border-bottom: none !important;
 }
+/* line 93, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #chunked_listing li a span {
   border-bottom: 1px solid #ccc;
 }
+/* line 97, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #dropzone {
   display: none;
 }
+/* line 101, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #dropzone.in {
   display: block;
   opacity: 0.6;
@@ -94,25 +116,31 @@ span.glyphicon-remove {
   z-index: 1000;
   padding-top: 10%;
 }
+/* line 117, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #dropzone.hover {
   background: #ccc;
 }
 /* from dataexchange for now */
+/* line 126, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #upload_listing th {
   background-color: #dddddd;
 }
+/* line 130, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 input.buttonToggler {
   background: none;
   border-style: none;
   color: #205C90 !important;
 }
+/* line 136, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 input.buttonToggler:hover {
   cursor: pointer;
 }
+/* line 140, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #upload_listing .summary a {
   text-decoration: none;
   border-bottom: 0.1em solid #ccc;
 }
+/* line 145, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #upload_listing td,
 #upload_listing th,
 #activity_table td,
@@ -120,16 +148,20 @@ input.buttonToggler:hover {
   padding: 0.5em 1em;
   border-style: none;
 }
+/* line 151, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #upload_listing th.borderedHeader {
   border-left: 1px solid white !important;
 }
+/* line 155, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 .fileinput-button input {
   color: white;
 }
+/* line 159, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #upload_listing tbody tr.odd td,
 #activity_table tbody tr.odd td {
   background: none repeat scroll 0 0 #EEEEEE;
 }
+/* line 164, http://localhost:8081/newyork/++resource++ims.upload/upload.less */
 #portal-header .btn-default {
   background-color: #e5e5e5;
   border-color: #b2b2b2;

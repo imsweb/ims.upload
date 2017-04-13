@@ -6,7 +6,7 @@ import re
 import plone.api
 from Products.CMFPlone import utils
 from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
-from Products.CMFPlone.resources import add_bundle_on_request
+from Products.CMFPlone.resources import add_bundle_on_request, add_resource_on_request
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from ims.upload import _, QUIET_UPLOAD
@@ -36,9 +36,12 @@ class ChunkUploadView(BrowserView):
     """ Upload form page """
     listing = ViewPageTemplateFile("listing.pt")
 
-    # def __call__(self):
-    #     add_bundle_on_request(self.request, 'ims.upload')
-    #     return super(ChunkUploadView, self).__call__(self)
+    def __call__(self):
+        add_resource_on_request(self.request, 'upload-bootstrap')
+        add_bundle_on_request(self.request, 'jqueryui')
+        add_resource_on_request(self.request, 'jquery-fileupload')
+        add_resource_on_request(self.request, 'ims-upload-js')
+        return super(ChunkUploadView, self).__call__(self)
 
     def email_from_address(self):
         return plone.api.portal.get_registry_record('plone.email_from_address')

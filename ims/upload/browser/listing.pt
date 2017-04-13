@@ -49,12 +49,22 @@
           <tr>
             <td>
               <span class="summary">
-                  <a href="#"
-                     tal:attributes="href python:item_type in use_view_action and item_url+'/view' or item_url;
-                                     class string:$item_type_class $item_wf_state_class url"
-                     tal:content="item_title_or_id">
-                      Item Title
-                  </a>
+                  <tal:image omit-tag="" condition="python:item_type == 'Image'">
+                      <a href="#"
+                         tal:attributes="href string:${item_url}/view;
+                                         class string:${item_wf_state_class} url">
+                          <img tal:attributes="src string:${item_url}/@@images/image/icon"/>
+                          <span tal:content="item_title_or_id"/>
+                      </a>
+                  </tal:image>
+                  <tal:notimage omit-tag="" condition="python:item_type != 'Image'">
+                      <a href="#"
+                         tal:attributes="href python:item_type in use_view_action and item_url+'/view' or item_url;
+                                         class string:$item_type_class $item_wf_state_class url"
+                         tal:content="item_title_or_id">
+                          Item Title
+                      </a>
+                  </tal:notimage>
                   <span tal:condition="python:item_type in use_view_action">
                     &mdash;
                     <a tal:attributes="href item_url">

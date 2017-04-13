@@ -1,4 +1,5 @@
 <registry>
+    <!-- registry settings -->
     <record field="chunksize" interface="ims.upload.interfaces.IChunkSettings"
             name="ims.upload.interfaces.IChunkSettings.chunksize">
         <value>10000000</value>
@@ -7,6 +8,10 @@
             name="ims.upload.interfaces.IChunkSettings.hijack">
         <value>True</value>
     </record>
+
+    <!-- RESOURCES -->
+
+    <!-- blueimp jQuery File Upload -->
     <records prefix="plone.resources/jquery-fileupload"
              interface='Products.CMFPlone.interfaces.IResourceRegistry'>
         <value key="js">++resource++ims.upload/jquery.fileupload.js</value>
@@ -14,20 +19,45 @@
             <element>++resource++ims.upload/jquery.fileupload.css</element>
         </value>
     </records>
-    <records prefix="plone.resources/ims-upload"
+
+    <!-- custom js and css. They are going into different bundles so must be different resources -->
+    <records prefix="plone.resources/ims-upload-js"
              interface='Products.CMFPlone.interfaces.IResourceRegistry'>
         <value key="js">++resource++ims.upload/upload.js</value>
+    </records>
+    <records prefix="plone.resources/ims-upload-css"
+             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+        <value key="css">
+            <element>++resource++ims.upload/upload.less</element>
+        </value>
+    </records>
+
+    <!-- bootstrap theme prettiness for buttons, progress bar, etc -->
+    <records prefix="plone.resources/upload-bootstrap"
+             interface='Products.CMFPlone.interfaces.IResourceRegistry'>
         <value key="css">
             <element>++resource++ims.upload/bootstrap.css</element>
             <element>++resource++ims.upload/bootstrap-theme.css</element>
-            <element>++resource++ims.upload/upload.css</element>
         </value>
     </records>
-    <records prefix="plone.bundles/plone-legacy"
+
+
+    <!-- BUNDLES -->
+
+    <!-- custom css, on entire site -->
+    <records prefix="plone.bundles/ims.upload"
              interface='Products.CMFPlone.interfaces.IBundleRegistry'>
-        <value key="resources" purge="False">
-            <element>jquery-fileupload</element>
-            <element>ims-upload</element>
+        <value key="merge_with">default</value>
+        <value key="resources">
+            <element>ims-upload-css</element>
         </value>
+        <value key="enabled">True</value>
+        <value key="csscompilation">++resource++ims.upload/ims.upload-compiled.css</value>
+    </records>
+
+    <!-- disable globally -->
+    <records prefix="plone.bundles/jqueryui"
+             interface='Products.CMFPlone.interfaces.IBundleRegistry'>
+        <value key="enabled">False</value>
     </records>
 </registry>

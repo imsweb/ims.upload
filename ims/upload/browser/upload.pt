@@ -49,7 +49,7 @@
     </div>
     <input id="mailto" name="mailto" type="hidden" tal:attributes="value view/email_from_address"/>
 
-    <div class="uploadForm" style="display:none;">
+    <div class="uploadForm">
         <!-- The fileinput-button span is used to style the file input field as button -->
         <span class="btn btn-success fileinput-button">
             <i class="glyphicon glyphicon-plus"></i>
@@ -87,7 +87,7 @@
 
     <data id="chunksize" tal:attributes="data view/chunksize"/>
 
-    <div id="folder-contents" style="display:none;">
+    <div id="folder-contents">
         <h3>Files in process or aborted</h3>
         <div id="upload-chunks-listing">
             <img src="++plone++static/select2-spinner.gif" class="upload-spinner"/>

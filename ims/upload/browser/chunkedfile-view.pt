@@ -6,22 +6,6 @@
       i18n:domain="ims.upload"
       metal:use-macro="here/main_template/macros/master">
 
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <metal:css fill-slot="style_slot">
-        <link rel="stylesheet" type="text/css" media="screen"
-              tal:attributes="href string:${portal_url}/++resource++ims.upload/css/bootstrap.css">
-        <link rel="stylesheet" type="text/css" media="screen"
-              tal:attributes="href string:${portal_url}/++resource++ims.upload/css/bootstrap-theme.css">
-
-        <link rel="stylesheet"
-              tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload.css">
-        <!-- fix me! <noscript><link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload-noscript.css"></noscript>
-        <noscript><link rel="stylesheet" tal:attributes="href string:${portal_url}/++resource++ims.upload/blueimp/css/jquery.fileupload-ui-noscript.css"></noscript> -->
-    </metal:css>
-</head>
-
 <body>
 
 <div metal:fill-slot="content"
@@ -119,7 +103,7 @@
 
         </script>
 
-        <div tal:condition="python:checkPermission('Manage portal',context)">
+        <div tal:condition="view/can_see_chunks">
             <h2>Chunks (debug info - admin only)</h2>
             <span tal:condition="not:context/objectValues">There are no chunks.</span>
             <ul>
