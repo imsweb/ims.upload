@@ -1287,7 +1287,6 @@ $.widget('blueimp.fileupload', {
     _onDragLeave: getDragHandler('dragleave'),
 
     _initEventHandlers: function () {
-        console.log(this._on);
         if (this._isXHRUpload(this.options)) {
             this._on(this.options.dropZone, {
                 dragover: this._onDragOver,
@@ -1384,7 +1383,6 @@ $.widget('blueimp.fileupload', {
     },
 
     _create: function () {
-        console.log('help')
         this._initDataAttributes();
         this._initSpecialOptions();
         this._slots = [];

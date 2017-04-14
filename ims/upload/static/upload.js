@@ -136,9 +136,9 @@ function get_current_files() {
     var filenames = new Array();
     var contents = $('#upload-folder-listing a');
     for (var i = 0; i < contents.length; i++) {
-        filenames.push($(contents[i]).text());
+        var url_parts = $(contents[i]).attr('href').split('/');
+        filenames.push(url_parts[url_parts.length-1]);
     }
-    ;
     return filenames;
 }
 
@@ -151,7 +151,6 @@ function get_chunk_for_file(file_name) {
             return full_url;
         }
     }
-    ;
 }
 
 function update_progress(data) {
@@ -344,7 +343,6 @@ $(document).ready(function () {
         $.each(data.files, function (index, file) {
             var error_text = 'File upload failed. An unknown error has occurred.',
                 mailto = $('#mailto').val();
-            console.log(data);
             if (xhr_support()) {
                 switch (data.jqXHR.status) {
                     case 504:
