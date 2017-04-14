@@ -48,7 +48,7 @@
           <metal:block define-slot="entry">
           <tr>
             <td>
-              <span class="summary">
+              <span class="summary upload-listing-item">
                   <tal:image omit-tag="" condition="python:item_type == 'Image'">
                       <a href="#"
                          tal:attributes="href string:${item_url}/view;
