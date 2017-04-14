@@ -52,7 +52,7 @@
             <element>ims-upload-css</element>
         </value>
         <value key="enabled">True</value>
-        <value key="csscompilation">++resource++ims.upload/ims.upload.css</value>
+        <value key="csscompilation">++resource++ims.upload/upload.css</value>
     </records>
 
     <!-- disable globally -->
