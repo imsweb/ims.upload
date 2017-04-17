@@ -137,7 +137,7 @@ function get_current_files() {
     var contents = $('#upload-folder-listing a');
     for (var i = 0; i < contents.length; i++) {
         var url_parts = $(contents[i]).attr('href').split('/');
-        filenames.push(url_parts[url_parts.length-1]);
+        filenames.push(url_parts[url_parts.length - 1]);
     }
     return filenames;
 }
@@ -163,25 +163,7 @@ function update_progress(data) {
     $('#progress .progress-bar').html('&nbsp;' + progress + '%');
 }
 
-$(document).ready(function () {
-    // assign event for upload all
-    $('#uploadAll').click(function () {
-        $('#files button.singular').click();
-    });
-
-    // assign event for clear all
-    $('#clearAll').click(function () {
-        $('#files div button').each(function () {
-            var $this = $(this),
-                data = $this.data();
-            abortize($this, data);
-        });
-        $('#files div').remove();
-        $('#progress .progress-bar').css('width', '0%');
-        $('#progress .progress-bar').text('');
-        refreshlisting();
-    });
-
+function make_dropzone() {
     $(document).bind('dragover', function (e) {
         var dropZone = $('#dropzone'),
             timeout = window.dropZoneTimeout;
@@ -209,11 +191,30 @@ $(document).ready(function () {
             dropZone.removeClass('in hover');
         }, 100);
     });
-    refresh_buttons(); // initial button load
-});
-
+}
 
 $(document).ready(function () {
+    // assign event for upload all
+    $('#uploadAll').click(function () {
+        $('#files button.singular').click();
+    });
+
+    // assign event for clear all
+    $('#clearAll').click(function () {
+        $('#files div button').each(function () {
+            var $this = $(this),
+                data = $this.data();
+            abortize($this, data);
+        });
+        $('#files div').remove();
+        $('#progress .progress-bar').css('width', '0%');
+        $('#progress .progress-bar').text('');
+        refreshlisting();
+    });
+
+    make_dropzone();
+    refresh_buttons(); // initial button load
+
     var url = '@@upload-chunk',
         // upload button to be added to individual files
         uploadButton = $('<button/>')
@@ -373,5 +374,5 @@ $(document).ready(function () {
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
 
     $.ajaxSetup({cache: false});
-    refreshlisting()
+    refreshlisting();
 });
