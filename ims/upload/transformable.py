@@ -17,7 +17,10 @@ class TransformIndexable(object):
         self.context = context
 
     def can_transform(self):
-        transforms = plone.api.portal.get_tool('portal_transforms')
+        try:
+            transforms = plone.api.portal.get_tool('portal_transforms')
+        except plone.api.exc.CannotGetPortalError:
+            return  # site being imported
         field = None
         try:
             field = IPrimaryField(self.context)  # dexterity

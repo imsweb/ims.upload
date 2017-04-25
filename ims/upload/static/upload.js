@@ -127,6 +127,8 @@ function resumify(ele, data) {
                 ele.parent().find('.glyphicon').remove();               // remove x-icon
                 ele.parent().find(':contains("File upload")').remove(); // remove error text
                 abortize(ele, data);
+            }).fail(function (result) {
+                ele.text('Failed');
             });
         });
 }
@@ -354,6 +356,9 @@ $(document).ready(function () {
                         break;
                     case 0:
                         error_text = 'File upload aborted.'
+                        break;
+                    case 200: // 200 because it redirects to a login page
+                        error_text = 'File upload failed. You may not have permission to upload large files to this directory.'
                         break;
                     default:
                         error_text = 'File upload failed. Server response: ' + data.jqXHR.status + ' - ' + data.jqXHR.statusText;

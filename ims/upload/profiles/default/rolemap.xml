@@ -4,6 +4,7 @@
         <permission name="ims.upload: add chunked file" acquire="True">
             <role name="Manager"/>
             <role name="Site Administrator"/>
+            <role name="Editor"/>
         </permission>
     </permissions>
 </rolemap>
