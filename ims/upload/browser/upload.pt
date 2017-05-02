@@ -16,6 +16,7 @@
     <input id="can_delete" name="can_delete" type="hidden" tal:attributes="value view/can_delete"/>
     <div id="fileupload-chunkless-container" style="display:none;">
         <form id="fileupload-chunkless" class="uploadForm" enctype="multipart/form-data" method="POST"
+        <form id="fileupload-chunkless" class="uploadForm" enctype="multipart/form-data" method="POST"
               tal:attributes="action string:${context/absolute_url}/chunkless-upload">
 
           <span class="btn btn-primary fileupload-chunkless">
@@ -68,11 +69,11 @@
             Clear Uploads
         </button>
 
-        <p class="draganddropdesc">
-            <i class="glyphicon glyphicon-question-sign"></i>
-            Drag and drop files anywhere on the page to upload, or use the
-            "<i class="glyphicon glyphicon-plus"></i>Add Files" button.
-        </p>
+        <!--<p class="draganddropdesc">-->
+            <!--<i class="glyphicon glyphicon-question-sign"></i>-->
+            <!--Drag and drop files anywhere on the page to upload, or use the-->
+            <!--"<i class="glyphicon glyphicon-plus"></i>Add Files" button.-->
+        <!--</p>-->
 
         <!-- The global progress bar -->
         <div class="discreet">Upload progress status:</div>
