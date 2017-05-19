@@ -352,7 +352,7 @@ $(document).ready(function () {
                         error_text = 'The uploaded file is still processing and is taking longer than expected.  This happens with very large files.  Please check back in a few minutes by refreshing the page.'
                         break;
                     case 500:
-                        error_text = 'An unexpected error has occurred.  Please contact the administrator at <a href="mailto:' + mailto + '">' + mailto + '</a>.'
+                        error_text = 'An unexpected error has occurred.  You can retry your upload, or if the problem persists please contact the administrator at <a href="mailto:' + mailto + '">' + mailto + '</a>.'
                         break;
                     case 0:
                         error_text = 'File upload aborted.'
