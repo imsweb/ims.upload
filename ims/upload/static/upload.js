@@ -248,7 +248,7 @@ $(document).ready(function () {
         url: url,
         formData: {'_authenticator': $('#_authenticator').val()},
         dataType: 'json',
-        dropZone: $('#dropzone'),
+        //dropZone: $('#dropzone'),
         autoUpload: false,
         maxChunkSize: parseInt($('#chunksize').attr('data')),
         disableImageResize: /Android(?!.*Chrome)|Opera/

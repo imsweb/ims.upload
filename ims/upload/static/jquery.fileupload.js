@@ -1287,15 +1287,28 @@ $.widget('blueimp.fileupload', {
     _onDragLeave: getDragHandler('dragleave'),
 
     _initEventHandlers: function () {
+    	
+    	// Drag & Drop #67753: save this context
+    	var that = this;
+    	
         if (this._isXHRUpload(this.options)) {
             this._on(this.options.dropZone, {
                 dragover: this._onDragOver,
-                drop: this._onDrop,
+                // drop: this._onDrop, // Drag & Drop #67753: for now, disable this event handler since we'll be using addEventListener on the dropzone
                 // event.preventDefault() on dragenter is required for IE10+:
                 dragenter: this._onDragEnter,
                 // dragleave is not required, but added for completeness:
                 dragleave: this._onDragLeave
             });
+            
+            
+            // Drag & Drop #67753: make a call to the widget's own drop event handler 
+            var dropZone = this.options.dropZone[0];
+            
+            dropZone.addEventListener('drop', function(e){
+            	that._onDrop(e);
+            });
+            
             this._on(this.options.pasteZone, {
                 paste: this._onPaste
             });
