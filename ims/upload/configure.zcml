@@ -54,7 +54,7 @@
         <implements interface=".interfaces.IUploadCapable"/>
     </class>
 
-    <class class="plone.app.contenttypes.content.Folder">
+    <class class="plone.dexterity.content.Container">
         <implements interface=".interfaces.IUploadCapable"/>
     </class>
 
