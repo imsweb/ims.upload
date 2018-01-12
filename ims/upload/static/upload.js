@@ -4,33 +4,35 @@
 function build_chunks() {
     // build an unordered list from the json data
     // this is a listing of all incomplete upload chunks
+    var chunk_listing = $('#upload-chunks-listing');
+
     $.getJSON('chunk-listing').done(function (result) {
         if (result.length == 0) {
-            $('#upload-chunks-listing').append('<span>')
+            chunk_listing.append('<span>')
                 .addClass('discreet')
                 .text('There are no partially uploaded files.')
         }
         else {
-            $('#upload-chunks-listing').html('<ul>');
-            $('#upload-chunks-listing ul').attr('id', 'chunked_listing');
+            chunk_listing.html('<ul>');
+            chunk_listing.find('ul').attr('id', 'chunked_listing');
 
             $.each(result, function (index, chunk) {
                 var link = $('<a>')
                     .attr('href', chunk.url)
-                    .addClass('contenttype-' + chunk.portal_type.toLowerCase())
+                    .addClass('contenttype-' + chunk.portal_type.toLowerCase());
                 var linkicon = $('<i>')
                     .addClass('glyphicon')
                     .addClass('glyphicon-warning-sign');
-                var linktext = $('<span>').text(chunk.title)
+                var linktext = $('<span>').text(chunk.title);
                 link.append(linkicon);
                 link.append(linktext);
                 var descriptor = $('<span>').text(chunk.percent + ' of ' + chunk.size + ' completed')
-                    .addClass('chunksize_descriptor')
+                    .addClass('chunksize_descriptor');
                 var linkblock = $('<span>').append(link)
                     .append('[ ')
                     .append(descriptor)
                     .append(' ]')
-                    .append(' &mdash; created on ' + chunk.date)
+                    .append(' &mdash; created on ' + chunk.date);
                 var delbutton = $('<a>').attr('href', chunk.url + '/@@delete?_authenticator=' + $('#_authenticator').val())
                     .text('Delete')
                     .addClass('btn btn-danger delete');
@@ -42,7 +44,7 @@ function build_chunks() {
                 else {
                     var listitem = $('<li>').append(linkblock);
                 }
-                $('#upload-chunks-listing ul').append(listitem)
+                chunk_listing.find('ul').append(listitem)
             });
         }
     });
@@ -62,9 +64,10 @@ function refreshlisting() {
 }
 
 function refresh_buttons() {
-    if ($('#files div').length > 0) {
+    var files = $('#files');
+    if (files.find('div').length > 0) {
         // if it doesn't have a button it's completed - only show the clear button
-        if ($('#files div button').length > 0) {
+        if (files.find('div button').length > 0) {
             $('#uploadAll').show();
         }
         else {
@@ -79,7 +82,9 @@ function refresh_buttons() {
 }
 
 function printable_size(fsize) {
-    fsize = parseFloat(fsize);
+    if (fsize) {
+        fsize = parseFloat(fsize);
+    }
     if (fsize == 0) {
         return '0 B'
     }
@@ -99,7 +104,7 @@ function abortize(ele, data) {
     ele.off('click')
         .text('Abort')
         .on('click', function () {
-            uploaded = data._progress.loaded;
+            var uploaded = data._progress.loaded;
             ele.closest('p').find('img').remove();
             data.abort();
             resumify(ele, data, uploaded);
@@ -119,15 +124,15 @@ function resumify(ele, data) {
         .prop('disabled', false)
         .on('click', function () {
             // get the starting size when we hit click, so we can resume on that byte
-            ele.text('Processing...')
-            chunk_name = get_chunk_for_file(data.files[0].name) || data.files[0].name + '_chunk'
+            ele.text('Processing...');
+            var chunk_name = get_chunk_for_file(data.files[0].name) || data.files[0].name + '_chunk';
             $.getJSON(chunk_name + '/chunk-check').done(function (result) {
                 data.uploadedBytes = result.uploadedBytes;
                 data.submit();
                 ele.parent().find('.glyphicon').remove();               // remove x-icon
                 ele.parent().find(':contains("File upload")').remove(); // remove error text
                 abortize(ele, data);
-            }).fail(function (result) {
+            }).fail(function () {
                 ele.text('Failed');
             });
         });
@@ -135,8 +140,8 @@ function resumify(ele, data) {
 
 function get_current_files() {
     // get all completed files
-    var filenames = new Array();
-    var contents = $('#upload-folder-listing a');
+    var filenames = [];
+    var contents = $('#upload-folder-listing').find('a');
     for (var i = 0; i < contents.length; i++) {
         var url_parts = $(contents[i]).attr('href').split('/');
         filenames.push(url_parts[url_parts.length - 1]);
@@ -146,7 +151,7 @@ function get_current_files() {
 
 function get_chunk_for_file(file_name) {
     // for a given file name, see if we have a partially uploaded version
-    var contents = $('#upload-chunks-listing a');
+    var contents = $('#upload-chunks-listing').find('a');
     for (var i = 0; i < contents.length; i++) {
         var full_url = $(contents[i]).attr('href');
         if (full_url.split('/').pop() == file_name + '_chunk') {
@@ -157,12 +162,14 @@ function get_chunk_for_file(file_name) {
 
 function update_progress(data) {
     // update the progress bar
-    var progress = parseInt(data.loaded / data.total * 100, 10);
-    $('#progress .progress-bar').css(
+    var progress = parseInt(data.loaded / data.total * 100, 10),
+        progressEl = $('#progress');
+
+    progressEl.find('.progress-bar').css(
         'width',
         progress + '%'
     );
-    $('#progress .progress-bar').html('&nbsp;' + progress + '%');
+    progressEl.find('.progress-bar').html('&nbsp;' + progress + '%');
 }
 
 function make_dropzone() {
@@ -197,20 +204,22 @@ function make_dropzone() {
 
 $(document).ready(function () {
     // assign event for upload all
+    var filesEl = $('#files'),
+        progressel = $('#progress');
     $('#uploadAll').click(function () {
-        $('#files button.singular').click();
+        filesEl.find('button.singular').click();
     });
 
     // assign event for clear all
     $('#clearAll').click(function () {
-        $('#files div button').each(function () {
+        filesEl.find('div button').each(function () {
             var $this = $(this),
                 data = $this.data();
             abortize($this, data);
         });
-        $('#files div').remove();
-        $('#progress .progress-bar').css('width', '0%');
-        $('#progress .progress-bar').text('');
+        filesEl.find('div').remove();
+        progressel.find('.progress-bar').css('width', '0%');
+        progressel.find('.progress-bar').text('');
         refreshlisting();
     });
 
@@ -283,7 +292,7 @@ $(document).ready(function () {
                             node.remove();
                             return null;
                         }
-                        var percent_complete = (result.uploadedBytes / result.targetsize * 100).toFixed(2)
+                        var percent_complete = (result.uploadedBytes / result.targetsize * 100).toFixed(2);
                         resumify(node.find('.btn-primary.singular'), data);
                         node.append($('<span class="text-danger"/>').text(' A file with this name is ' + percent_complete + '% uploaded.'));
                     });
@@ -349,16 +358,16 @@ $(document).ready(function () {
             if (xhr_support()) {
                 switch (data.jqXHR.status) {
                     case 504:
-                        error_text = 'The uploaded file is still processing and is taking longer than expected.  This happens with very large files.  Please check back in a few minutes by refreshing the page.'
+                        error_text = 'The uploaded file is still processing and is taking longer than expected.  This happens with very large files.  Please check back in a few minutes by refreshing the page.';
                         break;
                     case 500:
-                        error_text = 'An unexpected error has occurred.  You can retry your upload, or if the problem persists please contact the administrator at <a href="mailto:' + mailto + '">' + mailto + '</a>.'
+                        error_text = 'An unexpected error has occurred.  You can retry your upload, or if the problem persists please contact the administrator at <a href="mailto:' + mailto + '">' + mailto + '</a>.';
                         break;
                     case 0:
-                        error_text = 'File upload aborted.'
+                        error_text = 'File upload aborted.';
                         break;
                     case 200: // 200 because it redirects to a login page
-                        error_text = 'File upload failed. You may not have permission to upload large files to this directory.'
+                        error_text = 'File upload failed. You may not have permission to upload large files to this directory.';
                         break;
                     default:
                         error_text = 'File upload failed. Server response: ' + data.jqXHR.status + ' - ' + data.jqXHR.statusText;
