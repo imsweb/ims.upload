@@ -1,10 +1,19 @@
 from setuptools import setup, find_packages
+import os
 
 version = '2.2.1'
+
+
+def read(*rnames):
+    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
+
+
+long_description = (read('README.rst'))
 
 setup(name='ims.upload',
       version=version,
       description="Plone package for chunked uploads",
+      long_description=long_description,
       classifiers=[
           "Framework :: Plone :: 5.0",
           "Framework :: Plone :: 5.1",
