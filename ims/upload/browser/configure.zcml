@@ -1,9 +1,7 @@
 <configure
-    xmlns="http://namespaces.zope.org/zope"
-    xmlns:five="http://namespaces.zope.org/five"
-    xmlns:browser="http://namespaces.zope.org/browser"
-    xmlns:zcml="http://namespaces.zope.org/zcml"
-    i18n_domain="ims.upload">
+        xmlns="http://namespaces.zope.org/zope"
+        xmlns:browser="http://namespaces.zope.org/browser"
+        i18n_domain="ims.upload">
 
     <browser:page
         for="*"
@@ -27,7 +25,7 @@
         name="upload"
         class=".upload.ChunkUploadView"
         template="upload.pt"
-        permission="zope.Public"
+        permission="cmf.AddPortalContent"
         />
 
     <browser:page

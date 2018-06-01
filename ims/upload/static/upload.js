@@ -255,6 +255,8 @@ $(document).ready(function () {
     $('#fileupload').fileupload({
         // main fileupload
         url: url,
+        maxRetries: 100,
+        retryTimeout: 500,
         formData: {'_authenticator': $('#_authenticator').val()},
         dataType: 'json',
         //dropZone: $('#dropzone'),
