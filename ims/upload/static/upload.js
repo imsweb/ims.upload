@@ -300,7 +300,7 @@ $(document).ready(function () {
                     });
                 }
                 // check if we have a completed upload of the same name
-                else if ($.inArray(file.name, get_current_files()) != -1) {
+                else if ($.inArray(encodeURIComponent(file.name), get_current_files()) != -1) {
                     node.append($('<span class="text-danger"/>').text(' WARNING - file already exists and will be overwritten'));
                 }
             }
