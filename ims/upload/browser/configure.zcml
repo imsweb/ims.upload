@@ -30,6 +30,13 @@
 
     <browser:page
         for="ims.upload.interfaces.IUploadCapable"
+        name="upload-description"
+        template="description.pt"
+        permission="cmf.AddPortalContent"
+        />
+
+    <browser:page
+        for="ims.upload.interfaces.IUploadCapable"
         name="upload-chunk"
         class=".upload.ChunkedUpload"
         attribute="render"

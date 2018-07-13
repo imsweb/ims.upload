@@ -8,6 +8,7 @@
 
 <body metal:fill-slot="main">
 <h1 class="documentFirstHeading">Upload Files to <span tal:replace="context/title|string:Folder"/></h1>
+<div tal:replace="structure context/@@upload-description"></div>
 
 <div tal:replace="structure provider:plone.abovecontentbody" tal:condition="not:ajax_load"/>
 <div id="content-core"
@@ -15,7 +16,6 @@
     <br>
     <input id="can_delete" name="can_delete" type="hidden" tal:attributes="value view/can_delete"/>
     <div id="fileupload-chunkless-container" style="display:none;">
-        <form id="fileupload-chunkless" class="uploadForm" enctype="multipart/form-data" method="POST"
         <form id="fileupload-chunkless" class="uploadForm" enctype="multipart/form-data" method="POST"
               tal:attributes="action string:${context/absolute_url}/chunkless-upload">
 
