@@ -8,7 +8,6 @@
 
 <body metal:fill-slot="main">
 <h1 class="documentFirstHeading">Upload Files to <span tal:replace="context/title|string:Folder"/></h1>
-<div tal:replace="structure context/@@upload-description"></div>
 
 <div tal:replace="structure provider:plone.abovecontentbody" tal:condition="not:ajax_load"/>
 <div id="content-core"
@@ -73,6 +72,8 @@
             Drag and drop files anywhere on the page to upload, or use the
             "<i class="glyphicon glyphicon-plus"></i>Add Files" button.
         </p>
+
+        <p tal:replace="structure context/@@upload-description"></p>
 
         <!-- The global progress bar -->
         <div class="discreet">Upload progress status:</div>
