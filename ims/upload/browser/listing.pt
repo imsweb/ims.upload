@@ -1,5 +1,5 @@
 <metal:listingmacro define-macro="listing">
-<tal:foldercontents define="contentFilter contentFilter|request/contentFilter|nothing;
+    <tal:foldercontents define="contentFilter contentFilter|request/contentFilter|nothing;
                     contentFilter python:contentFilter and dict(contentFilter) or {};
                     limit_display limit_display|request/limit_display|nothing;
                     limit_display python:limit_display and int(limit_display) or None;
@@ -19,20 +19,20 @@
                     pas_member context/@@pas_member;
                     portal_state context/@@plone_portal_state;
                     portal_url portal_state/portal_url;
-                    plone_view context/@@plone;">
-<tal:listing condition="batch">
-    <table class="tablesorter" metal:define-slot="entries" id="upload_listing">
-      <thead>
-        <tr>
-          <th class="borderedHeader">File</th>
-          <th class="borderedHeader">Creator</th>
-          <th class="borderedHeader">Modified Date</th>
-          <th class="borderedHeader">File Size</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tal:entry tal:repeat="item folderContents" metal:define-macro="entries">
-        <tal:block tal:define="item_url item/getURL|item/absolute_url;
+                    plone_layout nocall:context/@@plone_layout">
+        <tal:listing condition="batch">
+            <table class="tablesorter" metal:define-slot="entries" id="upload_listing">
+                <thead>
+                <tr>
+                    <th class="borderedHeader">File</th>
+                    <th class="borderedHeader">Creator</th>
+                    <th class="borderedHeader">Modified Date</th>
+                    <th class="borderedHeader">File Size</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tal:entry tal:repeat="item folderContents" metal:define-macro="entries">
+                    <tal:block tal:define="item_url item/getURL|item/absolute_url;
                                item_id item/getId|item/id;
                                item_title_or_id item/pretty_title_or_id;
                                item_description item/Description;
@@ -40,14 +40,14 @@
                                item_type_title item/Type;
                                item_modified item/ModificationDate;
                                item_created item/CreationDate;
-                               item_icon python:plone_view.getIcon(item);
+                               item_icon python:plone_layout.getIcon(item);
                                item_type_class python:'contenttype-' + normalizeString(item_type);
                                item_wf_state item/review_state|python: context.portal_workflow.getInfoFor(item, 'review_state', '');
                                item_wf_state_class python:'state-' + normalizeString(item_wf_state);
                                item_creator item/Creator;">
-          <metal:block define-slot="entry">
-          <tr>
-            <td>
+                        <metal:block define-slot="entry">
+                            <tr>
+                                <td>
               <span class="summary upload-listing-item">
                   <tal:image omit-tag="" condition="python:item_type == 'Image'">
                       <a href="#"
@@ -67,47 +67,48 @@
                   </tal:notimage>
                   <span tal:condition="python:item_type in use_view_action">
                     &mdash;
-                    <a tal:attributes="href item_url">
+                      <a tal:attributes="href item_url">
                       <span class="glyphicon glyphicon-download"></span>
                       download
                     </a>
                   </span>
               </span>
-            </td>
-            <td>
+                                </td>
+                                <td>
               <span class="documentByLine"
                     tal:condition="item_creator"
                     tal:define="author python:view.member_info(item_creator);"
                     tal:content="python: author and author['fullname'] or item_creator"
-                    tal:omit-tag="not:author" />
-            </td>
-            <td>
-              <tal:modified>
+                    tal:omit-tag="not:author"/>
+                                </td>
+                                <td>
+                                    <tal:modified>
                   <span tal:replace="python:toLocalizedTime(item_modified,long_format=1)">
                     August 16, 2001 at 23:35:59
                   </span>
-              </tal:modified>
-            </td>
-            <td tal:content="item/getObjSize"/>
-          </tr>
-          </metal:block>
-        </tal:block>
-        </tal:entry>
-      </tbody>
-    </table>
+                                    </tal:modified>
+                                </td>
+                                <td tal:content="item/getObjSize"/>
+                            </tr>
+                        </metal:block>
+                    </tal:block>
+                </tal:entry>
+                </tbody>
+            </table>
 
-    <p>For mass modification or deletion of uploaded files please use the <a tal:attributes="href string:${context/absolute_url}/folder_contents">Contents</a> page</p>
+            <p>For mass modification or deletion of uploaded files please use the <a
+                    tal:attributes="href string:${context/absolute_url}/folder_contents">Contents</a> page</p>
 
-    <div metal:use-macro="context/batch_macros/macros/navigation" />
+            <div metal:use-macro="context/batch_macros/macros/navigation"/>
 
-</tal:listing>
-<metal:empty metal:define-slot="no_items_in_listing">
-    <p class="discreet"
-       tal:condition="not: folderContents"
-       i18n:translate="description_no_items_in_folder">
-        There are currently no other items.
-    </p>
-</metal:empty>
+        </tal:listing>
+        <metal:empty metal:define-slot="no_items_in_listing">
+            <p class="discreet"
+               tal:condition="not: folderContents"
+               i18n:translate="description_no_items_in_folder">
+                There are currently no other items.
+            </p>
+        </metal:empty>
 
-</tal:foldercontents>
+    </tal:foldercontents>
 </metal:listingmacro>
