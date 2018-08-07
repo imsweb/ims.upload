@@ -96,8 +96,8 @@
                 </tbody>
             </table>
 
-            <p>For mass modification or deletion of uploaded files please use the <a
-                    tal:attributes="href string:${context/absolute_url}/folder_contents">Contents</a> page</p>
+            <p>For mass modification or deletion of uploaded files please use the
+                <a tal:attributes="href string:${context/absolute_url}/folder_contents">Contents</a> page</p>
 
             <div metal:use-macro="context/batch_macros/macros/navigation"/>
 
