@@ -2,8 +2,9 @@ import json
 import logging
 import mimetypes
 import re
+import tempfile
 
-import plone.api
+import plone.api as api
 from Products.CMFPlone import utils
 from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.CMFPlone.resources import add_bundle_on_request, add_resource_on_request
@@ -44,7 +45,7 @@ class ChunkUploadView(BrowserView):
         return super(ChunkUploadView, self).__call__(self)
 
     def email_from_address(self):
-        return plone.api.portal.get_registry_record('plone.email_from_address')
+        return api.portal.get_registry_record('plone.email_from_address')
 
     def contents_table(self):
         return self.listing()
@@ -66,21 +67,21 @@ class ChunkUploadView(BrowserView):
         return chunked
 
     def chunksize(self):
-        return plone.api.portal.get_registry_record('ims.upload.interfaces.IChunkSettings.chunksize')
+        return api.portal.get_registry_record('ims.upload.interfaces.IChunkSettings.chunksize')
 
     def can_delete(self):
-        return plone.api.user.has_permission('Manage delete objects', obj=self.context)
+        return api.user.has_permission('Manage delete objects', obj=self.context)
 
 
 def make_file(file_name, context, filedata):
     if file_name not in context.objectIds():
-        ctr = plone.api.portal.get_tool('content_type_registry')
-        pt = plone.api.portal.get_tool('portal_types')
+        ctr = api.portal.get_tool('content_type_registry')
+        pt = api.portal.get_tool('portal_types')
         content_type = ctr.findTypeName(file_name.lower(), '', '') or 'File'
         # force file
         if content_type == 'Document' or not pt.getTypeInfo(context).allowType(content_type):
             content_type = 'File'
-        obj = plone.api.content.create(
+        obj = api.content.create(
             container=context, type=content_type, id=file_name, title=file_name)
         primary_field = IPrimaryFieldInfo(obj)
         setattr(obj, primary_field.fieldname, primary_field.field._type(
@@ -94,9 +95,18 @@ def merge_chunks(context, cf, file_name):
 
     nf = make_file(file_name, context, filedata='')
     primary_field = IPrimaryFieldInfo(nf)
+    tf = tempfile.NamedTemporaryFile(mode='w+b', delete=False)
+    temp_name = tf.name
+    for chunk in chunks:
+        tf.write(chunk.file.data)
+    tf.close()
 
-    primary_field.value._setData(
-        ''.join([chunk.file.data for chunk in chunks]))
+    # See plone.namedfile.file.NamedBlobFile and NamedImageFile. _setData will find a storable and store the blob
+    # We want a closed file, which will let it select FileDescriptorStorable in _setData. This storable passes the file
+    # location to blob.consumeFile which will convert it to blob form. See https://squishlist.com/ims/plone/68427
+    with open(temp_name) as closed_file:
+        pass
+    primary_field.value._setData(closed_file)
     nf.reindexObject()
 
     _file_name = file_name + '_chunk'
@@ -230,7 +240,7 @@ class ChunklessUploadView(BrowserView):
     def render(self):
         _file = self.request.form.get('files[]')
         if not _file:
-            plone.api.portal.show_message(
+            api.portal.show_message(
                 _(u"You must select a file."), self.request, type="error")
             return self.request.response.redirect(self.context.absolute_url() + '/@@upload')
 
@@ -238,12 +248,12 @@ class ChunklessUploadView(BrowserView):
         file_name = _file.filename.split('\\')[-1]
         file_name = clean_file_name(file_name)
         if file_name in self.context.objectIds():
-            plone.api.portal.show_message(
+            api.portal.show_message(
                 _(u"A file with that name already exists"), self.request, type="errors")
             return self.request.response.redirect(self.context.absolute_url() + '/@@upload')
         else:
             make_file(file_name, self.context, _file)
-            plone.api.portal.show_message(
+            api.portal.show_message(
                 _(u"File successfully uploaded."), self.request, type="info")
             return self.request.response.redirect(self.context.absolute_url() + '/@@upload')
 
@@ -278,7 +288,7 @@ class ChunkedListing(BrowserView):
                                 'size': printable_size(getattr(obj, 'targetsize', 0)),
                                 'percent': '%.02f%%' % (currsize / float(getattr(obj, 'targetsize', 0)) * 100),
                                 'title': obj.Title(),
-                                'date': plone.api.portal.get_localized_time(obj.CreationDate(), long_format=1),
+                                'date': api.portal.get_localized_time(obj.CreationDate(), long_format=1),
                                 'portal_type': obj.portal_type,
                                 })
         return json.dumps(content)
@@ -290,7 +300,7 @@ class ChunkedFileDelete(BrowserView):
     def render(self):
         parent = self.context.aq_inner.aq_parent
         parent.manage_delObjects(self.context.getId())
-        plone.api.portal.show_message(
+        api.portal.show_message(
             _(u"Partially uploaded file successfully deleted."), self.request, type="info")
         self.request.response.redirect(parent.absolute_url() + '/@@upload')
 
@@ -313,8 +323,8 @@ class UploadActionGuards(BrowserView):
         except TypeError:
             pass
 
-        return [plone.api.user.has_permission('Add portal content', obj=self.context),
-                plone.api.user.has_permission('ATContentTypes: Add File', obj=self.context),
+        return [api.user.has_permission('Add portal content', obj=self.context),
+                api.user.has_permission('ATContentTypes: Add File', obj=self.context),
                 immediately_addable,
                 [i for i in _allowedTypes(self.request, self.context) if i.id in ('Image', 'File')]]
 
