@@ -247,10 +247,7 @@ $(document).ready(function () {
                 $this.closest('div').remove();
                 refreshlisting();
                 update_progress(data);
-            }),
-        spinner = $('<img>')
-            .attr('src', '++plone++static/select2-spinner.gif')
-            .addClass('upload-spinner');
+            });
 
     $('#fileupload').fileupload({
         // main fileupload
