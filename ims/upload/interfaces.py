@@ -52,4 +52,5 @@ class IChunkSettings(model.Schema):
         title=_(u"Override 'Add New' menu"),
         description=_(
             u"If true, adding Files and Images will instead redirect to @@upload"),
+        required=False,
     )
