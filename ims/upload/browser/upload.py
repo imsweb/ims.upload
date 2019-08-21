@@ -95,7 +95,7 @@ def merge_chunks(context, cf, file_name):
 
     nf = make_file(file_name, context, filedata='')
     primary_field = IPrimaryFieldInfo(nf)
-    tf = tempfile.NamedTemporaryFile(mode='w+b', delete=False)
+    tf = tempfile.NamedTemporaryFile(mode='wb', delete=False)
     temp_name = tf.name
     for chunk in chunks:
         tf.write(chunk.file.data)
@@ -104,7 +104,7 @@ def merge_chunks(context, cf, file_name):
     # See plone.namedfile.file.NamedBlobFile and NamedImageFile. _setData will find a storable and store the blob
     # We want a closed file, which will let it select FileDescriptorStorable in _setData. This storable passes the file
     # location to blob.consumeFile which will convert it to blob form. See https://squishlist.com/ims/plone/68427
-    with open(temp_name) as closed_file:
+    with open(temp_name, 'rb') as closed_file:
         pass
     primary_field.value._setData(closed_file)
     nf.reindexObject()
