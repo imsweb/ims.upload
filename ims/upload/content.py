@@ -1,7 +1,6 @@
 import logging
 import re
 
-from Products.CMFPlone.utils import safe_unicode as su
 from plone.dexterity.content import Item, Container
 from plone.namedfile.file import NamedBlobFile
 from plone.registry.interfaces import IRegistry
@@ -49,7 +48,7 @@ class ChunkedFile(Container):
             return
         self.invokeFactory('Chunk', id)
         chunk = self[id]
-        chunk.file = NamedBlobFile(file_data.read(), filename=su(file_name))
+        chunk.file = NamedBlobFile(file_data.read(), filename=file_name)
         if content_range:  # might be a lone chunk
             startbyte, endbyte = re.match(
                 'bytes ([0-9]+)-([0-9]+)', content_range).groups()
