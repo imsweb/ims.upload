@@ -1,7 +1,8 @@
 import plone.api
 from Products.CMFPlone.resources import add_bundle_on_request, add_resource_on_request
 from Products.Five import BrowserView
-from ims.upload.tools import printable_size
+
+from ..tools import printable_size
 
 
 class ChunkView(BrowserView):

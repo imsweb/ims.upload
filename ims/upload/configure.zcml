@@ -31,9 +31,6 @@
             handler=".upgrade.to_1_5"
             profile="ims.upload:default"/>
 
-    <adapter for="plone.app.blob.interfaces.IATBlob"
-             provides=".transformable.ITransformIndexable"
-             factory=".transformable.TransformIndexable"/>
     <adapter zcml:condition="installed plone.app.contenttypes"
              for="plone.app.contenttypes.interfaces.IFile"
              provides=".transformable.ITransformIndexable"
@@ -41,14 +38,6 @@
 
     <adapter factory=".indexes.transformableIndexer"
              name="transform_indexable"/>
-
-    <class class="Products.ATContentTypes.content.folder.ATFolder">
-        <implements interface=".interfaces.IUploadCapable"/>
-    </class>
-
-    <class class="Products.ATContentTypes.content.folder.ATBTreeFolder">
-        <implements interface=".interfaces.IUploadCapable"/>
-    </class>
 
     <class class="Products.CMFPlone.Portal.PloneSite">
         <implements interface=".interfaces.IUploadCapable"/>

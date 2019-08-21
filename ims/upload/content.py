@@ -9,8 +9,8 @@ from zope.component import getUtility
 
 logger = logging.getLogger('ims.upload')
 
-from ims.upload import QUIET_UPLOAD
-from ims.upload.interfaces import IChunkSettings
+from . import QUIET_UPLOAD
+from .interfaces import IChunkSettings
 
 
 class ChunkedFile(Container):
@@ -56,7 +56,7 @@ class ChunkedFile(Container):
             chunk.startbyte = int(startbyte)
             chunk.endbyte = int(endbyte)
             if not QUIET_UPLOAD:
-                logger.info('Chunk uploaded: %s; %s' % (content_range,file_name))
+                logger.info('Chunk uploaded: %s; %s' % (content_range, file_name))
 
     def Title(self):
         return 'Processing/Aborted - ' + self.id[:-6]  # remove "_chunk" from id

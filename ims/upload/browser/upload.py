@@ -10,13 +10,14 @@ from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.CMFPlone.resources import add_bundle_on_request, add_resource_on_request
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from ims.upload import _, QUIET_UPLOAD
-from ims.upload.interfaces import IFileMutator
-from ims.upload.tools import printable_size
 from plone.app.content.browser.folderfactories import _allowedTypes
 from plone.app.content.interfaces import IStructureAction
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 from zope.component import getAllUtilitiesRegisteredFor, getUtilitiesFor, getMultiAdapter
+
+from .. import _, QUIET_UPLOAD
+from ..interfaces import IFileMutator
+from ..tools import printable_size
 
 logger = logging.getLogger('ims.upload')
 
@@ -25,8 +26,7 @@ bad_id = re.compile(r'[^a-zA-Z0-9-_~,.$\(\)# @]').search
 
 def clean_file_name(file_name):
     while bad_id(file_name):
-        file_name = utils.safe_unicode(file_name).replace(
-            bad_id(utils.safe_unicode(file_name)).group(), u'_')
+        file_name = file_name.replace(bad_id(file_name).group(), '_')
     non_underscore = re.search(r'[^_]', file_name)
     if non_underscore:
         return file_name[non_underscore.start():]
@@ -168,7 +168,7 @@ class ChunkedUpload(BrowserView):
                                  'size': nf.getObjSize(None, primary_field.value.getSize()),
                                  'url': nf.absolute_url()}
 
-        return json.dumps({'files': _files.values()})
+        return json.dumps({'files': list(_files.values())})
 
 
 class ChunkCheck(BrowserView):
@@ -231,7 +231,7 @@ class ChunkedUploadDirect(BrowserView):
                         logger.info('Starting chunk merger')
                     merge_chunks(self.context.aq_parent, self.context, file_name)
                     complete = self.context.aq_parent.absolute_url() + '/@@upload'
-        return json.dumps({'files': _files.values(), 'complete': complete})
+        return json.dumps({'files': list(_files.values()), 'complete': complete})
 
 
 class ChunklessUploadView(BrowserView):
@@ -241,7 +241,7 @@ class ChunklessUploadView(BrowserView):
         _file = self.request.form.get('files[]')
         if not _file:
             api.portal.show_message(
-                _(u"You must select a file."), self.request, type="error")
+                _("You must select a file."), self.request, type="error")
             return self.request.response.redirect(self.context.absolute_url() + '/@@upload')
 
         # older IE returns full path?!
@@ -249,12 +249,12 @@ class ChunklessUploadView(BrowserView):
         file_name = clean_file_name(file_name)
         if file_name in self.context.objectIds():
             api.portal.show_message(
-                _(u"A file with that name already exists"), self.request, type="errors")
+                _("A file with that name already exists"), self.request, type="errors")
             return self.request.response.redirect(self.context.absolute_url() + '/@@upload')
         else:
             make_file(file_name, self.context, _file)
             api.portal.show_message(
-                _(u"File successfully uploaded."), self.request, type="info")
+                _("File successfully uploaded."), self.request, type="info")
             return self.request.response.redirect(self.context.absolute_url() + '/@@upload')
 
 
@@ -301,7 +301,7 @@ class ChunkedFileDelete(BrowserView):
         parent = self.context.aq_inner.aq_parent
         parent.manage_delObjects(self.context.getId())
         api.portal.show_message(
-            _(u"Partially uploaded file successfully deleted."), self.request, type="info")
+            _("Partially uploaded file successfully deleted."), self.request, type="info")
         self.request.response.redirect(parent.absolute_url() + '/@@upload')
 
 
@@ -315,7 +315,7 @@ class UploadActionGuards(BrowserView):
     def guards(self):
         immediately_addable = True
         context_state = getMultiAdapter(
-            (self.context.aq_inner, self.request), name=u'plone_context_state')
+            (self.context.aq_inner, self.request), name='plone_context_state')
         container = context_state.folder()
         try:
             constraint = ISelectableConstrainTypes(container)

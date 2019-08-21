@@ -21,12 +21,7 @@ class TransformIndexable(object):
             transforms = plone.api.portal.get_tool('portal_transforms')
         except plone.api.exc.CannotGetPortalError:
             return  # site being imported
-        field = None
-        try:
-            field = IPrimaryField(self.context)  # dexterity
-        except TypeError:
-            if hasattr(self.context, 'getPrimaryField'):  # archetypes
-                field = self.context.getPrimaryField()
+        field = IPrimaryField(self.context)
 
         if not field:
             return False
