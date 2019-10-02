@@ -1,5 +1,5 @@
 import plone.api
-from plone.rfc822.interfaces import IPrimaryField
+from plone.rfc822.interfaces import IPrimaryFieldInfo
 from zope.interface import Interface
 
 
@@ -21,7 +21,7 @@ class TransformIndexable(object):
             transforms = plone.api.portal.get_tool('portal_transforms')
         except plone.api.exc.CannotGetPortalError:
             return  # site being imported
-        field = IPrimaryField(self.context)
+        field = IPrimaryFieldInfo(self.context)
 
         if not field:
             return False
