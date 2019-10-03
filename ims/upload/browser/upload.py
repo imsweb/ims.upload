@@ -12,6 +12,7 @@ from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.content.browser.folderfactories import _allowedTypes
 from plone.app.content.interfaces import IStructureAction
+from plone.app.contenttypes.browser.folder import FolderView
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 from zope.component import getAllUtilitiesRegisteredFor, getUtilitiesFor, getMultiAdapter
 
@@ -258,7 +259,7 @@ class ChunklessUploadView(BrowserView):
             return self.request.response.redirect(self.context.absolute_url() + '/@@upload')
 
 
-class UnchunkedListing(BrowserView):
+class UnchunkedListing(FolderView):
     """ listing of all else
     """
 
