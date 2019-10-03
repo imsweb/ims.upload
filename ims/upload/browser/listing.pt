@@ -11,10 +11,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tal:entry tal:repeat="item folderContents" metal:define-macro="entries">
+                <tal:entry tal:repeat="item batch" metal:define-macro="entries">
                     <tal:block tal:define="item_url item/getURL|item/absolute_url;
                                item_id item/getId|item/id;
-                               item_title_or_id item/pretty_title_or_id;
+                               item_title item/Title;
+                               item_title python:item_title or item_id;
                                item_description item/Description;
                                item_type item/portal_type;
                                item_type_title item/Type;
@@ -33,14 +34,14 @@
                          tal:attributes="href string:${item_url}/view;
                                          class string:${item_wf_state_class} url">
                           <img tal:attributes="src string:${item_url}/@@images/image/icon"/>
-                          <span tal:content="item_title_or_id"/>
+                          <span tal:content="item_title"/>
                       </a>
                   </tal:image>
                   <tal:notimage omit-tag="" condition="python:item_type != 'Image'">
                       <a href="#"
                          tal:attributes="href python:item_type in use_view_action and item_url+'/view' or item_url;
                                          class string:$item_type_class $item_wf_state_class url"
-                         tal:content="item_title_or_id">
+                         tal:content="item_title">
                           Item Title
                       </a>
                   </tal:notimage>
