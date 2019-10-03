@@ -84,7 +84,7 @@
         </tal:listing>
         <metal:empty metal:define-slot="no_items_in_listing">
             <p class="discreet"
-               tal:condition="not: folderContents"
+               tal:condition="not: batch"
                i18n:translate="description_no_items_in_folder">
                 There are currently no other items.
             </p>
