@@ -64,7 +64,7 @@
                                 </td>
                                 <td>
                                     <tal:modified>
-                  <span tal:replace="python:toLocalizedTime(item_modified,long_format=1)">
+                  <span tal:replace="python:view.toLocalizedTime(item_modified,long_format=1)">
                     August 16, 2001 at 23:35:59
                   </span>
                                     </tal:modified>
