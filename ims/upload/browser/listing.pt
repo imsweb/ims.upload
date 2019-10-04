@@ -22,6 +22,7 @@
                                item_modified item/ModificationDate;
                                item_created item/CreationDate;
                                item_type_class python:'contenttype-' + view.normalizeString(item_type);
+                               item_link python:item_type in view.use_view_action and item_url+'/view' or item_url;
                                item_wf_state item/review_state;
                                item_wf_state_class python:'state-' + view.normalizeString(item_wf_state);
                                item_creator item/Creator;">
@@ -39,7 +40,7 @@
                   </tal:image>
                   <tal:notimage omit-tag="" condition="python:item_type != 'Image'">
                       <a href="#"
-                         tal:attributes="href python:item_type in use_view_action and item_url+'/view' or item_url;
+                         tal:attributes="href item_link;
                                          class string:$item_type_class $item_wf_state_class url"
                          tal:content="item_title">
                           Item Title
@@ -47,7 +48,7 @@
                   </tal:notimage>
                   <span tal:condition="python:item_type in use_view_action">
                     &mdash;
-                      <a tal:attributes="href item_url">
+                      <a tal:attributes="href item_link">
                       <span class="glyphicon glyphicon-download"></span>
                       download
                     </a>

@@ -82,8 +82,7 @@ def make_file(file_name, context, filedata):
         # force file
         if content_type == 'Document' or not pt.getTypeInfo(context).allowType(content_type):
             content_type = 'File'
-        obj = api.content.create(
-            container=context, type=content_type, id=file_name, title=file_name)
+        obj = api.content.create(container=context, type=content_type, id=file_name, title=file_name)
         primary_field = IPrimaryFieldInfo(obj)
         setattr(obj, primary_field.fieldname, primary_field.field._type(
             filedata, filename=utils.safe_unicode(file_name)))
