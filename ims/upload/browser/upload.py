@@ -11,6 +11,7 @@ from Products.CMFPlone.resources import add_bundle_on_request, add_resource_on_r
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.content.browser.folderfactories import _allowedTypes
+from Products.CMFPlone.utils import human_readable_size
 from plone.app.content.interfaces import IStructureAction
 from plone.app.contenttypes.browser.folder import FolderView
 from plone.rfc822.interfaces import IPrimaryFieldInfo
@@ -165,7 +166,7 @@ class ChunkedUpload(BrowserView):
             nf = make_file(file_name, self.context, file_data)
             primary_field = IPrimaryFieldInfo(nf)
             _files[file_name] = {'name': file_name,
-                                 'size': nf.getObjSize(None, primary_field.value.getSize()),
+                                 'size': human_readable_size(primary_field.value.size),
                                  'url': nf.absolute_url()}
 
         return json.dumps({'files': list(_files.values())})
