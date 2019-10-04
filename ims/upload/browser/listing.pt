@@ -46,7 +46,7 @@
                           Item Title
                       </a>
                   </tal:notimage>
-                  <span tal:condition="python:item_type in use_view_action">
+                  <span tal:condition="python:item_type in view.use_view_action">
                     &mdash;
                       <a tal:attributes="href item_link">
                       <span class="glyphicon glyphicon-download"></span>
