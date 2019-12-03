@@ -10,13 +10,16 @@ from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.CMFPlone.resources import add_bundle_on_request, add_resource_on_request
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from ims.upload import _, QUIET_UPLOAD
-from ims.upload.interfaces import IFileMutator
-from ims.upload.tools import printable_size
 from plone.app.content.browser.folderfactories import _allowedTypes
+from Products.CMFPlone.utils import human_readable_size
 from plone.app.content.interfaces import IStructureAction
+from plone.app.contenttypes.browser.folder import FolderView
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 from zope.component import getAllUtilitiesRegisteredFor, getUtilitiesFor, getMultiAdapter
+
+from .. import _, QUIET_UPLOAD
+from ..interfaces import IFileMutator
+from ..tools import printable_size
 
 logger = logging.getLogger('ims.upload')
 
@@ -25,8 +28,7 @@ bad_id = re.compile(r'[^a-zA-Z0-9-_~,.$\(\)# @]').search
 
 def clean_file_name(file_name):
     while bad_id(file_name):
-        file_name = utils.safe_unicode(file_name).replace(
-            bad_id(utils.safe_unicode(file_name)).group(), u'_')
+        file_name = file_name.replace(bad_id(file_name).group(), '_')
     non_underscore = re.search(r'[^_]', file_name)
     if non_underscore:
         return file_name[non_underscore.start():]
@@ -81,8 +83,7 @@ def make_file(file_name, context, filedata):
         # force file
         if content_type == 'Document' or not pt.getTypeInfo(context).allowType(content_type):
             content_type = 'File'
-        obj = api.content.create(
-            container=context, type=content_type, id=file_name, title=file_name)
+        obj = api.content.create(container=context, type=content_type, id=file_name, title=file_name)
         primary_field = IPrimaryFieldInfo(obj)
         setattr(obj, primary_field.fieldname, primary_field.field._type(
             filedata, filename=utils.safe_unicode(file_name)))
@@ -95,7 +96,7 @@ def merge_chunks(context, cf, file_name):
 
     nf = make_file(file_name, context, filedata='')
     primary_field = IPrimaryFieldInfo(nf)
-    tf = tempfile.NamedTemporaryFile(mode='w+b', delete=False)
+    tf = tempfile.NamedTemporaryFile(mode='wb', delete=False)
     temp_name = tf.name
     for chunk in chunks:
         tf.write(chunk.file.data)
@@ -104,7 +105,7 @@ def merge_chunks(context, cf, file_name):
     # See plone.namedfile.file.NamedBlobFile and NamedImageFile. _setData will find a storable and store the blob
     # We want a closed file, which will let it select FileDescriptorStorable in _setData. This storable passes the file
     # location to blob.consumeFile which will convert it to blob form. See https://squishlist.com/ims/plone/68427
-    with open(temp_name) as closed_file:
+    with open(temp_name, 'rb') as closed_file:
         pass
     primary_field.value._setData(closed_file)
     nf.reindexObject()
@@ -165,10 +166,10 @@ class ChunkedUpload(BrowserView):
             nf = make_file(file_name, self.context, file_data)
             primary_field = IPrimaryFieldInfo(nf)
             _files[file_name] = {'name': file_name,
-                                 'size': nf.getObjSize(None, primary_field.value.getSize()),
+                                 'size': human_readable_size(primary_field.value.size),
                                  'url': nf.absolute_url()}
 
-        return json.dumps({'files': _files.values()})
+        return json.dumps({'files': list(_files.values())})
 
 
 class ChunkCheck(BrowserView):
@@ -231,7 +232,7 @@ class ChunkedUploadDirect(BrowserView):
                         logger.info('Starting chunk merger')
                     merge_chunks(self.context.aq_parent, self.context, file_name)
                     complete = self.context.aq_parent.absolute_url() + '/@@upload'
-        return json.dumps({'files': _files.values(), 'complete': complete})
+        return json.dumps({'files': list(_files.values()), 'complete': complete})
 
 
 class ChunklessUploadView(BrowserView):
@@ -241,7 +242,7 @@ class ChunklessUploadView(BrowserView):
         _file = self.request.form.get('files[]')
         if not _file:
             api.portal.show_message(
-                _(u"You must select a file."), self.request, type="error")
+                _("You must select a file."), self.request, type="error")
             return self.request.response.redirect(self.context.absolute_url() + '/@@upload')
 
         # older IE returns full path?!
@@ -249,16 +250,16 @@ class ChunklessUploadView(BrowserView):
         file_name = clean_file_name(file_name)
         if file_name in self.context.objectIds():
             api.portal.show_message(
-                _(u"A file with that name already exists"), self.request, type="errors")
+                _("A file with that name already exists"), self.request, type="errors")
             return self.request.response.redirect(self.context.absolute_url() + '/@@upload')
         else:
             make_file(file_name, self.context, _file)
             api.portal.show_message(
-                _(u"File successfully uploaded."), self.request, type="info")
+                _("File successfully uploaded."), self.request, type="info")
             return self.request.response.redirect(self.context.absolute_url() + '/@@upload')
 
 
-class UnchunkedListing(BrowserView):
+class UnchunkedListing(FolderView):
     """ listing of all else
     """
 
@@ -301,7 +302,7 @@ class ChunkedFileDelete(BrowserView):
         parent = self.context.aq_inner.aq_parent
         parent.manage_delObjects(self.context.getId())
         api.portal.show_message(
-            _(u"Partially uploaded file successfully deleted."), self.request, type="info")
+            _("Partially uploaded file successfully deleted."), self.request, type="info")
         self.request.response.redirect(parent.absolute_url() + '/@@upload')
 
 
@@ -315,7 +316,7 @@ class UploadActionGuards(BrowserView):
     def guards(self):
         immediately_addable = True
         context_state = getMultiAdapter(
-            (self.context.aq_inner, self.request), name=u'plone_context_state')
+            (self.context.aq_inner, self.request), name='plone_context_state')
         container = context_state.folder()
         try:
             constraint = ISelectableConstrainTypes(container)
@@ -324,7 +325,7 @@ class UploadActionGuards(BrowserView):
             pass
 
         return [api.user.has_permission('Add portal content', obj=self.context),
-                api.user.has_permission('ATContentTypes: Add File', obj=self.context),
+                api.user.has_permission('plone.app.contenttypes: Add File', obj=self.context),
                 immediately_addable,
                 [i for i in _allowedTypes(self.request, self.context) if i.id in ('Image', 'File')]]
 

@@ -1,7 +1,6 @@
 import logging
 import re
 
-from Products.CMFPlone.utils import safe_unicode as su
 from plone.dexterity.content import Item, Container
 from plone.namedfile.file import NamedBlobFile
 from plone.registry.interfaces import IRegistry
@@ -9,8 +8,8 @@ from zope.component import getUtility
 
 logger = logging.getLogger('ims.upload')
 
-from ims.upload import QUIET_UPLOAD
-from ims.upload.interfaces import IChunkSettings
+from . import QUIET_UPLOAD
+from .interfaces import IChunkSettings
 
 
 class ChunkedFile(Container):
@@ -49,14 +48,14 @@ class ChunkedFile(Container):
             return
         self.invokeFactory('Chunk', id)
         chunk = self[id]
-        chunk.file = NamedBlobFile(file_data.read(), filename=su(file_name))
+        chunk.file = NamedBlobFile(file_data.read(), filename=file_name)
         if content_range:  # might be a lone chunk
             startbyte, endbyte = re.match(
                 'bytes ([0-9]+)-([0-9]+)', content_range).groups()
             chunk.startbyte = int(startbyte)
             chunk.endbyte = int(endbyte)
             if not QUIET_UPLOAD:
-                logger.info('Chunk uploaded: %s; %s' % (content_range,file_name))
+                logger.info('Chunk uploaded: %s; %s' % (content_range, file_name))
 
     def Title(self):
         return 'Processing/Aborted - ' + self.id[:-6]  # remove "_chunk" from id

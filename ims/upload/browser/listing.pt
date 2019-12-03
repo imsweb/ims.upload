@@ -1,25 +1,5 @@
 <metal:listingmacro define-macro="listing">
-    <tal:foldercontents define="contentFilter contentFilter|request/contentFilter|nothing;
-                    contentFilter python:contentFilter and dict(contentFilter) or {};
-                    limit_display limit_display|request/limit_display|nothing;
-                    limit_display python:limit_display and int(limit_display) or None;
-                    more_url more_url|request/more_url|string:folder_contents;
-                    is_a_topic python:context.portal_type=='Topic';
-                    folderContents folderContents|nothing; folderContents python:folderContents or is_a_topic and context.queryCatalog(batch=True, **contentFilter) or context.getFolderContents(contentFilter, batch=True, b_size=limit_display or 100);
-                    folderContents python:[b for b in folderContents if b.portal_type != 'ChunkedFile'];
-                    site_properties context/portal_properties/site_properties;
-                    use_view_action python:('File','Image',);
-                    Batch python:modules['Products.CMFPlone'].Batch;
-                    b_start python:request.get('b_start', 0);
-                    batch python:isinstance(folderContents, Batch) and folderContents or Batch(folderContents, limit_display or 100, int(b_start), orphan=1);
-                    isAnon context/@@plone_portal_state/anonymous;
-                    normalizeString nocall: context/plone_utils/normalizeString;
-                    toLocalizedTime nocall: context/@@plone/toLocalizedTime;
-                    navigation_root_url context/@@plone_portal_state/navigation_root_url;
-                    pas_member context/@@pas_member;
-                    portal_state context/@@plone_portal_state;
-                    portal_url portal_state/portal_url;
-                    plone_layout nocall:context/@@plone_layout">
+    <tal:foldercontents define="batch view/batch">
         <tal:listing condition="batch">
             <table class="tablesorter" metal:define-slot="entries" id="upload_listing">
                 <thead>
@@ -31,19 +11,20 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tal:entry tal:repeat="item folderContents" metal:define-macro="entries">
+                <tal:entry tal:repeat="item batch" metal:define-macro="entries">
                     <tal:block tal:define="item_url item/getURL|item/absolute_url;
                                item_id item/getId|item/id;
-                               item_title_or_id item/pretty_title_or_id;
+                               item_title item/Title;
+                               item_title python:item_title or item_id;
                                item_description item/Description;
                                item_type item/portal_type;
                                item_type_title item/Type;
                                item_modified item/ModificationDate;
                                item_created item/CreationDate;
-                               item_icon python:plone_layout.getIcon(item);
-                               item_type_class python:'contenttype-' + normalizeString(item_type);
-                               item_wf_state item/review_state|python: context.portal_workflow.getInfoFor(item, 'review_state', '');
-                               item_wf_state_class python:'state-' + normalizeString(item_wf_state);
+                               item_type_class python:'contenttype-' + view.normalizeString(item_type);
+                               item_link python:item_type in view.use_view_action and item_url+'/view' or item_url;
+                               item_wf_state item/review_state;
+                               item_wf_state_class python:'state-' + view.normalizeString(item_wf_state);
                                item_creator item/Creator;">
                         <metal:block define-slot="entry">
                             <tr>
@@ -54,20 +35,20 @@
                          tal:attributes="href string:${item_url}/view;
                                          class string:${item_wf_state_class} url">
                           <img tal:attributes="src string:${item_url}/@@images/image/icon"/>
-                          <span tal:content="item_title_or_id"/>
+                          <span tal:content="item_title"/>
                       </a>
                   </tal:image>
                   <tal:notimage omit-tag="" condition="python:item_type != 'Image'">
                       <a href="#"
-                         tal:attributes="href python:item_type in use_view_action and item_url+'/view' or item_url;
+                         tal:attributes="href item_link;
                                          class string:$item_type_class $item_wf_state_class url"
-                         tal:content="item_title_or_id">
+                         tal:content="item_title">
                           Item Title
                       </a>
                   </tal:notimage>
-                  <span tal:condition="python:item_type in use_view_action">
+                  <span tal:condition="python:item_type in view.use_view_action">
                     &mdash;
-                      <a tal:attributes="href item_url">
+                      <a tal:attributes="href item_link">
                       <span class="glyphicon glyphicon-download"></span>
                       download
                     </a>
@@ -83,7 +64,7 @@
                                 </td>
                                 <td>
                                     <tal:modified>
-                  <span tal:replace="python:toLocalizedTime(item_modified,long_format=1)">
+                  <span tal:replace="python:view.toLocalizedTime(item_modified,long_format=1)">
                     August 16, 2001 at 23:35:59
                   </span>
                                     </tal:modified>
@@ -104,7 +85,7 @@
         </tal:listing>
         <metal:empty metal:define-slot="no_items_in_listing">
             <p class="discreet"
-               tal:condition="not: folderContents"
+               tal:condition="not: batch"
                i18n:translate="description_no_items_in_folder">
                 There are currently no other items.
             </p>

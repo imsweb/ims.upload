@@ -1,4 +1,5 @@
 import plone.api
+from Products.GenericSetup.tool import UNKNOWN
 
 
 def setup_various(context):
@@ -8,15 +9,14 @@ def setup_various(context):
     if context.readDataFile('imsupload.txt') is None:
         return
 
-    qi = plone.api.portal.get_tool('portal_quickinstaller')
     setup = plone.api.portal.get_tool('portal_setup')
     pw = plone.api.portal.get_tool('portal_workflow')
-    if qi.isProductInstalled('CRNTracker'):
+    if setup.getLastVersionForProfile('CRNTracker:default') != UNKNOWN:
         # redo the workflow step to allow in CRNTracker
         setup.runImportStepFromProfile(
             'profile-Products.CRNTracker:default', 'workflow')
         pw.updateRoleMappings()
-    elif qi.isProductInstalled('ims.groupspace'):
+    elif setup.getLastVersionForProfile('ims.groupspace:default') != UNKNOWN:
         # redo the workflow step to allow in GroupSpaces
         setup.runImportStepFromProfile(
             'profile-ims.groupspace:default', 'workflow')

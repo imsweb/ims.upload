@@ -1,7 +1,7 @@
 from plone.indexer import indexer
 from zope.interface import Interface
 
-from ims.upload.transformable import ITransformIndexable
+from .transformable import ITransformIndexable
 
 
 @indexer(Interface)
