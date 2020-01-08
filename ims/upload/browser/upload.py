@@ -128,6 +128,7 @@ class ChunkedUpload(BrowserView):
         file_name = file_name.split('/')[-1].split('\\')[-1]  # bug in old IE
         file_name = clean_file_name(file_name)
         _file_name = file_name + '_chunk'
+        logger.info('Staring chunk: ' + _file_name)
 
         content_range = self.request['HTTP_CONTENT_RANGE']
 
