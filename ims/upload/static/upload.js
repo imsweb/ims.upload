@@ -256,6 +256,7 @@ $(document).ready(function () {
         retryTimeout: 500,
         formData: {'_authenticator': $('#_authenticator').val()},
         dataType: 'json',
+        limitMultiFileUploads: 1,
         //dropZone: $('#dropzone'),
         autoUpload: false,
         maxChunkSize: parseInt($('#chunksize').attr('data')),
