@@ -1,0 +1,13 @@
+<registry>
+    <records interface="ims.upload.interfaces.IChunkSettings" remove="true"/>
+    <records prefix="plone.resources/jquery-fileupload"
+             interface='Products.CMFPlone.interfaces.IResourceRegistry' remove="true"/>
+    <records prefix="plone.resources/ims-upload-js"
+             interface='Products.CMFPlone.interfaces.IResourceRegistry' remove="true"/>
+    <records prefix="plone.resources/ims-upload-css"
+             interface='Products.CMFPlone.interfaces.IResourceRegistry' remove="true"/>
+    <records prefix="plone.resources/upload-bootstrap"
+             interface='Products.CMFPlone.interfaces.IResourceRegistry' remove="true"/>
+    <records prefix="plone.bundles/ims.upload"
+             interface='Products.CMFPlone.interfaces.IBundleRegistry' remove="true"/>
+</registry>

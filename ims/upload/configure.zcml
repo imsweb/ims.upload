@@ -14,14 +14,15 @@
             name="default"
             title="ims.upload"
             directory="profiles/default"
-            description="Installs the ims.upload package"
-            provides="Products.GenericSetup.interfaces.EXTENSION"/>
+            description="Chunked, bulk uploading"
+            provides="Products.GenericSetup.interfaces.EXTENSION"
+            post_handler="ims.upload.setuphandlers.setup_various"/>
 
-    <genericsetup:importStep
-            name="ims.upload"
-            title="ims.upload after install"
-            description=""
-            handler="ims.upload.setuphandlers.setup_various"/>
+    <genericsetup:registerProfile
+            name="uninstall"
+            title="ims.upload [uninstall]"
+            directory="profiles/uninstall"
+            provides="Products.GenericSetup.interfaces.EXTENSION"/>
 
     <genericsetup:upgradeStep
             title="Upgrade ims.upload to 1.5"

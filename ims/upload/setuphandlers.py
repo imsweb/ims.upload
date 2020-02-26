@@ -3,11 +3,8 @@ from Products.GenericSetup.tool import UNKNOWN
 
 
 def setup_various(context):
-    """Miscellanous steps import handle
+    """ Miscellaneous steps import handle
     """
-
-    if context.readDataFile('imsupload.txt') is None:
-        return
 
     setup = plone.api.portal.get_tool('portal_setup')
     pw = plone.api.portal.get_tool('portal_workflow')
