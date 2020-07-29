@@ -6,10 +6,10 @@ from plone.namedfile.file import NamedBlobFile
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 
-logger = logging.getLogger('ims.upload')
-
 from . import QUIET_UPLOAD
 from .interfaces import IChunkSettings
+
+logger = logging.getLogger('ims.upload')
 
 
 class ChunkedFile(Container):

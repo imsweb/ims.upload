@@ -170,6 +170,7 @@ class ChunkedUpload(BrowserView):
                                  'size': human_readable_size(primary_field.value.size),
                                  'url': nf.absolute_url()}
 
+        self.request.response.setHeader('Content-Type', 'application/json')
         return json.dumps({'files': list(_files.values())})
 
 
@@ -183,6 +184,7 @@ class ChunkCheck(BrowserView):
             data['uploadedBytes'] = self.context[
                 file_name + '_chunk'].currsize()
             data['url'] = self.context[file_name + '_chunk'].absolute_url()
+        self.request.response.setHeader('Content-Type', 'application/json')
         return json.dumps(data)
 
 
@@ -192,6 +194,7 @@ class ChunkCheckDirect(BrowserView):
     def render(self):
         data = {'uploadedBytes': self.context.currsize(),
                 'targetsize': self.context.targetsize}
+        self.request.response.setHeader('Content-Type', 'application/json')
         return json.dumps(data)
 
 
@@ -233,6 +236,7 @@ class ChunkedUploadDirect(BrowserView):
                         logger.info('Starting chunk merger')
                     merge_chunks(self.context.aq_parent, self.context, file_name)
                     complete = self.context.aq_parent.absolute_url() + '/@@upload'
+        self.request.response.setHeader('Content-Type', 'application/json')
         return json.dumps({'files': list(_files.values()), 'complete': complete})
 
 
@@ -293,6 +297,7 @@ class ChunkedListing(BrowserView):
                                 'date': api.portal.get_localized_time(obj.CreationDate(), long_format=1),
                                 'portal_type': obj.portal_type,
                                 })
+        self.request.response.setHeader('Content-Type', 'application/json')
         return json.dumps(content)
 
 
