@@ -15,7 +15,7 @@ class ChunkedFileView(BrowserView):
         add_resource_on_request(self.request, 'upload-bootstrap')
         add_bundle_on_request(self.request, 'jqueryui')
         add_resource_on_request(self.request, 'jquery-fileupload')
-        return super(ChunkedFileView, self).__call__(self)
+        return super().__call__(self)
 
     def can_see_chunks(self):
         return plone.api.user.has_permission('Manage portal', obj=self.context)

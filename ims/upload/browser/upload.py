@@ -44,7 +44,7 @@ class ChunkUploadView(BrowserView):
         add_bundle_on_request(self.request, 'jqueryui')
         add_resource_on_request(self.request, 'jquery-fileupload')
         add_resource_on_request(self.request, 'ims-upload-js')
-        return super(ChunkUploadView, self).__call__(self)
+        return super().__call__(self)
 
     def email_from_address(self):
         return api.portal.get_registry_record('plone.email_from_address')
@@ -314,7 +314,7 @@ class ChunkedFileDelete(BrowserView):
 
 class UploadActionGuards(BrowserView):
     def __init__(self, context, request):
-        super(UploadActionGuards, self).__init__(context, request)
+        super().__init__(context, request)
         request.response.setHeader('Cache-Control', 'no-cache')
         request.response.setHeader('Pragma', 'no-cache')
 

@@ -19,7 +19,7 @@ class IntegrationTestCase(EntrezIntegrationTestCase):
     layer = testing.INTEGRATION
 
     def setUp(self):
-        super(IntegrationTestCase, self).setUp()
+        super().setUp()
         directlyProvides(self.portal.REQUEST, IUploadLayer)
         directlyProvides(self.request, IUploadLayer)
 
@@ -28,7 +28,7 @@ class FunctionalTestCase(IntegrationTestCase):
     layer = testing.FUNCTIONAL
 
     def setUp(self):
-        super(FunctionalTestCase, self).setUp()
+        super().setUp()
         self.browser = Browser(self.layer['app'])
         self.browser.handleErrors = False
         self.browser.addHeader(
