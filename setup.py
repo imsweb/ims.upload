@@ -15,8 +15,7 @@ setup(name='ims.upload',
       description="Plone package for chunked uploads",
       long_description=long_description,
       classifiers=[
-          "Framework :: Plone :: 5.0",
-          "Framework :: Plone :: 5.1",
+          "Framework :: Plone :: 5.2",
           "Programming Language :: Python",
       ],
       keywords='',
@@ -31,7 +30,6 @@ setup(name='ims.upload',
       install_requires=[
           'setuptools',
           'collective.js.jqueryui>=1.10.1.2',
-          'plone.app.dexterity',
       ],
       entry_points="""
       # -*- Entry points: -*-
