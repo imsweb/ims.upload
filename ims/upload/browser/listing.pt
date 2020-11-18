@@ -80,8 +80,6 @@
             <p>For mass modification or deletion of uploaded files please use the
                 <a tal:attributes="href string:${context/absolute_url}/folder_contents">Contents</a> page</p>
 
-            <div metal:use-macro="context/batch_macros/macros/navigation"/>
-
         </tal:listing>
         <metal:empty metal:define-slot="no_items_in_listing">
             <p class="discreet"

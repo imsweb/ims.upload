@@ -279,6 +279,10 @@ class UnchunkedListing(FolderView):
     def member_info(self, creator):
         return self.context.portal_membership.getMemberInfo(creator)
 
+    def batch(self):
+        """ Don't batch. Because this is an AJAX call, all of the batch tool links would need to be AJAXed too """
+        return self.results(batch=False)
+
 
 class ChunkedListing(BrowserView):
     """ listing of files
