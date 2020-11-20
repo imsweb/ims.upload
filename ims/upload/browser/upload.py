@@ -8,14 +8,16 @@ import plone.api as api
 from Products.CMFPlone import utils
 from Products.CMFPlone.interfaces.constrains import ISelectableConstrainTypes
 from Products.CMFPlone.resources import add_bundle_on_request, add_resource_on_request
+from Products.CMFPlone.utils import human_readable_size
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.content.browser.folderfactories import _allowedTypes
-from Products.CMFPlone.utils import human_readable_size
 from plone.app.content.interfaces import IStructureAction
 from plone.app.contenttypes.browser.folder import FolderView
 from plone.rfc822.interfaces import IPrimaryFieldInfo
 from zope.component import getAllUtilitiesRegisteredFor, getUtilitiesFor, getMultiAdapter
+from zope.event import notify
+from zope.lifecycleevent import ObjectModifiedEvent
 
 from .. import _, QUIET_UPLOAD
 from ..interfaces import IFileMutator
@@ -87,7 +89,7 @@ def make_file(file_name, context, filedata):
         primary_field = IPrimaryFieldInfo(obj)
         setattr(obj, primary_field.fieldname, primary_field.field._type(
             filedata, filename=utils.safe_unicode(file_name)))
-        obj.reindexObject()
+        notify(ObjectModifiedEvent(obj))
     return context[file_name]
 
 
