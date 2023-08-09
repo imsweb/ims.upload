@@ -4,10 +4,10 @@
     <object name="object" meta_type="CMF Action Category">
         <property name="title"></property>
         <object name="upload" meta_type="CMF Action" i18n:domain="plone">
-            <property name="title" i18n:translate="">Upload</property>
+            <property name="title" i18n:translate="">Large File Upload</property>
             <property name="description" i18n:translate=""></property>
             <property name="url_expr">string:${globals_view/getCurrentFolderUrl}/@@upload</property>
-            <property name="icon_expr"></property>
+            <property name="icon_expr">string:upload</property>
             <property name="available_expr">here/@@is_upload_supported</property>
             <property name="permissions">
                 <element value="Modify portal content"/>

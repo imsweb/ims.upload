@@ -1,0 +1,11 @@
+<registry>
+    <!-- registry settings -->
+    <record field="chunksize" interface="ims.upload.interfaces.IChunkSettings"
+            name="ims.upload.interfaces.IChunkSettings.chunksize">
+        <value>10000000</value>
+    </record>
+    <record field="hijack" interface="ims.upload.interfaces.IChunkSettings"
+            name="ims.upload.interfaces.IChunkSettings.hijack">
+        <value>False</value>
+    </record>
+</registry>
